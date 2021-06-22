@@ -22,6 +22,7 @@ classdef user_entry < handle
         imdl
         load_fmdl
         withcells
+        mk_antibodies
         
     end
     

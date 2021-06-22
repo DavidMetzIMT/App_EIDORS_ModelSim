@@ -42,12 +42,13 @@ for i=1:size(p,1)
     addpath(p{i});
 end
 
-if isempty(app.CallingApp)    
+if isempty(app.CallingApp)
     cd(app.Path.CurrentFolder); % go to current folder for this App
 else
     
 end
 end
+
 function Init_globalVar_EIDORS(app)
 global EIDORS
 Reset=0;

@@ -1,27 +1,68 @@
 clear
+%% Add all the Subfolder of the App
+current_path= pwd;
+addpath([current_path '\Sub_Programms'])
+AddAllSubFolders(current_path)
+%% Start EIDORS Toolbox
+Start_EIDORS()
 
-if ~exist('show_fem')
-    run C:\EIDORS\eidors\startup.m
-end
-
-
+%% Init the protocol???
+protocol= {['Protocol Init']};
+t = datetime('now','TimeZone','local','Format','yyyyMMdd_HHmmss');
+protocol{end+1}= char(t);
+%% define User entry
 user_entry = user_entry();
 
 %for now, Neural Network solver works fine with following data:
-load_file_with_user_entry = 'user_entry_1_IMT0616.mat';
-load(load_file_with_user_entry)
+% here you can also open an dialog
+title = ['Select a file to load user_enty '];
+folder= current_path;
+[file,path, notCancelled] = uigetfile('*.*',title,folder);
+%load_file_with_user_entry = 'user_entry_1_IMT0616.mat';
+if notCancelled
+    load_file_with_user_entry=[path file];
+    user_entry = load(load_file_with_user_entry, 'user_entry');
+else
+    return 
+end
 
-user_entry.net_file_name = 'Trained_Network_1_IMT0616.mat';   % file name, which contains suitable nets for invers solving
+user_entry.net_file_name = 'Trained_Network_1_IMT0616';% PLEASE Ohne .mat   % file name, which contains suitable nets for invers solving
 user_entry.load_fmdl =0;                             % get the fmdl from GUI
 user_entry.range_num_of_cells = [1 2];
 %user_entry.range_cell_conductivity = [1.5, 1.5 , 1 ; 1, 1, 0.3; 0.5, 0.5, 0.1];         % 5 or e.g [5 10], one number indicates the maximum possible conductivity of cells, two numbers means the range of possible conductivitie of cells
 user_entry.withcells = 1;
-
 user_entry.num_trainingData = 10;                  % the number of sets for generating training data
 
-train_dataset = Cell_Data_Generator(user_entry);
+% Save user entry
+file2save = [user_entry.net_file_name '.mat'];
+save(file2save, 'user_entry')
+% Update protocol
+protocol{end+1}= ['user_entry saved in :'  file2save];
 
-% show the 3 first
+%% Training Dataset
+% here you can also open an dialog
+title = ['Select a file to load Training Dataset '];
+folder= current_path;
+[file,path, notCancelled] = uigetfile('*.*',title,folder);
+if notCancelled
+    file2load=[path file];
+    train_dataset = load(file2load, 'train_dataset');
+    trainset_filename= file2load;
+else
+    % if cancelled than 
+    train_dataset = Cell_Data_Generator(user_entry);
+    % Save user entry
+    file2save = [user_entry.net_file_name 'train_dataset' '.mat'];
+    save(file2save, 'user_entry')
+    % Update protocol
+    protocol{end+1}= ['user_entry saved in :'  file2save];
+    % TODO save the dataset
+    %
+    trainset_filename= 
+    protocol{end+1}= ['user_entry saved in :'  trainset_filename];
+end
+
+%% Plot some sample of trained data!
 figName= 'some Samples of generated data';
 clf
 h= getCurrentFigure_with_figName(figName);

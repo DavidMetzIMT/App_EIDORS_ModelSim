@@ -21,7 +21,20 @@ classdef Cell_Data_Generator
         function obj = Cell_Data_Generator(user_entry)
             disp('Start: generating Training Data...')
             num_trainingData = user_entry.num_trainingData;
+            % here make fmdl...
+            if user_entry.load_fmdl ==0
+                chamber_radius = user_entry.chamber_radius;
+                chamber_height = user_entry.chamber_height;
+                mesh_size = user_entry.mesh_size;
+                user_entry.fmdl= ng_mk_cyl_models([chamber_height,chamber_radius, mesh_size],[16,1],0);
+                % ng_mk_cyl_models(cyl_shape= {height, radius, max size of mesh elems}, elec_pos, elec_shape, extra_ng_code)
+                user_entry.fmdl.stimulation = mk_stim_patterns(16,1,[0,1],[0,1],{},1);
+            else
+                user_entry.fmdl=EIDORS.fmdl;
+            end
+            
             % generation of n (= num_trainingData) number of sets from class TrainingDataset:
+            
             for i=1:num_trainingData
                 disp(['                 Training Data #', num2str(i)])
                 obj.single_data(i) = TrainingDataset(user_entry);
@@ -42,7 +55,7 @@ classdef Cell_Data_Generator
                 
                 obj.TrainingSet.X_ihn(:,i) = obj.single_data(i).data_ihn.meas;
             end
-            disp('Stop: generating Training Data')
+            disp('End: generating Training Data')
         end
     end
     
