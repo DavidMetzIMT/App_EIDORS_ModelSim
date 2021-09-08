@@ -19,6 +19,7 @@ for i=1:length(fields)
     fields{i}
     if isstruct(l.(fields{i}))
     if isfield(l.(fields{i}),class_type)
+        
         if l.(fields{i})(1).class_type== 'user_entry';
             user_entry=l.fields{i}
             return
