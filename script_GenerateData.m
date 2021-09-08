@@ -24,7 +24,7 @@ out_path= [current_path '\Outputs\' folder_out];
 mkdir(out_path);
 addpath([current_path '\Sub_Programms'])
 disp(['Add all sub folder from: ' current_path]);
-addpath(replace(genpath(current_path),'\old',''));
+addpath(genpath(current_path));
 
 
 %% Start EIDORS Toolbox

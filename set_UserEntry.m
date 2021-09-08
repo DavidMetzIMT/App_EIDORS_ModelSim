@@ -11,6 +11,7 @@
 % if isempty(path)
 %     return
 % end
+addpath(genpath(pwd))
 
 l=load('user_entrys.mat');
 fields = fieldnames(l)
