@@ -1,5 +1,4 @@
 clear
-clear
 
 
 if ~exist('show_fem')
