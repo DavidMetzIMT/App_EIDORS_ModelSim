@@ -1,4 +1,4 @@
-function Start_EIDORS (path)
+function Start_EIDORS(path)
 if nargin == 0
     path = 'C:\EIDORS\eidors\startup.m';
 end

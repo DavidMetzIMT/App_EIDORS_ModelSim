@@ -2,8 +2,8 @@ function Sim_GenerateModelwithCell()
 %
 %
 disp('Generate model with cell: Start')
-    disp('please wait ...')
-   
+disp('please wait ...')
+
 global EIDORS
 close all
 
@@ -44,28 +44,31 @@ for i=1:size(EIDORS.sim.cell,1)
     cell_frac(:,i) = elem_select( EIDORS.sim.img_h.fwd_model, select_cell);
     select_rst = @(x,y,z) (x-c.PosX).^2 + (y-c.PosY).^2+(z-c.PosZ).^2 > c.Radius^2 ;
     layer_frac(:,i) = elem_select( EIDORS.sim.img_h.fwd_model, select_rst);%% do we really need this one???
-           
+    
 end
-
-c_is=sum(cell_frac>0,2);
-l_is=sum(layer_frac>0,2);
-for i=1:size(cell_frac,1)
-    if c_is(i)==0
-        c_frac(i,1) =0;
-    elseif c_is(i)==1
-        c_frac(i,1) = sum(cell_frac(i,:));
-    elseif c_is(i)>1
-        c_frac(i,1) = 1;
+if size(EIDORS.sim.cell,1)==0
+    EIDORS.sim.img_ih=EIDORS.sim.img_h;
+else
+    c_is=sum(cell_frac>0,2);
+    l_is=sum(layer_frac>0,2);
+    for i=1:size(cell_frac,1)
+        if c_is(i)==0
+            c_frac(i,1) =0;
+        elseif c_is(i)==1
+            c_frac(i,1) = sum(cell_frac(i,:));
+        elseif c_is(i)>1
+            c_frac(i,1) = 1;
+        end
+        if sum(layer_frac(i,:),2)==size(layer_frac,2)
+            l_frac(i,1) =1;
+        else
+            l_frac(i,1) = 0;
+        end
     end
-    if sum(layer_frac(i,:),2)==size(layer_frac,2)
-        l_frac(i,1) =1;
-    else
-        l_frac(i,1) = 0;
-    end
+    
+    EIDORS.sim.img_ih = mk_image(EIDORS.sim.img_h, EIDORS.sim.bufferConduct + c_frac*(EIDORS.sim.cellConduct) + l_frac*(EIDORS.sim.layerConduct));
+    EIDORS.sim.img_ih = mk_image(EIDORS.sim.img_h, EIDORS.sim.bufferConduct + c_frac*(EIDORS.sim.cellConduct));
 end
- 
-EIDORS.sim.img_ih = mk_image(EIDORS.sim.img_h, EIDORS.sim.bufferConduct + c_frac*(EIDORS.sim.cellConduct) + l_frac*(EIDORS.sim.layerConduct));
-EIDORS.sim.img_ih = mk_image(EIDORS.sim.img_h, EIDORS.sim.bufferConduct + c_frac*(EIDORS.sim.cellConduct));
 
 %%  Make data for simulation
 
@@ -78,9 +81,15 @@ EIDORS.sim.data_ih = fwd_solve(EIDORS.sim.img_ih);
 figName= '3D Image of homogenious conductivity';
 h= getCurrentFigure_with_figName(figName);
 show_fem( EIDORS.sim.img_h, [1,1.012,0]);
+if ~EIDORS.flag.displaymesh
+    set(h,'EdgeColor','none');
+end
 figName= '3D Image of inhomogenious conductivity';
 h= getCurrentFigure_with_figName(figName);
 show_fem(EIDORS.sim.img_ih,[1,0,0]);
+if ~EIDORS.flag.displaymesh
+    set(h,'EdgeColor','none');
+end
 show_cell(h,EIDORS.sim.iimg.calc_slices.levels,1)
- disp('Generate model with cell: Done!')
+disp('Generate model with cell: Done!')
 

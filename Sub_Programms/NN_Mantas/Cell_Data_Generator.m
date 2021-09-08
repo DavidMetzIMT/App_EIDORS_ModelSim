@@ -19,6 +19,7 @@ classdef Cell_Data_Generator
     
     methods ( Access = public )
         function obj = Cell_Data_Generator(user_entry)
+            
             disp('Start: generating Training Data...')
             num_trainingData = user_entry.num_trainingData;
             % here make fmdl...
@@ -29,16 +30,24 @@ classdef Cell_Data_Generator
                 user_entry.fmdl= ng_mk_cyl_models([chamber_height,chamber_radius, mesh_size],[16,1],0);
                 % ng_mk_cyl_models(cyl_shape= {height, radius, max size of mesh elems}, elec_pos, elec_shape, extra_ng_code)
                 user_entry.fmdl.stimulation = mk_stim_patterns(16,1,[0,1],[0,1],{},1);
+                user_entry.fmdl.solve= 'fwd_solve_1st_order';
+                user_entry.fmdl.jacobian= 'jacobian_adjoint';
+                user_entry.fmdl.system_mat= 'system_mat_1st_order';
+                
             else
                 user_entry.fmdl=EIDORS.fmdl;
             end
             
             % generation of n (= num_trainingData) number of sets from class TrainingDataset:
+            obj.user_entry= user_entry;
             
+            %parpool('local', 4);
             for i=1:num_trainingData
                 disp(['                 Training Data #', num2str(i)])
-                obj.single_data(i) = TrainingDataset(user_entry);
+                single_data(i) = TrainingDataset(user_entry);
             end
+            delete(gcp('nocreate'))
+            obj.single_data= single_data;
             % Extracting data from all generated sets of homogeneous and inhomogeneous
             % data of voltages (data_h.meas and data_ih.meas) and conductivities
             % (img_h.elem_data and img_ih.elem_data) and combining it into separate
@@ -52,9 +61,10 @@ classdef Cell_Data_Generator
                 obj.TrainingSet.X_ih(:,i) = obj.single_data(i).data_ih.meas;
                 obj.TrainingSet.Y_h(:,i) = obj.single_data(i).img_h.elem_data;
                 obj.TrainingSet.Y_ih(:,i) = obj.single_data(i).img_ih.elem_data;
-                
                 obj.TrainingSet.X_ihn(:,i) = obj.single_data(i).data_ihn.meas;
             end
+            
+            
             disp('End: generating Training Data')
         end
     end

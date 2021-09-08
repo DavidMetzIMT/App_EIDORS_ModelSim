@@ -28,6 +28,7 @@ classdef invSolver
             obj.inv.parameters.term_tolerance= 1e-3;
             
             
+            
             switch user_entry.inv_solver_name
                 case 'GN' % obj.inv_solve_diff_GN_one_step (prior_laplace)
                         disp('Start: GN Inverse solver...')

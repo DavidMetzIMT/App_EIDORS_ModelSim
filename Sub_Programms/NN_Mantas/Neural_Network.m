@@ -1,4 +1,4 @@
-function [net, nets, time_train_h] = Neural_Network(user_entry, train_data)     % Artificial Neural Network code
+function [net, nets, time_train_h, tr] = Neural_Network(user_entry, train_data)     % Artificial Neural Network code
 disp('Start: Training of Neural Network...')
 tic
 % X'- input matrix 96 x 50000 of training cases
@@ -41,12 +41,12 @@ spmd
     gpuDevice(useGPUs(labindex))
 end
 
-parfor i=1:N % Start 'for' loop with parallel computing
+parfor i=1:50 % Start 'for' loop with parallel computing
     disp(i)
     % Train the network. The variable 'nets_for_pixels' is a structure that consists of 2883
     % separately trained neural networks.
-    [nets{i},~] = train(net,x,y(i,:),'useParallel','no','useGPU','yes','showResources','yes'); 
-     
+    [nets{i},tr{i}] = train(net,x,y(i,:),'useParallel','no','useGPU','yes','showResources','yes'); 
+    
 end % End 'parfor' loop
 
 delete(gcp('nocreate'))

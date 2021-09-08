@@ -1,3 +1,11 @@
+
+
+
+
+prompt = 'Did it star ';
+x = input(prompt)
+str = input(prompt,'s')
+
 clear
 ask4Load=0;
 

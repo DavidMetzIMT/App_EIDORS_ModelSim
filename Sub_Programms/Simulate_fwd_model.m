@@ -18,7 +18,18 @@ if EIDORS.flag.redraw==0
     disp('Simulation: Start')
     disp('please wait ...')
     
+    if contains(EIDORS.sim.imdl.reconst_type, 'difference')
     EIDORS.sim.iimg = inv_solve(EIDORS.sim.imdl, EIDORS.sim.data_h,EIDORS.sim.data_ih);
+    else
+        EIDORS.sim.imdl.reconst_type= 'absolute'
+        tmp=EIDORS.sim.data_ih;
+        tmp.meas= zeros(size(EIDORS.sim.data_ih.meas));
+        EIDORS.sim.iimg = inv_solve(EIDORS.sim.imdl, EIDORS.sim.data_ih);
+        
+%         EIDORS.sim.imdl.reconst_type ='difference';
+%         EIDORS.sim.imdl.solve='eidors_default';
+%     EIDORS.sim.iimg = inv_solve(EIDORS.sim.imdl, tmp,EIDORS.sim.data_ih);
+    end
     
     disp('Simulation: Done!')
 else
@@ -29,26 +40,26 @@ figName= '3D Image of resolved inverse Problem';
 h= getCurrentFigure_with_figName(figName);
 EIDORS.sim.iimg.fwd_model.show_fem.alpha_inhomogeneities=EIDORS.sim.transparency;
 h=show_fem(EIDORS.sim.iimg,[1,0,0]);
-show_cell(h,EIDORS.sim.iimg.calc_slices.levels,1)
+show_cell(h,EIDORS.sim.levels,1)
 % set(h,'EdgeColor','none');
 
 for i= 1:size(EIDORS.sim.levels,1)
     EIDORS.sim.iimg.calc_slices.levels= EIDORS.sim.levels(i,:);
-    param=eval_GREIT_fig_merit(EIDORS.sim.iimg, [[EIDORS.sim.cell(:).PosX]; [EIDORS.sim.cell(:).PosY]; [EIDORS.sim.cell(:).PosZ]; [EIDORS.sim.cell(:).Radius]]);
+%     param=eval_GREIT_fig_merit(EIDORS.sim.iimg, [[EIDORS.sim.cell(:).PosX]; [EIDORS.sim.cell(:).PosY]; [EIDORS.sim.cell(:).PosZ]; [EIDORS.sim.cell(:).Radius]]);
     figName= sprintf('Slice x = %d , y = %d , z = %d', EIDORS.sim.iimg.calc_slices.levels);
     h= getCurrentFigure_with_figName(figName);
     h=show_slices(EIDORS.sim.iimg,EIDORS.sim.iimg.calc_slices.levels);
     show_cell(h,EIDORS.sim.iimg.calc_slices.levels,0)
-    title(sprintf('Amplitude: %0.3d, Pos Error: %0.3d Res: %0.3d, Shape: %0.3d, Ringing: %0.3d', param'));
-    
-    param=param';
-    EIDORS.sim.GREIT(i,1).AmpR=param(:,1);
-    EIDORS.sim.GREIT(i,1).PosError=param(:,2);
-    EIDORS.sim.GREIT(i,1).Res=param(:,3);
-    EIDORS.sim.GREIT(i,1).ShapeDef=param(:,4);
-    EIDORS.sim.GREIT(i,1).Ringing=param(:,5);
-    
-    EIDORS.sim.RES_Yue=calc_Res_Yue();
+%     title(sprintf('Amplitude: %0.3d, Pos Error: %0.3d Res: %0.3d, Shape: %0.3d, Ringing: %0.3d', param'));
+%     
+%     param=param';
+%     EIDORS.sim.GREIT(i,1).AmpR=param(:,1);
+%     EIDORS.sim.GREIT(i,1).PosError=param(:,2);
+%     EIDORS.sim.GREIT(i,1).Res=param(:,3);
+%     EIDORS.sim.GREIT(i,1).ShapeDef=param(:,4);
+%     EIDORS.sim.GREIT(i,1).Ringing=param(:,5);
+%     
+%     EIDORS.sim.RES_Yue=calc_Res_Yue();
     end
 end
 

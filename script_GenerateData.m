@@ -1,10 +1,19 @@
-clear
+if usejava('desktop')
+    disp('This Matlab instance runs with a desktop')
+else
+    disp('This Matlab instance runs')
+end
+prompt = 'Start through console? yes=1, no=0 ';
+console_start = input(prompt);
+getenv('ISDISPLAY')
+str = input(prompt,'s')
 
+clear
 ask4Load=0;
 
 
 %% Please give an folder name for the results
-folder_out= 'Test_Mantas'
+folder_out= 'test_user'
 folder_out=['Train_' folder_out]
 %% Add all the Subfolder of the App
 current_path= pwd;
@@ -13,7 +22,9 @@ mkdir(out_path);
 out_path= [current_path '\Outputs\' folder_out];
 mkdir(out_path);
 addpath([current_path '\Sub_Programms'])
-AddAllSubFolders(current_path)
+disp(['Add all sub folder from: ' current_path]);
+addpath(replace(genpath(current_path),'\old',''));
+
 
 %% Start EIDORS Toolbox
 Start_EIDORS()
@@ -38,24 +49,32 @@ end
 %load_file_with_user_entry = 'user_entry_1_IMT0616.mat';
 if notCancelled
     file2load=[path file];
-    user_entry = load(file2load, 'user_entry');
+    l = load(file2load);
+    user_entry=l.user_entry
     fprintf(proto_fid,['user_entry loaded from: ' replace(file2load, '\','\\') '\n']);
 else
     %TODO init user_entry with default values
     user_entry=init_user_entry(user_entry);
     
-    %% #####################################################
+    
+end
+user_entry.net_file_name = folder_out;% PLEASE Ohne .mat   % file name, which contains suitable nets for invers solving
+
+if 1
+%% #####################################################
     % Here change user entry
     %  ####################################################
-    user_entry.net_file_name = folder_out;% PLEASE Ohne .mat   % file name, which contains suitable nets for invers solving
-    user_entry.load_fmdl =0;                             % get the fmdl from GUI
-    user_entry.range_num_of_cells = [1 2];
+%     user_entry.net_file_name = folder_out;% PLEASE Ohne .mat   % file name, which contains suitable nets for invers solving
+     user_entry.load_fmdl =0;                             % get the fmdl from GUI
+%     user_entry.range_num_of_cells = [1 2];
     %user_entry.range_cell_conductivity = [1.5, 1.5 , 1 ; 1, 1, 0.3; 0.5, 0.5, 0.1];         % 5 or e.g [5 10], one number indicates the maximum possible conductivity of cells, two numbers means the range of possible conductivitie of cells
-    user_entry.withcells = 1;
+%     user_entry.withcells = 1;
     user_entry.num_trainingData = 3;                  % the number of sets for generating training data
-    user_entry.NN = 1; % execute training
+    user_entry.NN = 0; % execute training
     % #####################################################
 end
+
+
 % Save user entry
 file2save = [out_path '\' user_entry.net_file_name '_user_entry' '.mat'];
 save(file2save, 'user_entry')
@@ -73,7 +92,7 @@ if ask4Load
 end
 if notCancelled
     file2load=[path file];
-    train_dataset = load(file2load, 'train_dataset');
+    train_dataset = load(file2load, 'TrainingSet')
     trainset_filename= file2load;
     fprintf(proto_fid,['Train dataset loaded from : ' replace(file2load, '\','\\') '\n']);
 else
@@ -101,7 +120,8 @@ for sample=1:nb_samples
     
     subplot(nb_samples,2,(sample-1)*2+1)
     title(['Conduct Sample# ' num2str(sample)]);
-    show_fem(img,[1,1,0]);
+    h= show_fem(img,[1,0,0]);
+    set(h,'EdgeColor','none');
     
     subplot(nb_samples,2,sample*2)
     title(['Voltages Sample# ' num2str(sample)]);
@@ -111,7 +131,8 @@ end
 %% Train
 
 if user_entry.NN == 1
-    [net, nets,time_train_h]= Neural_Network(user_entry,train_dataset);
+    
+    [net, nets,time_train_h, tr]= Neural_Network(user_entry,train_dataset);
     file2save= [out_path '\' user_entry.net_file_name '_trained_net' '.mat'];
     
     save(file2save, 'user_entry', 'net','nets') %network data is saved in user defined file (and folder)
@@ -131,7 +152,7 @@ user_entry.load_fmdl =0;                             % get the fmdl from GUI
 user_entry.chamber_type = 'circle';                 % 'circle' or 'rectangle' defines chamber shape and objects coordinates
 user_entry.chamber_radius = 1;                    % 1 indicates radius of the buffer(chamber)
 user_entry.chamber_height = 0;                      % 0 indicates 2D object, number indicates the height of 3D chamber
-user_entry.mesh_size = 0.3;                             % max size of mesh elems
+user_entry.mesh_size = 0.035;                             % max size of mesh elems
 
 user_entry.range_num_of_cells = [1 4];              % 5 or e.g [5 10], one number indicates the maximum possible number of cells, two numbers means the range of possible number of cells, e.g. [5 10] from 5 to 10 cells
 user_entry.range_buffer_conductivity = [2 3];       % 5 or e.g [5 10], one number indicates the maximum possible conductivity of the buffer, two numbers means the range of possible conductivity of the buffer

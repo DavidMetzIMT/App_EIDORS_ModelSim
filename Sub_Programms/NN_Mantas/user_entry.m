@@ -3,7 +3,6 @@ classdef user_entry < handle
     properties ( Access = public )
         
         net_file_name                       % file name, which contains suitable nets for invers solving
-
         chamber_type = [];                  % = 'circle'; % 'circle' or 'rectangle' defines chamber shape and objects coordinates
         chamber_height = [];                % 0 indicates 2D object, number indicates the height of chamber
         chamber_radius = [];                % = 2; % indicates radius of the buffer(chamber)

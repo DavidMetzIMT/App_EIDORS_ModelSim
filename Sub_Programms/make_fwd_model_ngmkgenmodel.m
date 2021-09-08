@@ -239,8 +239,10 @@ for i= 1:size(EIDORS.chamber.electrode,1) % sets of electrodes
                 tmp_shape=[Radius_elecs,0,EIDORS.chamber.body.FEM_refinement];
             case 'Rectangular'
                 tmp_shape=[EIDORS.chamber.electrode(i).Diameter_Width,EIDORS.chamber.electrode(i).Height,EIDORS.chamber.body.FEM_refinement];
+                tmp_shape=[Radius_elecs,0,EIDORS.chamber.body.FEM_refinement];
             case 'Point'
                 tmp_shape=[0,0,EIDORS.chamber.body.FEM_refinement];
+                tmp_shape=[Radius_elecs,0,EIDORS.chamber.body.FEM_refinement];
             otherwise
         end
         elec_set(i).shape = tmp_shape.*ones(nb_elecs,1);
@@ -270,8 +272,6 @@ else
     [fmdl,mat_idx] = ng_mk_cyl_models(cyl_shape, elec_pos_2D, elec_shape(1,:), EIDORS.sim.netgenAdditionalText);
     
     else
-    
-    
     
     fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj,EIDORS.sim.netgenAdditionalText);
     EIDORS.sim.netgenAdditionalText="";
