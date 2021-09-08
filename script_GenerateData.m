@@ -1,3 +1,4 @@
+test
 if usejava('desktop')
     disp('This Matlab instance runs with a desktop')
 else
