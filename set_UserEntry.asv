@@ -1,0 +1,30 @@
+if usejava('desktop')
+    disp('This Matlab instance runs with a desktop')
+else
+    disp('This Matlab instance runsin console')
+end
+% path of the file
+prompt = ['Select a file to load user_entry-file'];
+folder= pwd;
+file_typ= '*.*';
+path = get_path_user_entrys(prompt, folder, file_typ);
+if isempty(path)
+    return
+end
+
+l=load(path);
+fields = fieldnames(l)
+for i=1:length(fields)
+    fields{i}
+    if isfield(S,field)
+        if l.(fields{i}).class_type== 'user_entry';
+        user_entry=l.fields{i}
+        return
+    end
+end
+user_entry=l.user_entry;
+
+for i=1:length(user_entry)
+    i
+    user_entry
+end

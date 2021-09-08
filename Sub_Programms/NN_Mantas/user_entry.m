@@ -1,7 +1,7 @@
 classdef user_entry < handle
   
     properties ( Access = public )
-        
+        class_type= 'user_entry';
         net_file_name                       % file name, which contains suitable nets for invers solving
         chamber_type = [];                  % = 'circle'; % 'circle' or 'rectangle' defines chamber shape and objects coordinates
         chamber_height = [];                % 0 indicates 2D object, number indicates the height of chamber
@@ -22,6 +22,7 @@ classdef user_entry < handle
         load_fmdl
         withcells
         mk_antibodies
+        
         
     end
     
