@@ -1,4 +1,6 @@
 clear
+clear
+
 
 if ~exist('show_fem')
     run C:\EIDORS\eidors\startup.m
