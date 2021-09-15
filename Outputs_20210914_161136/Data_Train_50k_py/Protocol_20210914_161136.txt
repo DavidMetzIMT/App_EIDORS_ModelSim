@@ -1,4 +1,0 @@
-Protocol Init
-Date time: 20210914_161136
-user_entry loaded from: E:\EIT_Project\05_Engineering\06_MATLAB\Matlab_Apps\App_EIDORS_ModelSim\user_entry.mat
-user_entry saved in: E:\EIT_Project\05_Engineering\06_MATLAB\Matlab_Apps\App_EIDORS_ModelSim\Outputs_20210914_161136\Data_Train_50k_py\Train_50k_py_user_entry.mat

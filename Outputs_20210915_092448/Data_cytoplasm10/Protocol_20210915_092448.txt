@@ -1,6 +1,0 @@
-Protocol Init
-Date time: 20210915_092448
-user_entry loaded from: E:\EIT_Project\05_Engineering\06_MATLAB\Matlab_Apps\App_EIDORS_ModelSim\user_entry.mat
-user_entry saved in: E:\EIT_Project\05_Engineering\06_MATLAB\Matlab_Apps\App_EIDORS_ModelSim\Outputs_20210915_092448\Data_cytoplasm10\cytoplasm10_user_entry.mat
-Train dataset generated 
-Train dataset saved in: E:\EIT_Project\05_Engineering\06_MATLAB\Matlab_Apps\App_EIDORS_ModelSim\Outputs_20210915_092448\Data_cytoplasm10\cytoplasm10_train_dataset.mat

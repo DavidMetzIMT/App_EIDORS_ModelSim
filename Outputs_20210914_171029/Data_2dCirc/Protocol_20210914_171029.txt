@@ -1,6 +1,0 @@
-Protocol Init
-Date time: 20210914_171029
-user_entry loaded from: E:\EIT_Project\05_Engineering\06_MATLAB\Matlab_Apps\App_EIDORS_ModelSim\user_entry3.mat
-user_entry saved in: E:\EIT_Project\05_Engineering\06_MATLAB\Matlab_Apps\App_EIDORS_ModelSim\Outputs_20210914_171029\Data_2dCirc\2dCirc_user_entry.mat
-Train dataset generated 
-Train dataset saved in: E:\EIT_Project\05_Engineering\06_MATLAB\Matlab_Apps\App_EIDORS_ModelSim\Outputs_20210914_171029\Data_2dCirc\2dCirc_train_dataset.mat
