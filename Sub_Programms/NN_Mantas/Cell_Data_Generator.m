@@ -1,6 +1,6 @@
 classdef Cell_Data_Generator
     
-    % to get n number of sets write in >> e.g. Cell_Data_Generator(user_entry, 5)
+    % to get n number of sets write in >> e.g. Cell_Data_Generator(user_entry)
     %  where 5 indicates the number of generated sets, when input data is described in user_entry.
     %
     % If desired, in "for" loop the pause function can be uncommented to observe every generated set. By pressing any keyboard button, it switching from one set to another.
@@ -14,16 +14,26 @@ classdef Cell_Data_Generator
     properties ( Access = public )
         single_data TrainingDataset
         user_entry user_entry
-        TrainingSet
+        Samples
+        num_samples
     end
     
     methods ( Access = public )
         function obj = Cell_Data_Generator(user_entry)
-            
             disp('Start: generating Training Data...')
-            num_trainingData = user_entry.num_trainingData;
-            % here make fmdl...
-            if user_entry.load_fmdl ==0
+            obj.num_samples = user_entry.num_trainingData;
+            if obj.num_samples > 0
+                obj= obj.Generate_single_data(user_entry);
+                disp('End: generating Training Data')
+            else
+                disp('Abort samples generation: Number of samples are 0')
+                return
+            end
+        end
+        
+        function obj= Generate_single_data(obj,user_entry)
+            % here make fmdl... if not loaded from GUI
+            if user_entry.load_fmdl ==0 % only for old code
                 chamber_radius = user_entry.chamber_radius;
                 chamber_height = user_entry.chamber_height;
                 mesh_size = user_entry.mesh_size;
@@ -33,41 +43,41 @@ classdef Cell_Data_Generator
                 user_entry.fmdl.solve= 'fwd_solve_1st_order';
                 user_entry.fmdl.jacobian= 'jacobian_adjoint';
                 user_entry.fmdl.system_mat= 'system_mat_1st_order';
-                
-            else
-                user_entry.fmdl=EIDORS.fmdl;
             end
             
-            % generation of n (= num_trainingData) number of sets from class TrainingDataset:
-            obj.user_entry= user_entry;
-            
-            %parpool('local', 4);
-            for i=1:num_trainingData
+            % generation of n (= num_trainingData) number of sets from class TrainingDataset:        
+            for i=1:obj.num_samples
                 disp(['                 Training Data #', num2str(i)])
                 single_data(i) = TrainingDataset(user_entry);
             end
-            delete(gcp('nocreate'))
             obj.single_data= single_data;
             % Extracting data from all generated sets of homogeneous and inhomogeneous
             % data of voltages (data_h.meas and data_ih.meas) and conductivities
             % (img_h.elem_data and img_ih.elem_data) and combining it into separate
             % matrices accordingly X_h, X_ih, Y_h, Y_ih for further data processing.
-            obj.TrainingSet.X_h = zeros( length(obj.single_data(1).data_h.meas) , num_trainingData);
-            obj.TrainingSet.X_ih = zeros( length(obj.single_data(1).data_ih.meas) , num_trainingData);
-            obj.TrainingSet.Y_h = zeros( length(obj.single_data(1).img_h.elem_data) , num_trainingData);
-            obj.TrainingSet.Y_ih = zeros( length(obj.single_data(1).img_ih.elem_data) , num_trainingData);
-            for i=1:num_trainingData
-                obj.TrainingSet.X_h(:,i) = obj.single_data(i).data_h.meas;
-                obj.TrainingSet.X_ih(:,i) = obj.single_data(i).data_ih.meas;
-                obj.TrainingSet.Y_h(:,i) = obj.single_data(i).img_h.elem_data;
-                obj.TrainingSet.Y_ih(:,i) = obj.single_data(i).img_ih.elem_data;
-                obj.TrainingSet.X_ihn(:,i) = obj.single_data(i).data_ihn.meas;
+            
+            obj.Samples.X_h = zeros( length(obj.single_data(1).data_h.meas) , obj.num_samples);
+            obj.Samples.X_ih = zeros( length(obj.single_data(1).data_ih.meas) , obj.num_samples);
+            obj.Samples.Y_h = zeros( length(obj.single_data(1).img_h.elem_data) , obj.num_samples );
+            obj.Samples.Y_ih = zeros( length(obj.single_data(1).img_ih.elem_data) , obj.num_samples);
+            for i=1:obj.num_samples
+                obj.Samples.X_h(:,i) = obj.single_data(i).data_h.meas;
+                obj.Samples.X_ih(:,i) = obj.single_data(i).data_ih.meas;
+                obj.Samples.Y_h(:,i) = obj.single_data(i).img_h.elem_data;
+                obj.Samples.Y_ih(:,i) = obj.single_data(i).img_ih.elem_data;
+                obj.Samples.X_ihn(:,i) = obj.single_data(i).data_ihn.meas;
             end
+        
+           
+        end
+        function obj= save_samples(obj,path)
+            X_h = obj.Samples.X_h;
+            X_ih =obj.Samples.X_ih;
+            Y_h =obj.Samples.Y_h;
+            Y_ih = obj.Samples.Y_ih;
+            X_ihn=obj.Samples.X_ihn;
             
-            
-            disp('End: generating Training Data')
+            save(path, 'X_h', 'X_ih','Y_h', 'Y_ih' ,'X_ihn')
         end
     end
-    
 end
-

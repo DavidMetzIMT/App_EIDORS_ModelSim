@@ -43,7 +43,7 @@ option = EIDORS.Pattern.option_mkstimpattern';
 
 switch EIDORS.Pattern.PatternGeneratorfunc
     case '1'
-        [stimulation, meas_select] = mk_stim_patterns(nb_elecs,1,inj,meas_pattern,option,amplitude);
+        [stimulation, meas_select] = mk_stim_patterns_dm(nb_elecs,1,inj,meas_pattern,option,amplitude);
     case '2'
         [stimulation,meas_select]=mk_stim_pattern_Array(inj,meas_pattern,option,amplitude);
     case '3'

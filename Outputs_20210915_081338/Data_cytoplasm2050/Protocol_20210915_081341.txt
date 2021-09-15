@@ -1,0 +1,4 @@
+Protocol Init
+Date time: 20210915_081341
+user_entry loaded from: E:\EIT_Project\05_Engineering\06_MATLAB\Matlab_Apps\App_EIDORS_ModelSim\user_entry2.mat
+user_entry saved in: E:\EIT_Project\05_Engineering\06_MATLAB\Matlab_Apps\App_EIDORS_ModelSim\Outputs_20210915_081338\Data_cytoplasm2050\cytoplasm2050_user_entry.mat
