@@ -1,5 +1,4 @@
 function path = Start_EIDORS(path)
-
 if nargin == 0
     if ismac
         % Code to run on Mac platform
@@ -12,28 +11,31 @@ if nargin == 0
     else
         disp('Platform not supported')
     end
+    
 end
 
-if ~exist(path)
-    path = uigetfile('.m', 'Select File "startup.m" to run EIDORS');
-    if isequal(path,0)
+if ~exist(app.Path.EIDORS)
+    app.Path.EIDORS = uigetfile('.m', 'Select File "startup.m" to run EIDORS');
+    if isequal(app.Path.EIDORS,0)
         warndlg('User selected Cancel: EIDORS not started');
-        path = 'EIDORS not started';
-        return
+    else
+        msgbox(['User selected ', fullfile(app.Path.EIDORS)]);
+        run(app.Path.EIDORS);
+        eidors_cache('cache_size', 2*1024^3 ); % 2 GB cache
     end
+else
+    run(app.Path.EIDORS);
+    eidors_cache('cache_size', 2*1024^3 ); % 2 GB cache
 end
+
+
+
 if ~exist('show_fem')
     disp(['Starting EIDORS from path: ' path]);
     run(path);
-    eidors_cache('cache_size', 2*1024^3 ); % 2 GB cache
 else
     disp(['EIDORS already started']);
 end
-
-
-
-
-
 
 end
 

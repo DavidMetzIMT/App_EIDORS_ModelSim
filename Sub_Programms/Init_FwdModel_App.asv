@@ -64,6 +64,7 @@ end
 if Reset
     clear EIDORS
     clear global EIDORS
+    global EIDORS
     tmp =load([app.Path.Setups filesep 'EIDORS_default.mat']);
     EIDORS=tmp.EIDORS;
     EIDORS.flag.redraw=0;
@@ -91,7 +92,7 @@ if isempty(app.CallingApp)
 %         run(app.Path.EIDORS);
 %         eidors_cache('cache_size', 2*1024^3 ); % 2 GB cache
 %     end
-app.Path.EIDORS=Start_EIDORS();
+Start_EIDORS()
 else
     disp('EIDORS already started from MainApp');
     app.Path.EIDORS= ['Started from MainApp: ' app.CallingApp.Path.EIDORS];
