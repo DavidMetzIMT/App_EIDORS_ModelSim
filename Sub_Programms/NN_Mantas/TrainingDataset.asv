@@ -9,7 +9,7 @@ classdef TrainingDataset
         data_ih
         data_hn
         data_ihn
-        conduct_element
+        %conduct_element
         fmdl
     end
     
@@ -22,9 +22,6 @@ classdef TrainingDataset
                 obj = generate_data_random(obj, user_entry);
             end
             obj = obj.mk_inhomogeneous_fwd_solve(user_entry);
-            % otimaization for less output weight
-            obj.conduct_element=[]; % is to found in img.elem_data...
-            obj.fmdl=[]; % is to found in user_entry 
         end
         
         %% make the homogenous image and solve the fwd model to get data

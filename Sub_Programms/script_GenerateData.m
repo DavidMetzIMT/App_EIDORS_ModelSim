@@ -17,7 +17,7 @@ else
     end
 end
 t = datetime('now','TimeZone','local','Format','yyyyMMdd_HHmmss');
-out_path_root= [current_path filesep 'Outputs' filesep char(t)];
+out_path_root= [current_path filesep 'Outputs'];
 mkdir(out_path_root);
 
 %% Start EIDORS Toolbox
@@ -27,7 +27,7 @@ Start_EIDORS()
 for indx=indxs
     user_entry = ue{indx}
     %% folder name for the results
-    folder_out=['Data_' user_entry.net_file_name]
+    folder_out=[char(t) '_' user_entry.net_file_name '_dataset']
     %% Add all the Subfolder of the App
     out_path= [out_path_root filesep folder_out];
     mkdir(out_path);

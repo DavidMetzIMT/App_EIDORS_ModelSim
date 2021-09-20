@@ -33,7 +33,7 @@ switch EIDORS.chamber.body.typ
     case '2D_Circ'
         cyl_shape = [0, EIDORS.chamber.body.diameter_length/2, EIDORS.chamber.body.FEM_refinement];
         
-             
+        
         
         
         
@@ -78,7 +78,7 @@ for i= 1:size(EIDORS.chamber.electrode,1) % sets of electrodes
                             msgbox('Forward Model not Generated: Too big or too much electrode... incompatible with Chamber diameter')
                             DoNotGenerate=1;
                         end
-                    
+                        
                     else
                         
                         msgbox('Forward Model not Generated: Chamber_typ and Design electrode incompatible')
@@ -259,22 +259,17 @@ for i= 1:size(EIDORS.chamber.electrode,1) % sets of electrodes
             elec_shape = [elec_shape;elec_set(i).shape];
             elec_obj= [elec_obj,tmp];
         end
-        
-        
     end
 end
-
 
 if EIDORS.flag.manualMeshGenerate
     fmdl = ng_mk_gen_models_Yue(shape_str, elec_pos, elec_shape, elec_obj);
 else
     if strcmp(EIDORS.chamber.body.typ,'2D_Circ')
-    [fmdl,mat_idx] = ng_mk_cyl_models(cyl_shape, elec_pos_2D, elec_shape(1,:), EIDORS.sim.netgenAdditionalText);
-    
+        [fmdl,mat_idx] = ng_mk_cyl_models(cyl_shape, elec_pos_2D, elec_shape(1,:));
     else
-    
-    fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj,EIDORS.sim.netgenAdditionalText);
-    EIDORS.sim.netgenAdditionalText="";
+        fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj,EIDORS.sim.netgenAdditionalText);
+        EIDORS.sim.netgenAdditionalText="";
     end
 end
 

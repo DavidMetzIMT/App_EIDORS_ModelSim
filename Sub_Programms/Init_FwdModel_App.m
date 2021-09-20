@@ -64,6 +64,7 @@ end
 if Reset
     clear EIDORS
     clear global EIDORS
+    global EIDORS
     tmp =load([app.Path.Setups filesep 'EIDORS_default.mat']);
     EIDORS=tmp.EIDORS;
     EIDORS.flag.redraw=0;

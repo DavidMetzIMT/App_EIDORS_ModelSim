@@ -23,8 +23,9 @@ if usejava('desktop')
         return
     end
 else
-    file2load = input([prompt '/r/n enter relativ path from pwd:/r/n' folder],'s');
-    file2load{1}=[folder file2load];
+    file2loadtmp = input([prompt '/r/n enter relativ path from pwd: /r/n' folder filesep ' '],'s')
+    folder
+    file2load{1}=[folder filesep file2loadtmp]
     %     disp('This Matlab instance runs in console')
 end
 
