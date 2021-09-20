@@ -21,13 +21,13 @@ out_path_root= [current_path filesep 'Outputs'];
 mkdir(out_path_root);
 
 %% Start EIDORS Toolbox
-Start_EIDORS()
+Start_EIDORS();
 
 % loop for each
 for indx=indxs
-    user_entry = ue{indx}
+    user_entry = ue{indx};
     %% folder name for the results
-    folder_out=[char(t) '_' user_entry.net_file_name '_dataset']
+    folder_out=[char(t) '_' user_entry.net_file_name '_dataset'];
     %% Add all the Subfolder of the App
     out_path= [out_path_root filesep folder_out];
     mkdir(out_path);
@@ -40,7 +40,7 @@ for indx=indxs
     fprintf(proto_fid,['user_entry loaded from: ' replace(user_entry_path{indx}, '\','\\') '\n']);
     % Save user entry separately in the folder!
     file2save = [out_path filesep user_entry.net_file_name '_user_entry.mat'];
-    save(file2save, 'user_entry')
+    save(file2save, 'user_entry');
     % Update protocol
     fprintf(proto_fid,['user_entry saved in: ' replace(file2save, '\','\\') '\n']);
     
@@ -52,7 +52,7 @@ for indx=indxs
     % Save Traindataset with user_entry in case of need of traceback...
     file2save = [out_path filesep user_entry.net_file_name '_train_dataset.mat'];
     save(file2save, 'user_entry', 'train_dataset')
-    train_dataset.save_samples([out_path filesep user_entry.net_file_name '_Samples.mat'])
+    train_dataset.save_samples([out_path filesep user_entry.net_file_name '_Samples.mat']);
     % Update protocol
     fprintf(proto_fid,['Train dataset saved in: ' replace(file2save, '\','\\') '\n']);
     
@@ -76,7 +76,7 @@ for indx=indxs
         end
     end
 end
-fclose(proto_fid)
+fclose(proto_fid);
 
 
 

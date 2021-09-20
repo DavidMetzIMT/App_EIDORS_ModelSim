@@ -16,6 +16,7 @@ classdef Cell_Data_Generator
         user_entry user_entry
         Samples
         num_samples
+        file2save
     end
     
     methods ( Access = public )
@@ -50,12 +51,12 @@ classdef Cell_Data_Generator
             if obj.num_samples<=100
                 mod_t= 5;
             elseif obj.num_samples<=10000
-                mod_t=10;
+                mod_t=50;
             elseif obj.num_samples<=1000000
                 mod_t=500;
             end
             t = datetime('now','TimeZone','local','Format','yyyyMMdd_HHmmss');
-            tmp_path= [pwd filesep 'tmp' char(t)];
+            tmp_path= [pwd filesep 'tmp' char(t)]
             mkdir(tmp_path)
             j=1;
             k=1;
@@ -65,15 +66,13 @@ classdef Cell_Data_Generator
                 if mod(i,mod_t)==0                
                     disp(['                 Training Data #', num2str(i)])
                     file2save{j}= [tmp_path filesep 'tmp' num2str(j) '.mat'];
-                    
-                    save(file2save{j}, 'single_data')
+                    save(file2save{j}, 'single_data');
                     j=j+1;
                     k=1;
                 end
             end
             
             obj.file2save= file2save;
-            
             for i=1:size(file2save,2)
                 l=load(file2save{i});
                 if i==1
@@ -83,7 +82,7 @@ classdef Cell_Data_Generator
                 end
             end
             
-            rmdir(tmp_path,'s')
+            rmdir(tmp_path,'s');
             
             obj.single_data= tmp;
             % Extracting data from all generated sets of homogeneous and inhomogeneous

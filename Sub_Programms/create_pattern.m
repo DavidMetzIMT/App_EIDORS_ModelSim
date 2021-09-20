@@ -37,7 +37,7 @@ switch EIDORS.Pattern.meas_pattern_typ
     otherwise
         meas_pattern = EIDORS.Pattern.meas_pattern_typ;
 end
-
+find_boundary
 option = EIDORS.Pattern.option_mkstimpattern';
 
 

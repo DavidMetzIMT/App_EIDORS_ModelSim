@@ -54,8 +54,8 @@ classdef Cell_Data_Generator
             elseif obj.num_samples<=1000000
                 mod_t=500;
             end
-           
-            tmp_path= [pwd filesep 'tmp'];
+            t = datetime('now','TimeZone','local','Format','yyyyMMdd_HHmmss');
+            tmp_path= [pwd filesep 'tmp' char(t)];
             mkdir(tmp_path)
             j=1;
             k=1;
@@ -65,15 +65,13 @@ classdef Cell_Data_Generator
                 if mod(i,mod_t)==0                
                     disp(['                 Training Data #', num2str(i)])
                     file2save{j}= [tmp_path filesep 'tmp' num2str(j) '.mat'];
-                    
                     save(file2save{j}, 'single_data')
                     j=j+1;
                     k=1;
                 end
             end
             
-            obj.file2save= file2save;
-            
+            obj.file2save
             for i=1:size(file2save,2)
                 l=load(file2save{i});
                 if i==1
