@@ -60,15 +60,17 @@ classdef Cell_Data_Generator
             mkdir(tmp_path)
             j=1;
             k=1;
+            tic
             for i=1:obj.num_samples
                 single_data(k) = TrainingDataset(user_entry);
                 k=k+1;
                 if mod(i,mod_t)==0                
-                    disp(['                 Training Data #', num2str(i)])
+                    disp(['                 Training Data #', num2str(i), '; time: ', num2str(toc),'s'])
                     file2save{j}= [tmp_path filesep 'tmp' num2str(j) '.mat'];
                     save(file2save{j}, 'single_data');
                     j=j+1;
                     k=1;
+                    tic
                 end
             end
             
