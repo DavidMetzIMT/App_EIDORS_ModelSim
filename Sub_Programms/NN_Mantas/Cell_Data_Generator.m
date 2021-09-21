@@ -21,12 +21,13 @@ classdef Cell_Data_Generator
     
     methods ( Access = public )
         function obj = Cell_Data_Generator(user_entry)
+            tStart= tic;
             obj.user_entry= user_entry;
             disp('Start: generating Training Data...')
             obj.num_samples = user_entry.num_trainingData;
             if obj.num_samples > 0
                 obj= obj.Generate_single_data(user_entry);
-                disp('End: generating Training Data')
+                disp(['End: generating Training Data; time ', num2str(toc(tStart)), 's'])
             else
                 disp('Abort samples generation: Number of samples are 0')
                 return
@@ -51,9 +52,9 @@ classdef Cell_Data_Generator
             if obj.num_samples<=100
                 mod_t= 5;
             elseif obj.num_samples<=10000
-                mod_t=50;
+                mod_t=100;
             elseif obj.num_samples<=1000000
-                mod_t=500;
+                mod_t=100;
             end
             t = datetime('now','TimeZone','local','Format','yyyyMMdd_HHmmss');
             tmp_path= [pwd filesep 'tmp' char(t)]

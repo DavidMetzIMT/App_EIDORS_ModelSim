@@ -29,13 +29,14 @@ classdef TrainingDataset
         
         %% make the homogenous image and solve the fwd model to get data
         function obj = mk_homogeneous_fwd_solve(obj, user_entry)
-            obj.fmdl = user_entry.fmdl;
+            
+            %obj.fmdl = user_entry.fmdl
             % creates random conductivity of the buffer and the random number of cells from defined ranges
             tmp = GenerateRange(user_entry);
             obj.bufferConduct = tmp.bufferConduct;
             obj.maxNumCells = tmp.maxNumCells;
             % creating Eidors for homogeneous and fwd_solve
-            obj.img_h = mk_image(obj.fmdl, obj.bufferConduct);
+            obj.img_h = mk_image( user_entry.fmdl, obj.bufferConduct);
             obj.data_h = fwd_solve(obj.img_h);  % voltage are to found under Data.meas
             obj.data_hn = add_noise(user_entry.SNR, obj.data_h);
             
@@ -43,7 +44,7 @@ classdef TrainingDataset
          %% make the inhomogenous image and solve the fwd model to get data
         function obj = mk_inhomogeneous_fwd_solve(obj, user_entry)
             % creating inhomogeneous image objects and fwd_solve
-            obj.img_ih = mk_image(obj.fmdl, obj.conduct_element);
+            obj.img_ih = mk_image( user_entry.fmdl, obj.conduct_element);
             obj.data_ih = fwd_solve(obj.img_ih);
             obj.data_ihn = add_noise( user_entry.SNR, obj.data_ih);
         end
@@ -69,7 +70,7 @@ classdef TrainingDataset
                     radius = obj.Cells(j).Radius*layer_ratio;
                     select_fcn = @(x,y,z) (x-pos(1)).^2 + (y-pos(2)).^2 + (z-pos(3)).^2<= radius.^2;
                     % to simplify
-                    Layers(layer).conduct(:,j) = (elem_select(obj.fmdl, select_fcn)~=0)*layer_conduct;
+                    Layers(layer).conduct(:,j) = (elem_select( user_entry.fmdl, select_fcn)~=0)*layer_conduct;
                 end
             end
             % handling the cell overlapping by taking only the max value of
