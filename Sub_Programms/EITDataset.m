@@ -130,8 +130,9 @@ classdef EITDataset
                 else
                     single_data(end+1)= new_sample;
                 end
-                size_of_single_data= whos('single_data').bytes+whos('new_sample').bytes; %get number of byte for singal data + 1
-                if (size_of_single_data > size_file_single_data_max) || (i==num_samples)
+                %size_of_single_data= whos('single_data').bytes+whos('new_sample').bytes; %get number of byte for singal data + 1
+                size_of_single_data= length(single_data);
+                if (size_of_single_data == size_file_single_data_max) || (i==num_samples)
                     i_begin= i-length(single_data)+1;
                     i_end = i;
                     obj.single_data_filename{batch_idx}= [obj.singledata_path filesep 'Single_data_' num2str(i_begin) '-' num2str(i_end) '.mat'];
@@ -179,9 +180,12 @@ classdef EITDataset
                 U(:,i,3) = single_data(i).data_hn.meas;
                 U(:,i,4) = single_data(i).data_ihn.meas;
             end
-            size_data= whos('U').bytes+whos('C').bytes;
-            nb_save_batch= floor(size_data/size_file_samples_max)+1;
-            inc= floor(num_samples/nb_save_batch);
+%             size_data= whos('U').bytes+whos('C').bytes;
+%             nb_save_batch= floor(size_data/size_file_samples_max)+1;
+%             inc= floor(num_samples/nb_save_batch);
+                
+            nb_save_batch= floor(num_samples/size_file_samples_max)+(mod(num_samples,size_file_samples_max)>0)*1;
+            inc= size_file_samples_max;
             obj.samples_indx=[];
             obj.samples_filename={};
             if exist(obj.samples_path, 'dir')
