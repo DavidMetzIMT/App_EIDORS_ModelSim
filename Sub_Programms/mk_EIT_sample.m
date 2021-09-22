@@ -1,4 +1,4 @@
-classdef TrainingDataset
+classdef mk_EIT_sample
     properties ( Access = public )
         Cells GenerateCell
         maxNumCells
@@ -12,9 +12,9 @@ classdef TrainingDataset
         conduct_element
         fmdl
     end
-    
+
     methods (Access = public)
-        function obj = TrainingDataset(user_entry)
+        function obj = mk_EIT_sample(user_entry)
             obj = obj.mk_homogeneous_fwd_solve(user_entry);
             if ~contains(user_entry.type_of_artefacts, 'Random')
                 obj = obj.generate_data_withcells(user_entry);
@@ -25,6 +25,8 @@ classdef TrainingDataset
             % otimaization for less output weight
             obj.conduct_element=[]; % is to found in img.elem_data...
             obj.fmdl=[]; % is to found in user_entry 
+            obj.img_h.fwd_model=[];
+            obj.img_ih.fwd_model=[];
         end
         
         %% make the homogenous image and solve the fwd model to get data
@@ -83,7 +85,6 @@ classdef TrainingDataset
                 if any(overlapping_indx)
                     l_total_conduct(overlapping_indx)= max(l_conducts(overlapping_indx,:),[],2);
                 end
-                
                 elmt_set = find(l_total_conduct~=0);
                 if any(elmt_set)
                     obj.conduct_element(elmt_set)= l_total_conduct(elmt_set);

@@ -22,6 +22,9 @@ classdef user_entry < handle
         load_fmdl=[]
         type_of_artefacts=[]                % cells, antibodies, invsolver
         chamber
+        
+        size_file_samples_max= 1e6%bytes
+        size_file_single_data_max= 10e6%bytes
         %withcells
         %mk_antibodies
         

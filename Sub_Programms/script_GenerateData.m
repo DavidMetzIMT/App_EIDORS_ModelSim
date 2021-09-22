@@ -1,7 +1,6 @@
 clear
 % add complete path load use functions
-current_path= pwd;
-addpath(genpath(pwd))
+add_all_path();
 
 % read user_entry
 [ue, user_entry_path ]= read_UserEntry();
@@ -47,12 +46,13 @@ for indx=indxs
     %% Training Dataset
     % if cancelled than
     % rng(1223)% to get all teh time same random generation...
-    train_dataset = Cell_Data_Generator(user_entry);
+    train_dataset = EITDataset();
+    train_dataset.generate_EITDataset(user_entry, out_path);
     fprintf(proto_fid,['Train dataset generated ' '\n']);
     % Save Traindataset with user_entry in case of need of traceback...
-    file2save = [out_path filesep user_entry.net_file_name '_train_dataset.mat'];
-    save(file2save, 'user_entry', 'train_dataset')
-    train_dataset.save_samples([out_path filesep user_entry.net_file_name '_Samples.mat']);
+%     file2save = [out_path filesep user_entry.net_file_name '_train_dataset.mat'];
+%     save(file2save, 'user_entry', 'train_dataset')
+    
     % Update protocol
     fprintf(proto_fid,['Train dataset saved in: ' replace(file2save, '\','\\') '\n']);
     
@@ -60,20 +60,29 @@ for indx=indxs
     if usejava('desktop')
         figName= ['some Samples of generated data of user_entry #' num2str(indx)];
         h= getCurrentFigure_with_figName(figName);
-        nb_samples=3;
-        for sample=1:nb_samples
-            img = train_dataset.single_data(sample).img_ih;
-            data=train_dataset.single_data(sample).data_ih.meas;
+        nb_single_data=3;
+        train_dataset = EITDataset();
+        path = [out_path filesep user_entry.net_file_name '_eit_dataset.mat'];
+        train_dataset=train_dataset.load_EITDataset(path);
+        
+        for idx=1:nb_single_data
+            s_data= train_dataset.get_single_data(idx);
+            img = s_data.img_ih;
+            img.fwd_model= user_entry.fmdl;
+            data=s_data.data_ih.meas;
             
-            subplot(nb_samples,2,(sample-1)*2+1)
-            title(['Conduct Sample# ' num2str(sample)]);
+            subplot(nb_single_data,2,(idx-1)*2+1)
+            title(['Conduct Sample# ' num2str(idx)]);
             h= show_fem(img,[1,0,0]);
             set(h,'EdgeColor','none');
             
-            subplot(nb_samples,2,sample*2)
-            title(['Voltages Sample# ' num2str(sample)]);
+            subplot(nb_single_data,2,idx*2)
+            title(['Voltages Sample# ' num2str(idx)]);
             plot(data)
         end
+        
+        [X, Y]=train_dataset.get_sample(5);
+        
     end
 end
 fclose(proto_fid);

@@ -131,9 +131,6 @@ end
 
 fclose(proto_fid)
 
-
-
-
 function user_entry=init_user_entry(user_entry)
 user_entry.net_file_name = 'Default';   % file name, which contains suitable nets for invers solving
 user_entry.load_fmdl =0;                             % get the fmdl from GUI
