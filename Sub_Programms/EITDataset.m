@@ -72,7 +72,7 @@ classdef EITDataset
             obj=obj.change_actual_folder('goto_actual_path');
             if ~isempty(obj.samples_indx)
                 [idx_in_filename , idx_in_batch ]= find(obj.samples_indx==idx);
-                f= load(obj.samples_filenames{idx_in_filename});
+                f= load([obj.samples_folder filesep obj.samples_filenames{idx_in_filename}]);
                 X= f.X(:,idx_in_batch,:);
                 y= f.y(:,idx_in_batch,:);
             else
@@ -181,7 +181,7 @@ classdef EITDataset
                     
             end
             for i=1:size(obj.single_data_filenames,2)
-                l=load(obj.single_data_filenames{i});
+                l=load([obj.single_data_folder filesep obj.single_data_filenames{i}]);
                 if i==1
                     tmp = l.single_data;
                 else
