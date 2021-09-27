@@ -197,6 +197,8 @@ classdef EITDataset
             num_samples=obj.user_entry.num_trainingData;
             U = zeros( length(single_data(1).data_h.meas) , num_samples,4);
             C = zeros( length(single_data(1).img_h.elem_data) ,num_samples,2);
+            %stat_eval=zeros(num_samples,4);
+            
             for i=1:num_samples
                 U(:,i,1) = single_data(i).data_h.meas;
                 U(:,i,2) = single_data(i).data_ih.meas;
@@ -204,6 +206,31 @@ classdef EITDataset
                 C(:,i,2) = single_data(i).img_ih.elem_data;
                 U(:,i,3) = single_data(i).data_hn.meas;
                 U(:,i,4) = single_data(i).data_ihn.meas;
+                
+                %% for stats on generated data
+                % stat_ev(indx_cell,index_sample,:)
+                % stat_ev(:,:,1) : pos x
+                % stat_ev(:,:,2) : pos y
+                % stat_ev(:,:,3) : pos z
+                % stat_ev(:,:,4) : radius
+                % stat_ev(:,:,5) : LayerConduct 1
+                %....
+                % stat_ev(:,:,4+i) : LayerConduct i
+                % stat_ev(:,:,4+i+1) : LayerRatio 1
+                %....
+                % stat_ev(:,:,4+i+i) : LayerRatio i
+                % stat_ev(:,:,end) : bufferConduct
+                
+                
+                sd= single_data(i);    
+                for j=1:sd.maxNumCells
+                    cell= sd.Cells(j);
+                    t= [cell.Pos cell.Radius cell.LayerConduct cell.LayerRatio sd.bufferConduct];
+                     stat_ev(j, i, :)=reshape(t, 1,1,[]);
+                end
+                
+%                 stat_eval(:,i,:)= stat_evaltmp             
+                
             end
             %             size_data= whos('U').bytes+whos('C').bytes;
             %             nb_save_batch= floor(size_data/size_file_samples_max)+1;
@@ -227,7 +254,8 @@ classdef EITDataset
                 obj.samples_filenames{i}= ['Samples_' num2str(i_begin) '-' num2str(i_end) '.mat'];
                 X= U(:,i_begin:i_end,:);
                 y= C(:,i_begin:i_end,:);
-                save([ obj.samples_folder filesep obj.samples_filenames{i}], 'X', 'y')
+                stat_eval= stat_ev(:,i_begin:i_end,:);
+                save([ obj.samples_folder filesep obj.samples_filenames{i}], 'X', 'y','stat_eval' )
                 obj.save_eit_dataset();
             end
             obj.make_mat_file4py()
