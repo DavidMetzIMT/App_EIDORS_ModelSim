@@ -47,7 +47,7 @@ for indx=indxs
     % if cancelled than
     % rng(1223)% to get all teh time same random generation...
     train_dataset = EITDataset();
-    train_dataset.generate_EITDataset(user_entry, out_path);
+    train_dataset.generate_eit_dataset(user_entry, out_path);
     fprintf(proto_fid,['Train dataset generated ' '\n']);
     % Save Traindataset with user_entry in case of need of traceback...
 %     file2save = [out_path filesep user_entry.net_file_name '_train_dataset.mat'];

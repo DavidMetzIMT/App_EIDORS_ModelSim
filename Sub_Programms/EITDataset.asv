@@ -47,8 +47,7 @@ classdef EITDataset
                 end
             end
             f= load(actualpath);
-            tmp= strfind(actualpath,filesep);
-            f.eit_dataset.actual_path=actualpath(1:tmp(end)-1);
+            f.eit_dataset.actual_path=actualpath(1:);
             loaded_dataset = f.eit_dataset;
             
         end
