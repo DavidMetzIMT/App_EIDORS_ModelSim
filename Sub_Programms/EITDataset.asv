@@ -243,7 +243,7 @@ classdef EITDataset
             obj.samples_filenames={};
             if exist(obj.samples_folder, 'dir')
                 rmdir(obj.samples_folder,'s');
-                mkdir(obj.samples_folder);
+                mkdir(obj.samples_folder)
             end
             for i=1:nb_save_batch
                 i_begin= 1+inc*(i-1);
