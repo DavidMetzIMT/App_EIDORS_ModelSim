@@ -54,23 +54,23 @@ classdef EITDataset
         end
         
         function s_data=get_single_data(obj,idx)
-            obj=obj.change_actual_folder('goto_actual_path'); 
-            pwd
+            
             if ~isempty(obj.single_data_indx)
                 [idx_in_filename , idx_in_batch ]= find(obj.single_data_indx==idx);
-                disp([obj.single_data_folder filesep obj.single_data_filenames{idx_in_filename} ])
-                f= load([obj.single_data_folder filesep obj.single_data_filenames{idx_in_filename} ]);
-                s_data= f.single_data(idx_in_batch)
+                path = [obj.actual_path filesep obj.single_data_folder filesep obj.single_data_filenames{idx_in_filename} ];
+                disp(path)
+                f= load(path);
+                s_data= f.single_data(idx_in_batch);
             else
                 error('no data in the eit_dataset')
                 %                 s_data=[];
             end
             %             [r , c ]= find(obj.samples_indx==idx_single_data)
-            obj=obj.change_actual_folder('get_back_old_folder');
+            
         end
         
         function [X,y]=get_sample(obj,idx)
-            obj=obj.change_actual_folder('goto_actual_path');
+            
             if ~isempty(obj.samples_indx)
                 [idx_in_filename , idx_in_batch ]= find(obj.samples_indx==idx);
                 f= load([obj.samples_folder filesep obj.samples_filenames{idx_in_filename}]);
@@ -81,27 +81,25 @@ classdef EITDataset
                 %                 X= [];
                 %                 y= [];
             end
-            obj=obj.change_actual_folder('get_back_old_folder');
+            
         end
         
-            function obj=change_actual_folder(obj, cmd)
-                
-                switch cmd
-                    case 'goto_actual_path'
-                        obj.oldFolder = pwd;
-                        cd(obj.actual_path);
-                    case 'get_back_old_folder'    
-                        cd(obj.oldFolder);
-                end
-                
-            end
+%         function obj=change_actual_folder(obj, cmd)
+%             
+%             switch cmd
+%                 case 'goto_actual_path'
+%                     obj.oldFolder = pwd;
+%                     cd(obj.actual_path);
+%                 case 'get_back_old_folder'
+%                     cd(obj.oldFolder);
+%             end
+%             
+%         end
         function obj = generate_eit_dataset(obj, user_entry, out_path)
             disp('Start: generating Training Data...')
             obj.user_entry= user_entry;
-            tStart= tic;
-            % save old Folder and move to the out_path
-            obj.actual_path= out_path;
-            obj=obj.change_actual_folder('goto_actual_path');
+            tStart= tic;            
+            
             % make output dir for Single_data and Samples
             
             mkdir([obj.single_data_folder]);
@@ -117,9 +115,7 @@ classdef EITDataset
                 disp('Abort samples generation: Number of samples are 0')
                 return
             end
-            % get back to the old Folder
-            obj=obj.change_actual_folder('get_back_old_folder');
-            %save
+            
         end
         
         function obj= generate_single_data(obj,size_file_single_data_max)
@@ -162,7 +158,10 @@ classdef EITDataset
                     i_end = i;
                     obj.single_data_filenames{batch_idx}= ['Single_data_' num2str(i_begin) '-' num2str(i_end) '.mat'];
                     obj.single_data_indx(batch_idx,1:i_end-i_begin+1)=i_begin:i_end;
-                    save([obj.single_data_folder filesep obj.single_data_filenames{batch_idx}], 'single_data');
+                    
+                    path= [obj.actual_path filesep obj.single_data_folder];
+                    path = [path filesep obj.single_data_filenames{batch_idx}];      
+                    save(path, 'single_data');
                     obj.save_eit_dataset();
                     batch_idx=batch_idx+1;
                     reset=1;
@@ -173,16 +172,19 @@ classdef EITDataset
         
         function obj= save_samples(obj, size_file_samples_max)
             
-            obj=obj.change_actual_folder('goto_actual_path');
+            
             switch nargin
                 
                 case 2
                 otherwise
                     size_file_samples_max = obj.user_entry.size_file_samples_max;
-                    
             end
             for i=1:size(obj.single_data_filenames,2)
-                l=load([obj.single_data_folder filesep obj.single_data_filenames{i}]);
+                path= [obj.actual_path filesep obj.single_data_folder];
+                path = [path filesep obj.single_data_filenames{i}];  
+                
+                disp(path)
+                l=load(path,'single_data');
                 if i==1
                     tmp = l.single_data;
                 else
@@ -196,19 +198,19 @@ classdef EITDataset
             % (img_h.elem_data and img_ih.elem_data) and combining it into separate
             % matrices accordingly X_h, X_ih, Y_h, Y_ih for further data processing.
             num_samples=obj.user_entry.num_trainingData;
-            U = zeros( length(single_data(1).data_h.meas) , num_samples,4);
-            C = zeros( length(single_data(1).img_h.elem_data) ,num_samples,2);
+            Voltages = zeros( size(obj.user_entry.fmdl.meas_select,1) , num_samples,4);
+            Conduct = zeros( size(obj.user_entry.fmdl.elems,1) ,num_samples,2);
             %stat_eval=zeros(num_samples,4);
             
             for i=1:num_samples
-                U(:,i,1) = single_data(i).data_h.meas;
-                U(:,i,2) = single_data(i).data_ih.meas;
-                C(:,i,1) = single_data(i).img_h.elem_data;
-                C(:,i,2) = single_data(i).img_ih.elem_data;
-                U(:,i,3) = single_data(i).data_hn.meas;
-                U(:,i,4) = single_data(i).data_ihn.meas;
+                Voltages(:,i,1) = single_data(1,i).data_h.meas;
+                Voltages(:,i,2) = single_data(1,i).data_ih.meas;
+                Conduct(:,i,1) = single_data(1,i).img_h.elem_data;
+                Conduct(:,i,2) = single_data(1,i).img_ih.elem_data;
+                Voltages(:,i,3) = single_data(1,i).data_hn.meas;
+                Voltages(:,i,4) = single_data(1,i).data_ihn.meas;
                 
-                %% for stats on generated data
+                % for stats on generated data
                 % stat_ev(indx_cell,index_sample,:)
                 % stat_ev(:,:,1) : pos x
                 % stat_ev(:,:,2) : pos y
@@ -223,14 +225,14 @@ classdef EITDataset
                 % stat_ev(:,:,end) : bufferConduct
                 
                 
-                sd= single_data(i);    
+                sd= single_data(i);
                 for j=1:sd.maxNumCells
                     cell= sd.Cells(j);
                     t= [cell.Pos cell.Radius cell.LayerConduct cell.LayerRatio sd.bufferConduct];
-                     stat_ev(j, i, :)=reshape(t, 1,1,[]);
+                    stat_ev(j, i, :)=reshape(t, 1,1,[]);
                 end
                 
-%                 stat_eval(:,i,:)= stat_evaltmp             
+                %                 stat_eval(:,i,:)= stat_evaltmp
                 
             end
             %             size_data= whos('U').bytes+whos('C').bytes;
@@ -243,7 +245,7 @@ classdef EITDataset
             obj.samples_filenames={};
             if exist(obj.samples_folder, 'dir')
                 rmdir(obj.samples_folder,'s');
-                mkdir(obj.samples_folder)
+                mkdir(obj.samples_folder);
             end
             for i=1:nb_save_batch
                 i_begin= 1+inc*(i-1);
@@ -253,20 +255,20 @@ classdef EITDataset
                 end
                 obj.samples_indx(i,1:i_end-i_begin+1)= i_begin:i_end;
                 obj.samples_filenames{i}= ['Samples_' num2str(i_begin) '-' num2str(i_end) '.mat'];
-                X= U(:,i_begin:i_end,:);
-                y= C(:,i_begin:i_end,:);
-                stat_eval= stat_ev(:,i_begin:i_end,:);
+                X= Voltages(:,i_begin:i_end,:);
+                y= Conduct(:,i_begin:i_end,:);        
                 try
-                    save([ obj.single_data_folder filesep 'Stat_eval.mat'],'stat_eval' )
-                    save([ obj.samples_folder filesep obj.samples_filenames{i}], 'X', 'y' )           
+                    stat_eval= stat_ev;
+                    save([ obj.actual_path, filesep, obj.single_data_folder, filesep 'Stat_eval.mat'],'stat_eval' )
+                    save([ obj.actual_path, filesep, obj.samples_folder, filesep, obj.samples_filenames{i}], 'X', 'y' )
                 catch
-                    save([ obj.samples_folder filesep obj.samples_filenames{i}], 'X', 'y','stat_eval' )
+                    stat_eval= stat_ev(:,i_begin:i_end,:);
+                    save([ obj.actual_path, filesep, obj.samples_folder, filesep, obj.samples_filenames{i}], 'X', 'y','stat_eval' )
                 end
                 obj.save_eit_dataset();
             end
             obj.make_mat_file4py()
-            
-            obj=obj.change_actual_folder('get_back_old_folder');
+
         end
         
         function obj= save_eit_dataset(obj)
@@ -281,13 +283,13 @@ classdef EITDataset
             
             obj.eit_dataset_filename;
             pwd
-            filename= [obj.user_entry.net_file_name '_infos2py.mat'];
+            filename= [obj.actual_path, filesep, obj.user_entry.net_file_name '_infos2py.mat'];
             obj.save_fieldnames(filename,obj);
             
         end
         
         function save_fieldnames(obj,filename, var, nameupperlevels)
-            separator= '_';            
+            separator= '_';
             if nargin ==3
                 varname = inputname(3);
                 nameupperlevels= '';%replace(varname,"_","");
@@ -310,14 +312,14 @@ classdef EITDataset
                     save(filename,'-struct', 'S', '-append' )
                 else
                     save(filename,'-struct', 'S')
-                end                
-            end            
-        end      
+                end
+            end
+        end
         
         function obj=display_progress(obj,indx)
             disp(['                 Training Data #', num2str(indx), '; time: ', num2str(toc),'s'])
             tic
-        end       
+        end
         
         function  obj= mk_default_fmdl(obj,user_entry)
             % here make fmdl... if not loaded from GUI
