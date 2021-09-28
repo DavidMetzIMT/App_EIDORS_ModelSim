@@ -54,12 +54,13 @@ classdef EITDataset
         end
         
         function s_data=get_single_data(obj,idx)
-            obj=obj.change_actual_folder('goto_actual_path');    
+            obj=obj.change_actual_folder('goto_actual_path'); 
+            pwd
             if ~isempty(obj.single_data_indx)
                 [idx_in_filename , idx_in_batch ]= find(obj.single_data_indx==idx);
-                
-                f= load(obj.single_data_filenames{idx_in_filename});
-                s_data= f.single_data(idx_in_batch);
+                disp([obj.single_data_folder filesep obj.single_data_filenames{idx_in_filename} ])
+                f= load([obj.single_data_folder filesep obj.single_data_filenames{idx_in_filename} ]);
+                s_data= f.single_data(idx_in_batch)
             else
                 error('no data in the eit_dataset')
                 %                 s_data=[];

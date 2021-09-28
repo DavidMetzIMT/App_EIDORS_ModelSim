@@ -63,12 +63,14 @@ for indx=indxs
         nb_single_data=3;
         train_dataset = EITDataset();
         path = [out_path filesep user_entry.net_file_name '_eit_dataset.mat'];
-        train_dataset=train_dataset.load_EITDataset(path);
+        train_dataset=train_dataset.load_EITDataset(path)
+        train_dataset.user_entry.fmdl
         
         for idx=1:nb_single_data
             s_data= train_dataset.get_single_data(idx);
-            img = s_data.img_ih;
-            img.fwd_model= user_entry.fmdl;
+            img = s_data.img_ih
+            size(train_dataset.user_entry.fmdl.elems)
+            img.fwd_model= train_dataset.user_entry.fmdl
             data=s_data.data_ih.meas;
             
             subplot(nb_single_data,2,(idx-1)*2+1)
