@@ -20,12 +20,13 @@ classdef GenerateCell
             chamber_type = user_entry.chamber.body.typ;
             chamber_radius = user_entry.chamber.body.diameter_length/2;
             chamber_height = user_entry.chamber.body.height;
+            z= chamber_height*rand();
             if contains(chamber_type, 'Cylinder') || contains(chamber_type, '2D_Circ')
                 r = chamber_radius*rand();
                 alpha = 2*pi()*rand();
-                pos = [r*cos(alpha) r*sin(alpha) chamber_height*rand()];
+                pos = [r*cos(alpha) r*sin(alpha) z];
             elseif contains(chamber_type, 'cubic')
-                pos = [chamber_radius(1)*(-1+2*rand()) chamber_radius(1)*(-1+2*rand()) chamber_height*rand()];
+                pos = [chamber_radius(1)*(-1+2*rand()) chamber_radius(1)*(-1+2*rand()) z];
             else
                 error("ERROR: Wrong chamber statment! Try 'circle' or 'rectangle'!")
             end
