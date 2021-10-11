@@ -78,7 +78,6 @@ classdef EITDataset
                 disp(path)
                 f= load(path);
                 
-                
                 X= f.X(:,idx_in_batch,:);
                 y= f.y(:,idx_in_batch,:);
             else
@@ -86,7 +85,6 @@ classdef EITDataset
                 %                 X= [];
                 %                 y= [];
             end
-            
         end
         
 %         function obj=change_actual_folder(obj, cmd)

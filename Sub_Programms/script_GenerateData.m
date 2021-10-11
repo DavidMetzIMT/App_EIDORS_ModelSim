@@ -56,36 +56,12 @@ for indx=indxs
     % Update protocol
     fprintf(proto_fid,['Train dataset saved in: ' replace(file2save, '\','\\') '\n']);
     
-    %% Plot some sample of trained data!
-    if usejava('desktop')
-        figName= ['some Samples of generated data of user_entry #' num2str(indx)];
-        h= getCurrentFigure_with_figName(figName);
-        nb_single_data=3;
-        train_dataset = EITDataset();
-        path = [out_path filesep user_entry.net_file_name '_eit_dataset.mat'];
-        train_dataset=train_dataset.load_EITDataset(path)
-        train_dataset.user_entry.fmdl
-        
-        for idx=1:nb_single_data
-            s_data= train_dataset.get_single_data(idx);
-            img = s_data.img_ih
-            size(train_dataset.user_entry.fmdl.elems)
-            img.fwd_model= train_dataset.user_entry.fmdl
-            data=s_data.data_ih.meas;
-            
-            subplot(nb_single_data,2,(idx-1)*2+1)
-            title(['Conduct Sample# ' num2str(idx)]);
-            h= show_fem(img,[1,0,0]);
-            set(h,'EdgeColor','none');
-            
-            subplot(nb_single_data,2,idx*2)
-            title(['Voltages Sample# ' num2str(idx)]);
-            plot(data)
-        end
-        
-        [X, Y]=train_dataset.get_sample(5);
-        
-    end
+    
+    
+    
+    path = [out_path filesep user_entry.net_file_name '_eit_dataset.mat'];
+    plot_samples([1:3], path)
+    
 end
 fclose(proto_fid);
 
