@@ -52,7 +52,7 @@ global EIDORS
     rec=[];
     if v.do_redundant == 0
          pattern= unique(pattern, 'stable','rows');
-         
+
     end
     
 % end
@@ -65,11 +65,11 @@ switch lower(pattern_typ)
     case '3d_ad_0'
         e_filter= [11 21];
     case '3d_ad_1'
-        e_filter= [11 21 22];
+        e_filter= [11 12 21 22];
     case '3d_ad_2'
-        e_filter= [11 12 21 22 23];
+        e_filter= [11 12 13 21 22 23];
     case '3d_ad_3'
-        e_filter= [11 12 13 21 22 23 24];
+        e_filter= [11 12 13 14 21 22 23 24];
     case '3d_op_inoutplane'
         e_filter= [-11 -21];
     case '3d_op'
