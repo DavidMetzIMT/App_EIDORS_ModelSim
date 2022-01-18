@@ -9,16 +9,38 @@ close all
 
 fmdl = EIDORS.fmdl; %% buffer fmdl
 
-if EIDORS.flag.AddcellinFEMmodel % rebuild fwd model with cell
-    text='';
-    for i=1:size(EIDORS.sim.cell,1)
-        c=EIDORS.sim.cell(i);
-        text= [text '\n\r ' 'solid cell_' num2str(i) ' = sphere(' num2str(c.PosX) ',' num2str(c.PosY) ',' num2str(c.PosZ) ';' num2str(c.Radius) ');\n\r ' 'tlo cell_' num2str(i) ';'];
-    end
-    EIDORS.sim.netgenAdditionalText=text;
-    create_fmdl(); % new fmdl in EIDORS.fmdl
-    h= gcf;
-    set(h,'Name','Foward Model with cell' )
+switch EIDORS.flag.Object
+    case 'cell'
+        if EIDORS.flag.AddcellinFEMmodel % rebuild fwd model with cell
+            text='';
+            for i=1:size(EIDORS.sim.cell,1)
+                c=EIDORS.sim.cell(i);
+                text= [text '\n\r ' 'solid cell_' num2str(i) ' = sphere(' num2str(c.PosX) ',' num2str(c.PosY) ',' num2str(c.PosZ) ';' num2str(c.Radius) ');\n\r ' 'tlo cell_' num2str(i) ';'];
+            end
+
+            EIDORS.sim.netgenAdditionalText=text;
+            create_fmdl(); % new fmdl in EIDORS.fmdl
+            h= gcf;
+            set(h,'Name','Foward Model with cell' )
+        end
+    
+    case 'cylinder'
+        if EIDORS.flag.AddcellFEMmodel
+            text='';
+            for i=1:size(EIDORS.sim.cell,1)
+                c=EIDORS.sim.cell(i);
+                text=[['solid wall    = cylinder (0,0,0; 0,0,1;' num2str(c.Radius) '); \n'], ...
+                        'solid top    = plane(0,0,' b_height_str ';0,0,1);\n'
+                        
+                        'solid bottom = plane(0,0,-' num2str(c.PosZ) ';0,0,-1);\n' ...
+                        'solid mainobj= top and bottom and wall -maxh=' maxh_str ';\n'];
+            end
+
+            EIDORS.sim.netgenAdditionalText=text;
+            create_fmdl(); % new fmdl in EIDORS.fmdl
+            h= gcf;
+            set(h,'Name','Foward Model with cylinder' )
+        end
 end
 
 EIDORS.sim.fmdl = EIDORS.fmdl;
