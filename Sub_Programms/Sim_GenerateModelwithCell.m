@@ -10,7 +10,7 @@ close all
 fmdl = EIDORS.fmdl; %% buffer fmdl
 
 switch EIDORS.flag.Object
-    case 'cell'
+    case 'Cell'
         if EIDORS.flag.AddcellinFEMmodel % rebuild fwd model with cell
             text='';
             for i=1:size(EIDORS.sim.cell,1)
@@ -24,16 +24,16 @@ switch EIDORS.flag.Object
             set(h,'Name','Foward Model with cell' )
         end
     
-    case 'cylinder'
-        if EIDORS.flag.AddcellFEMmodel
+    case 'Cylinder'
+        if EIDORS.flag.AddcellinFEMmodel
             text='';
             for i=1:size(EIDORS.sim.cell,1)
                 c=EIDORS.sim.cell(i);
                 text=[['solid wall    = cylinder (0,0,0; 0,0,1;' num2str(c.Radius) '); \n'], ...
-                        'solid top    = plane(0,0,' b_height_str ';0,0,1);\n'
+                        'solid top    = plane(0,0,' num2str(EIDORS.chamber.body.depth/2) ';0,0,1);\n'
                         
                         'solid bottom = plane(0,0,-' num2str(c.PosZ) ';0,0,-1);\n' ...
-                        'solid mainobj= top and bottom and wall -maxh=' maxh_str ';\n'];
+                        'solid mainobj= top and bottom and wall -maxh=' num2str( EIDORS.chamber.body.FEM_refinement) ';\n'];
             end
 
             EIDORS.sim.netgenAdditionalText=text;
