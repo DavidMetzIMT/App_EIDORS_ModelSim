@@ -77,22 +77,7 @@ end
 function Start_EIDORS_ToolBox(app)
 
 if isempty(app.CallingApp)
-%     app.Path.EIDORS= 'C:\EIDORS\eidors\startup.m';
-%     %%testen ob EIDORS richtig laeuft
-%     if ~exist(app.Path.EIDORS)
-%         app.Path.EIDORS = uigetfile('.m', 'Select File "startup.m" to run EIDORS');
-%         if isequal(app.Path.EIDORS,0)
-%             warndlg('User selected Cancel: EIDORS not started');
-%         else
-%             msgbox(['User selected ', fullfile(app.Path.EIDORS)]);
-%             run(app.Path.EIDORS);
-%             eidors_cache('cache_size', 2*1024^3 ); % 2 GB cache
-%         end
-%     else
-%         run(app.Path.EIDORS);
-%         eidors_cache('cache_size', 2*1024^3 ); % 2 GB cache
-%     end
-app.Path.EIDORS=Start_EIDORS();
+    app.Path.EIDORS=Start_EIDORS();
 else
     disp('EIDORS already started from MainApp');
     app.Path.EIDORS= ['Started from MainApp: ' app.CallingApp.Path.EIDORS];
