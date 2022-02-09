@@ -92,7 +92,7 @@ else
     end
     
 %     EIDORS.sim.img_ih = mk_image(EIDORS.sim.img_h, EIDORS.sim.bufferConduct + c_frac*(EIDORS.sim.cellConduct) + l_frac*(EIDORS.sim.layerConduct));
-    EIDORS.sim.img_ih = mk_image(EIDORS.sim.img_h, EIDORS.sim.bufferConduct + c_frac*(EIDORS.sim.cellConduct));
+    EIDORS.sim.img_ih = mk_image(EIDORS.sim.img_h, EIDORS.sim.bufferConduct + c_frac*(EIDORS.sim.cellConduct-EIDORS.sim.bufferConduct));
 end
 
 %%  Make data for simulation
