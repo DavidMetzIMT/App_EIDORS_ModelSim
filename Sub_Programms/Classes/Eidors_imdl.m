@@ -1,4 +1,4 @@
-classdef InvModel
+classdef Eidors_imdl
 
     properties
         name
@@ -9,7 +9,7 @@ classdef InvModel
         jacobian_bkgnd
         meas_icov % optional
         reconst_type
-        fwd_model FwdModel
+        fwd_model Eidors_fmdl
     end
     
     properties (Access = private)
@@ -17,7 +17,7 @@ classdef InvModel
     end
 
     methods 
-        function obj = InvModel(obj,args)
+        function obj = Eidors_imdl(obj,args)
             
         end
     end

@@ -1,4 +1,5 @@
-classdef FwdModel
+classdef Eidors_fmdl
+
 
     properties
         name

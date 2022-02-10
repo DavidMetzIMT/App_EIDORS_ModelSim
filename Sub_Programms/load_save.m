@@ -1,11 +1,11 @@
-function R = LoadSave(app,Load_Save,DataTyp, varargin)
+function obj, succes = load_save(loadSave,dataType,varargin)
 % LOADSAVE Standard Load or Save function for multiple Datatyp
 %
 % IN
-% Load_Save : str (not case sensitive)
+% LoadSave : str (not case sensitive)
 %                 - 'load'
 %                 - 'save' 
-% DataTyp : str (not case sensitive)
+% dataType : str (not case sensitive)
 %                 - 'chamber'
 %                 - 'fmdl'
 %                 - 'simulation'
@@ -16,12 +16,13 @@ function R = LoadSave(app,Load_Save,DataTyp, varargin)
 %                 - '' (empty str) >> only for save use default path and filename 
 % 
 % OUT
-% R = gives 0 if  loading or saving process have been cancelled, 1 if sucessful 
+% obj = loaded obj, var or struct...
+% succes = gives 0 if  loading or saving process have been cancelled, 1 if sucessful 
 
 
 global EIDORS
 
-R=0;
+succes=0;
 if ~isempty(varargin)
     option = varargin{1}; % path is directly given as a string
     % path will be choosen by user
@@ -29,9 +30,9 @@ else
     option = '';
 end
 
-parameters = SetParameters4Process(option, DataTyp,Load_Save);
+parameters = SetParameters4Process(option, dataType,loadSave);
 
-switch lower(Load_Save)
+switch lower(loadSave)
     case 'load' %% Load
         parameters = getFILENAME(parameters);
         load_(parameters);
@@ -40,15 +41,16 @@ switch lower(Load_Save)
         save_(parameters);
     otherwise
         disp('LoadSave Subfunction: please give ''load'' or ''save'' as string')
+        
 end
-R= parameters.INDX;
+succes= parameters.INDX;
 
 %% ========================================================================
 %  Internal fucntions =====================================================
 %  ========================================================================
-    function par = SetParameters4Process(option,DataTyp,Load_Save)
+    function par = SetParameters4Process(option,dataType,LoadSave)
         par.OPTION=option;
-        par.DATATYP=DataTyp;
+        par.DATATYP=dataType;
         par.Flag_folderISfilename=0;
         switch lower(par.DATATYP)
             case 'chamber' % OK
@@ -65,7 +67,7 @@ R= parameters.INDX;
                 par.Flag_folderISfilename=1;
                 par.PROMPT_text = 'Forward model ';
             case 'simulation'
-                if strcmpi(Load_Save,'save')
+                if strcmpi(LoadSave,'save')
                     % if fmdl is saved than
                     par.FIELD= {'fmdl', 'chamber', 'meshQuality','flag'};
                     par.FILTERSPEC= '*_fmdl.mat';
@@ -216,4 +218,35 @@ R= parameters.INDX;
             path= [par.FOLDER '\' replace(par.FILENAME,par.FILTERSPEC(2:end),'') '\' par.FILENAME];
         end
     end
+
+    function isPath = isPath(path)
+        % isPath check if a path:
+        % is a valid path (return 1) or already exist (return 2)
+        % return 0 if is not a valid path
+        isPath=0
+        if ~isfolder(path)
+            [status, msg] = mkdir(path);
+            if status
+                % is a valid path
+                isPath = 1
+                rmdir(path)
+            end
+        else
+            % Folder already exist
+            isPath=2
+        end
+        
+        return isPath
+        
+    end
+
+    function isMatFile = isMatFile(path)
+        isMatFile =false
+
+        
+
+        return isMatFile
+        
+    end
+     
 end
