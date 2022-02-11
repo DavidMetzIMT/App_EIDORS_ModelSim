@@ -48,13 +48,22 @@ classdef EIT_env < handle
             [new_env, success]= obj.load_p(par);
         end
 
-        function fmdl = create_fwd_model(obj)
+        function [fmdl, success] = create_fwd_model(obj, add_text)
             %create the foward model and return the fmdl fpr EIDORS/for plot...
-            shape_chamber= 
 
-            fmdl = make_fwd_model_ngmkgenmodel();
+            [shape_str, elec_pos, elec_shape, elec_obj, error] = obj.setup.data_for_ng();
+            if error.code
+                fmdl =0;
+                success=0;
+                return
+            end
 
-            fmdl.get_all_meas = 1;
+            fmdl = obj.fwd_model.gen_fmdl_ng(...
+                obj.setup.chamber,...
+                shape_str, elec_pos, elec_shape, elec_obj, add_text);
+
+            success=1;
+            
         end
 
     end 

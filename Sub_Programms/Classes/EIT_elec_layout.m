@@ -50,10 +50,10 @@ classdef EIT_elec_layout
                 obj.reset = 1;
                 obj.elecNb=16; % number of electrodes
                 obj.elecForm='Circular'; % Circular, Rectangular, Point
-                obj.elecSize=[0.1, 0]; % width, height
+                obj.elecSize=[0.5, 0]; % width, height
                 obj.elecPlace='Wall'; % Wall, Top, Bottom
                 obj.layoutDesign='Ring'; % Ring, Grid, Polka Dot
-                obj.layoutSize=0.75; % X, Y, Z
+                obj.layoutSize=4; % X, Y, Z
             end
         end
 
@@ -76,9 +76,9 @@ classdef EIT_elec_layout
             %Return Supported electrode forms
             cellarray = obj.ELEC_FORMS;
         end
-        function cellarray = supported_arrDesigns(obj)
+        function cellarray = supported_layouts(obj)
             %Return Supported arrDesign designs
-            cellarray = obj.layout_DESIGN;
+            cellarray = obj.LAYOUT_DESIGN;
         end
         function cellarray = supported_elec_pos(obj)
             %Return Supported electrode position
@@ -88,7 +88,7 @@ classdef EIT_elec_layout
         function val = allowed_placement(obj)
             % returns the supported chamber forms
             index_actual_layout = find(strcmp(obj.LAYOUT_DESIGN, obj.layoutDesign));
-            val = obj.ALLOW_ELEC_PLACEMENT(index_actual_form, :);
+            val = obj.ALLOW_ELEC_PLACEMENT(index_actual_layout, :);
         end
 
         function r = elec_radius(obj)
@@ -96,30 +96,27 @@ classdef EIT_elec_layout
             r= obj.elecSize(1)/2;
         end
 
-        function [elec_pos, elec_shape, elec_obj, status] = data_for_ng(obj, chamber)
+        function [elec_pos, elec_shape, elec_obj, error] = data_for_ng(obj, chamber)
 
             arguments % argument validator
+                obj
                 chamber EIT_chamber
             end
             
-            elec_pos=0;
-            elec_shape=0; 
-            elec_obj=0;
+            elec_pos=[];
+            elec_shape=[]; 
+            elec_obj={};
 
-            status.msg=''
-            status.error_code=0 % 0 noerror > 0 error
+            error.msg='';
+            error.code=0; % 0 noerror > 0 error
 
-            DoNotGenerate=0;
+            % DoNotGenerate=0;
+            %% Chamber
             % chamber radius
-            ch_r=chamber.length()/2;
+            ch_r=chamber.radius();
             % ch_limits = [minX, maxX; minY, maxY; minZ, maxZ] centered chamber 
-            ch_limits = [
-                -chamber.length()/2,chamber.length()/2;
-                -chamber.width()/2,chamber.width()/2;
-                -chamber.height()/2,chamber.height()/2];
+            ch_limits = chamber.box_limits();
             %% Electrodes
-
-            % for i= 1:size(EIDORS.chamber.electrode,1) % sets of electrodes
             % electrodes radius
             elec_r= obj.elec_radius();
             
@@ -129,27 +126,23 @@ classdef EIT_elec_layout
                 round(elec_n-mod(elec_n,1))
                 round(mod(elec_n,1)*100)];
             
-            layoutDesign= obj.layoutDesign;
-            
-            elec_set(i).obj = lower(obj.elecPlace); %for all?
-            
-            % check if electrode placement is compatible with layout design 
-            allow_place_for_actual_layout = obj.allowed_placement();
-            actual_elec_place_indx= find(strcmp(obj.ELEC_PLACE, obj.elecPlace));
-            if ~allow_place_for_actual_layout(actual_elec_place_indx)
-                % msgbox('Forward Model not Generated: Chamber_typ and Design electrode incompatible');
-                status.msg=[status.msg,
-                'Forward Model not Generated: Electrode place and layout are incompatible'];
-                status.error_code= 1; % 0 noerror > 0 error
+                
+                % check if electrode placement is compatible with layout design 
+                allow_place_for_actual_layout = obj.allowed_placement();
+                actual_elec_place_indx= find(strcmp(obj.ELEC_PLACE, obj.elecPlace));
+                if ~allow_place_for_actual_layout(actual_elec_place_indx)
+                % msgbox('Chamber_typ and Design electrode incompatible');
+                error.msg='Electrode place and layout are incompatible';
+                error.code= 1; % 0 noerror > 0 error
                 return; % ??
             end
 
             % check if electrode placement is compatible with chamber design 
             allow_place_for_actual_chamber = chamber.allowed_placement();
             if ~allow_place_for_actual_chamber(actual_elec_place_indx)
-                % msgbox('Forward Model not Generated: Chamber_typ and Design electrode incompatible');
-                status.msg= 'Forward Model not Generated: Electrode place and chamber are incompatible'
-                status.error_code= 1; % 0 noerror > 0 error
+                % msgbox('Chamber_typ and Design electrode incompatible');
+                error.msg= 'Electrode place and chamber are incompatible';
+                error.code= 1; % 0 noerror > 0 error
                 return; % ??
             end
 
@@ -160,28 +153,35 @@ classdef EIT_elec_layout
             switch elec_place
                 case obj.ELEC_PLACE{1} %'Wall'
                     specific_length = ch_r;
+                    f= [specific_length,specific_length, 1];
                     c_pos= [0, 0 , 0 ];
                     n_vec= [1,1,0];
     
                 case obj.ELEC_PLACE{2} %'Top'
+                    f= [specific_length,specific_length, 1];
                     c_pos= [0, 0 , ch_limits(3,2) ];
                     n_vec= [0,0,-1];
 
                 case obj.ELEC_PLACE{3}%'Bottom'
+                    f= [specific_length,specific_length, 1];
                     c_pos= [0, 0 , ch_limits(3,1)];
                     n_vec= [0,0,1];
                 otherwise
-                    msgbox('Forward Model not Generated: Electrode position/design combination not implemented/incompatible')
-                    DoNotGenerate=1;
-            end
-
+                    error.msg= 'Electrode position/design combination not implemented/incompatible';
+                    error.code= 1; % 0 noerror > 0 error
+                    return; % ??
+                    % msgbox('Electrode position/design combination not implemented/incompatible')
+                    % DoNotGenerate=1;
+                end
+                
             % rotation of the layoutDesign
             rot_angle = [0, 0, 0];
             if contains(obj.layoutDesign,'45')
                 rot_angle = [0, 0, pi/4];
             end
-
-            
+                    
+            layoutDesign= obj.layoutDesign;
+                
             switch layoutDesign
                 case obj.LAYOUT_DESIGN{1} % 'Ring'
 
@@ -190,161 +190,190 @@ classdef EIT_elec_layout
                     theta = linspace(0, 2*pi, elec_n + 1)';
                     theta(end) = []; % 0 <= theta < 2*pi 
                     
-                    xyz = [cos(theta), sin(theta), ones(elec_n,1)) .* c_pos; 
+                    xyz = [cos(theta), sin(theta), zeros(elec_n,1)] .*f + c_pos; 
                     n = [cos(theta), sin(theta), ones(elec_n,1)] .* n_vec;
                     
                     % check if electrodes are contained in chamber 
-                    if (ch_r)<(elec_r+specific_length) && elecPlace != obj.ELEC_PLACE{1} %'Wall'
-                        msgbox('Forward Model not Generated: Too big electrode diame te... incompatible with Chamber diameter and ring diameter')
-                        DoNotGenerate=1;
+                    
+                    
+                    if (ch_r)<(elec_r+specific_length) & ~strcmp(obj.elecPlace,obj.ELEC_PLACE{1}) %'Wall'
+                        % msgbox('Too big electrode diame te... incompatible with Chamber diameter and ring diameter')
+                        error.msg= 'Too big electrode diame te... incompatible with Chamber diameter and ring diameter';
+                        error.code= 1; % 0 noerror > 0 error
+                        return; % ??
                     end
                     % check if ring electrodes
                     if (2*pi*specific_length)<=(2*asin(elec_r/specific_length)*specific_length*elec_n)
-                        msgbox('Forward Model not Generated: Too big or too much electrode... incompatible with Chamber diameter')
-                        DoNotGenerate=1;
+                        % msgbox('Too big or too much electrode... incompatible with Chamber diameter')
+                        % DoNotGenerate=1;
+                        error.msg= 'Too big or too much electrode... incompatible with Chamber diameter';
+                        error.code= 1; % 0 noerror > 0 error
+                        return; % ??
                     end
-                   
+                
 
-                case {'Array_PolkaDot 0', 'Array_PolkaDot 45'}
-                    % only 13 electrodes....
-                    if size(elec_n,2)==2
-                        if (sum(mod(elec_n,2))==0)
-                            errordlg('please give only uneven number of electrodes for Array_PolkaDot ')
-                        else
-                            d = EIDORS.chamber.electrode(i).Diameter;
-                            ratio=elec_n(1)/elec_n(2);
-                            Width_grid = [sqrt(d^2/(1+1/ratio^2)) sqrt(d^2/(1+ratio^2))];
-                            for xy=1:2
-                                switch elec_n(xy)
-                                    case 1
-                                        vector(xy).v= 0;
-                                    case 2
-                                        vector(xy).v=[-Width_grid(xy)/2 Width_grid(xy)/2];
-                                    otherwise
-                                        vector(xy).v=linspace(-Width_grid(xy)/2,Width_grid(xy)/2,elec_n(xy));
-                                end
-                            end
-                            [x,y] = meshgrid(vector(1).v,vector(2).v);
-                        end
-                    else
-                        if ~(elec_n==13)
-                            warndlg('number of electrodes set to 13 ')
-                            elec_n=13;
-                        end
-                        EIDORS.chamber.electrode(i).Number=elec_n;
-                        Width_grid = EIDORS.chamber.electrode(i).Diameter/sqrt(2);
-                        [x,y] = meshgrid(linspace( -Width_grid/2,Width_grid/2,5));
-                    end
+                % case {'Array_PolkaDot 0', 'Array_PolkaDot 45'}
+                %     % only 13 electrodes....
+                %     if size(elec_n,2)==2
+                %         if (sum(mod(elec_n,2))==0)
+                %             errordlg('please give only uneven number of electrodes for Array_PolkaDot ')
+                %         else
+                %             d = EIDORS.chamber.electrode(i).Diameter;
+                %             ratio=elec_n(1)/elec_n(2);
+                %             Width_grid = [sqrt(d^2/(1+1/ratio^2)) sqrt(d^2/(1+ratio^2))];
+                %             for xy=1:2
+                %                 switch elec_n(xy)
+                %                     case 1
+                %                         vector(xy).v= 0;
+                %                     case 2
+                %                         vector(xy).v=[-Width_grid(xy)/2 Width_grid(xy)/2];
+                %                     otherwise
+                %                         vector(xy).v=linspace(-Width_grid(xy)/2,Width_grid(xy)/2,elec_n(xy));
+                %                 end
+                %             end
+                %             [x,y] = meshgrid(vector(1).v,vector(2).v);
+                %         end
+                %     else
+                %         if ~(elec_n==13)
+                %             warndlg('number of electrodes set to 13 ')
+                %             elec_n=13;
+                %         end
+                %         EIDORS.chamber.electrode(i).Number=elec_n;
+                %         Width_grid = EIDORS.chamber.electrode(i).Diameter/sqrt(2);
+                %         [x,y] = meshgrid(linspace( -Width_grid/2,Width_grid/2,5));
+                %     end
                     
-                    x=x(1:2:end);
-                    y=y(1:2:end);
-                    elec_n= max(size(x(:)));
+                %     x=x(1:2:end);
+                %     y=y(1:2:end);
+                %     elec_n= max(size(x(:)));
                     
-                    z=Z_height*ones(elec_n,1);
-                    nx=0*ones(elec_n,1);
-                    ny=0*ones(elec_n,1);
-                    nz=-ones(elec_n,1);
-                    switch EIDORS.chamber.electrode(i).Position
-                        case 'Top'
-                            % elec_set(i).obj = 'top';
-                        case 'Bottom'
-                            % only 13 electrodes....
-                            % elec_set(i).obj = 'bottom';
-                            z=-z;
-                            nz=-nz;
-                        otherwise
-                            msgbox('Forward Model not Generated: Electrode position/design combination not implemented/incompatible')
-                            DoNotGenerate=1;
-                    end
-                    if contains(EIDORS.chamber.electrode(i).Design,'45')
-                        alpha = pi/4;
-                    end
+                %     z=Z_height*ones(elec_n,1);
+                %     nx=0*ones(elec_n,1);
+                %     ny=0*ones(elec_n,1);
+                %     nz=-ones(elec_n,1);
+                %     switch EIDORS.chamber.electrode(i).Position
+                %         case 'Top'
+                %             % elec_set(i).obj = 'top';
+                %         case 'Bottom'
+                %             % only 13 electrodes....
+                %             % elec_set(i).obj = 'bottom';
+                %             z=-z;
+                %             nz=-nz;
+                %         otherwise
+                %             msgbox('Electrode position/design combination not implemented/incompatible')
+                %             DoNotGenerate=1;
+                %     end
+                %     if contains(EIDORS.chamber.electrode(i).Design,'45')
+                %         alpha = pi/4;
+                %     end
                     
-                case {'Array_Grid 0', 'Array_Grid 45'}
-                    if size(elec_n,2)==2
-                        d = EIDORS.chamber.electrode(i).Diameter;
-                        ratio=elec_n(1)/elec_n(2);
-                        Width_grid = [sqrt(d^2/(1+1/ratio^2)) sqrt(d^2/(1+ratio^2))];
-                        for xy=1:2
-                            switch elec_n(xy)
-                                case 1
-                                    vector(xy).v= 0;
-                                case 2
-                                    vector(xy).v=[-Width_grid(xy)/2 Width_grid(xy)/2];
-                                otherwise
-                                    vector(xy).v=linspace(-Width_grid(xy)/2,Width_grid(xy)/2,elec_n(xy));
-                            end
-                        end
-                        [x,y] = meshgrid(vector(1).v,vector(2).v);
-                    else % square array
-                        if ~(round(sqrt(elec_n))^2==elec_n)
-                            warndlg('number of electrodes set to 16 (please give a a^2 number of electrodes for square Array_Grid) ')
-                            elec_n=16;
-                        end
-                        EIDORS.chamber.electrode(i).Number=elec_n;
-                        Width_grid = EIDORS.chamber.electrode(i).Diameter/sqrt(2);
-                        [x,y] = meshgrid(linspace( -Width_grid/2,Width_grid/2,sqrt(elec_n)));
-                    end
-                    elec_n= max(size(x(:)));
+                % case {'Array_Grid 0', 'Array_Grid 45'}
+                %     if size(elec_n,2)==2
+                %         d = EIDORS.chamber.electrode(i).Diameter;
+                %         ratio=elec_n(1)/elec_n(2);
+                %         Width_grid = [sqrt(d^2/(1+1/ratio^2)) sqrt(d^2/(1+ratio^2))];
+                %         for xy=1:2
+                %             switch elec_n(xy)
+                %                 case 1
+                %                     vector(xy).v= 0;
+                %                 case 2
+                %                     vector(xy).v=[-Width_grid(xy)/2 Width_grid(xy)/2];
+                %                 otherwise
+                %                     vector(xy).v=linspace(-Width_grid(xy)/2,Width_grid(xy)/2,elec_n(xy));
+                %             end
+                %         end
+                %         [x,y] = meshgrid(vector(1).v,vector(2).v);
+                %     else % square array
+                %         if ~(round(sqrt(elec_n))^2==elec_n)
+                %             warndlg('number of electrodes set to 16 (please give a a^2 number of electrodes for square Array_Grid) ')
+                %             elec_n=16;
+                %         end
+                %         EIDORS.chamber.electrode(i).Number=elec_n;
+                %         Width_grid = EIDORS.chamber.electrode(i).Diameter/sqrt(2);
+                %         [x,y] = meshgrid(linspace( -Width_grid/2,Width_grid/2,sqrt(elec_n)));
+                %     end
+                %     elec_n= max(size(x(:)));
                     
-                    z=Z_height*ones(elec_n,1);
-                    nx=0*ones(elec_n,1);
-                    ny=0*ones(elec_n,1);
-                    nz=-ones(elec_n,1);
-                    switch EIDORS.chamber.electrode(i).Position
-                        case 'Top'
-                            % elec_set(i).obj = 'top';
-                        case 'Bottom'
-                            % only 13 electrodes....
-                            % elec_set(i).obj = 'bottom';
-                            z=-z;
-                            nz=-nz;
-                        otherwise
-                            msgbox('Forward Model not Generated: Electrode position/design combination not implemented/incompatible')
-                            DoNotGenerate=1;
-                    end
-                    if contains(EIDORS.chamber.electrode(i).Design,'45')
-                        alpha = pi/4;
-                    end
+                %     z=Z_height*ones(elec_n,1);
+                %     nx=0*ones(elec_n,1);
+                %     ny=0*ones(elec_n,1);
+                %     nz=-ones(elec_n,1);
+                %     switch EIDORS.chamber.electrode(i).Position
+                %         case 'Top'
+                %             % elec_set(i).obj = 'top';
+                %         case 'Bottom'
+                %             % only 13 electrodes....
+                %             % elec_set(i).obj = 'bottom';
+                %             z=-z;
+                %             nz=-nz;
+                %         otherwise
+                %             msgbox('Electrode position/design combination not implemented/incompatible')
+                %             DoNotGenerate=1;
+                %     end
+                %     if contains(EIDORS.chamber.electrode(i).Design,'45')
+                %         alpha = pi/4;
+                %     end
+
                 otherwise
-                    msgbox('Forward Model not Generated: Electrode Design not implemented')
-                    DoNotGenerate=1;
+                    error.msg= 'Electrode Design not implemented';
+                    error.code= 1; % 0 noerror > 0 error
+                    return; % ??
+                    % msgbox('Electrode Design not implemented')
+                    % DoNotGenerate=1;
             end
             
             elec_pos_2D=[elec_n,1]; % if '2D_circ'
-            if DoNotGenerate== 0
-                elec_set(i).pos = [x(:),y(:),z(:),nx(:),ny(:),nz(:)];
 
-                R = [cos(alpha),-sin(alpha),0; sin(alpha),cos(alpha),0;0,0,1];
+            % generate position of electrodes
+            elec_pos = [xyz,n];
 
-                elec_set(i).pos(:,1:3)=(R*elec_set(i).pos(:,1:3)')';
-                switch EIDORS.chamber.electrode(i).Form
-                    case 'Circular'
-                        tmp_shape=[Radius_elecs,0,EIDORS.chamber.body.FEM_refinement];
-                    case 'Rectangular'
-                        tmp_shape=[EIDORS.chamber.electrode(i).Diameter_Width,EIDORS.chamber.electrode(i).Height,EIDORS.chamber.body.FEM_refinement];
-                        tmp_shape=[Radius_elecs,0,EIDORS.chamber.body.FEM_refinement];
-                    case 'Point'
-                        tmp_shape=[0,0,EIDORS.chamber.body.FEM_refinement];
-                        tmp_shape=[Radius_elecs,0,EIDORS.chamber.body.FEM_refinement];
-                    otherwise
-                end
-                elec_set(i).shape = tmp_shape.*ones(elec_n,1);
-                clear tmp
-                for k=1:elec_n
-                    tmp(k)= {elec_set(i).obj};
-                end
-                if (i==1)
-                    elec_pos = elec_set(i).pos;
-                    elec_shape = elec_set(i).shape;
-                    elec_obj= tmp;
-                else
-                    elec_pos = [elec_pos ;elec_set(i).pos];
-                    elec_shape = [elec_shape;elec_set(i).shape];
-                    elec_obj= [elec_obj,tmp];
-                end
+            % rotation in z only
+            gamma= rot_angle(3);
+            Rz = [
+                cos(gamma), -sin(gamma), 0;
+                sin(gamma), cos(gamma), 0;
+                0, 0, 1
+            ];
+            Rz= [Rz,zeros(size(Rz));zeros(size(Rz)), Rz];
+            elec_pos=(Rz*elec_pos')';
+
+            % generate shape of electrodes
+            elec_form= obj.elecForm;
+
+            switch elec_form
+                case obj.ELEC_FORMS{1} %'Circular'
+                    tmp_shape=[elec_r,0,chamber.femRefinement];
+
+                case obj.ELEC_FORMS{2} %'Rectangular'
+                    tmp_shape=[obj.elecSize(1),obj.elecSize(2),chamber.femRefinement];
+
+                case obj.ELEC_FORMS{3} %'Point'
+                    tmp_shape=[0,0,chamber.femRefinement];
+
+                otherwise
+                    error.msg= 'Electrode form not implemented';
+                    error.code= 1; % 0 noerror > 0 error
+                    return; % ??
             end
-            % end
+            elec_shape = tmp_shape.*ones(elec_n,1);
+        
+            % generate shape of electrodes
+            place = lower(obj.elecPlace); %for a
+            
+            for k=1:elec_n
+                elec_obj{k}= place;
+            end
+                % if (i==1)
+                %     elec_pos = elec_set(i).pos;
+                %     elec_shape = elec_set(i).shape;
+                %     elec_obj= tmp;
+                % else
+                %     elec_pos = [elec_pos ;elec_set(i).pos];
+                %     elec_shape = [elec_shape;elec_set(i).shape];
+                %     elec_obj= [elec_obj,tmp];
+                % end
+                
+                % end
         end
 
     end

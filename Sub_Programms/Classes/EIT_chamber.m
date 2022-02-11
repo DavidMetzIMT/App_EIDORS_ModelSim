@@ -23,6 +23,7 @@ classdef EIT_chamber
             %     boxSize=varargin{2}; % X, Y, Z; Default: [1,1,1]
             %     femRefinement=varargin{3}; Default: 0.5
             %     form= varargin{4}; % Cylinder, Cube, Circle, Rectangular; Default:'Cylinder'
+
             if nargin==4
                 obj.name= varargin{1}; % User specific name
                 obj.boxSize=varargin{2}; % X, Y, Z
@@ -30,83 +31,126 @@ classdef EIT_chamber
                 obj.form= varargin{4}; % Cylinder, Cube, Circle, Rectangular
             else
                 obj.name= 'NameDesignOfChamber'; % User specific name
-                obj.boxSize=[1, 1, 1]; % X, Y, Z
+                obj.boxSize=[5, 5, 2]; % X, Y, Z
                 obj.femRefinement= 0.5;
                 obj.form= obj.FORMS{1}; % Default:'Cylinder'
             end
         end
 
         function value = length(obj)
+            %Return the size of the chamber in x direction defined as length
+
             value = obj.boxSize(1);
         end
 
         function value = width(obj)
+            %Return the size of the chamber in y direction defined as width
+
             value = obj.boxSize(2);            
         end
 
         function value = height(obj)
+            %Return the size of the chamber in Z direction defined as height
+
             value = obj.boxSize(3);
         end
+        
+        function l = box_limits(obj)
+            %Returns the limits of the chamber in the 3 xyz directions
+            % l= [minX, maxX; minY, maxY; minZ, maxZ]
 
-        function obj = set.form(obj, val)
-            % check if correct form has been transmitted
-            if any(strcmp(obj.FORMS,val))
-                obj.form=val;
-                switch val
-                    case obj.FORMS{1} % 'Cylinder'
-                        if obj.boxSize(1)>0 % set box size in x and y identical
-                            obj.boxSize(2)=obj.boxSize(1);
-                        elseif obj.boxSize(2)>0
-                            obj.boxSize(1)=obj.boxSize(2);
-                        else 
-                            errordlg('Negative X Y dimensions not suported' );
-                        end
-                    case obj.FORMS{2} % 'Cubic'
+            l=[
+                -obj.length()/2,obj.length()/2;
+                -obj.width()/2,obj.width()/2;
+                -obj.height()/2,obj.height()/2];
+        end
 
-                    case obj.FORMS{3} % '2D_Circ'
-                        obj.boxSize(3)=0; 
-                        if obj.boxSize(1)>0 % set box size in x and y identical
-                            obj.boxSize(2)=obj.boxSize(1);
-                        elseif obj.boxSize(2)>0
-                            obj.boxSize(1)=obj.boxSize(2);
-                        else 
-                            errordlg('Negative X Y dimensions not suported' );
-                        end
-                end
-            else
-                errordlg('The chamber form ist not correct');
+        function r = radius(obj)
+            % return the radius of the comprised circle 
+
+            val= obj.form;
+            switch val
+                case obj.FORMS{1} % 'Cylinder'
+                    r= obj.length()/2;        
+
+                case obj.FORMS{2} % 'Cubic'
+                    r= min([obj.length(),obj.width()])/2
+                    % r= sqrt(obj.length()^2+obj.height()^2); % to define
+
+                case obj.FORMS{3} % '2D_Circ'
+                    r= obj.length()/2;
             end
         end
 
+
+        function obj = set.form(obj, val)
+            %Setter for "form"
+
+            % check if correct form has been transmitted
+            if ~any(strcmp(obj.FORMS,val))
+                return;
+            end
+
+            % set the value
+            obj.form=val;
+
+            % and operate some automatic changes depending the form selected  
+            switch val
+                case obj.FORMS{1} % 'Cylinder'
+                    % set box size in x and y identical
+                    if obj.boxSize(1)>0 
+                        obj.boxSize(2)=obj.boxSize(1);
+                    elseif obj.boxSize(2)>0
+                        obj.boxSize(1)=obj.boxSize(2);
+                    else 
+                        errordlg('Negative X Y dimensions not suported' );
+                    end
+                case obj.FORMS{2} % 'Cubic'
+
+                case obj.FORMS{3} % '2D_Circ'
+                    % set z size to 0 as it is 2D!
+                    obj.boxSize(3)=0; 
+                    % set box size in x and y identical
+                    if obj.boxSize(1)>0 
+                        obj.boxSize(2)=obj.boxSize(1);
+                    elseif obj.boxSize(2)>0
+                        obj.boxSize(1)=obj.boxSize(2);
+                    else 
+                        errordlg('Negative X Y dimensions not suported' );
+                    end
+            end
+            
+        end
+
         function val = supported_forms(obj)
-            % returns the supported chamber forms
+            %Returns the supported chamber forms
+
             val = obj.FORMS;
         end
         function val = allowed_placement(obj)
-            % returns the supported chamber forms
+            %Returns the supported chamber forms
 
             index_actual_form = find(strcmp(obj.FORMS,obj.form));
             val = obj.ALLOW_ELEC_PLACEMENT(index_actual_form, :);
         end
 
         function shape = shape_for_ng(obj)
-            %% Use "ng_mk_gen_models"
-            radius    = num2str(obj.length()/2);
+            %Returns the shape string used to generate a fmdl with EIDORS 
+            % using "ng_mk_gen_models"
+
+            radius    = num2str(obj.radius());
             length    = num2str(obj.length()/2); % centered
             depth     = num2str(obj.width()/2); % centered
             height    = num2str(obj.height()/2); % centered 
-            %mit height_cyl=2 & maxh=0.2 scheint es probleme zu geben, nur zur Info!
             maxh      = num2str(obj.femRefinement);
             type= obj.form;
             switch type
-
                 case obj.FORMS{1} % 'Cylinder'
                     shape = [
                         'solid wall    = cylinder (0,0,0; 0,0,1;' radius '); \n', ...
                         'solid top    = plane(0,0,' height ';0,0,1);\n' ...
                         'solid bottom = plane(0,0,-' height ';0,0,-1);\n' ...
                         'solid mainobj= top and bottom and wall -maxh=' maxh ';\n'];
-                    return;
 
                 case obj.FORMS{2} % 'Cubic'
                     shape = [
@@ -117,11 +161,9 @@ classdef EIT_chamber
                         'solid top    = plane(' length ',' depth ',' height ';0,0,1);\n' ...
                         'solid bottom = plane(-' length ',-' depth ',-' height ';0,0,-1);\n' ...
                         'solid mainobj= top and bottom and wall -maxh=' maxh ';\n'];
-                    return;
 
                 case obj.FORMS{3}% '2D_Circ'
                     shape = [0, obj.length()/2, obj.femRefinement];
-                    return;
                 otherwise
                     errordlg('wrong form of the chamber')
             end 

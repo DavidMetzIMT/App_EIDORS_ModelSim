@@ -56,24 +56,46 @@ classdef EIT_setup < handle
      
         end
 
+        function ch = get.chamber(obj)
+            %Returns the chamber object
+            ch= obj.chamber;            
+        end
+
         function struct4gui = get_elec_layout_4_gui(obj)
+            %Returns the electrodes layout as a struct array for the display 
+            %in gui
+
             for i=1:length(obj.elec_layout)
                 struct4gui(i)=obj.elec_layout(i).get_struct_4_gui();
             end
         end
 
 
-        function [shape, elec_pos, elec_shape, elec_obj] = data_for_ng(input)
+        function [shape, elec_pos, elec_shape, elec_obj, error] = data_for_ng(obj)
+            %Returns the data needed for the generation of a fmdel with EIDORS 
+            % using "ng_mk_gen_models":
+            % shape, elec_pos, elec_shape, elec_obj
+            % also an error flag containing .code (>0 error)
+            %                               .msg message of error 
 
+            % shape string for eidors model generation function with ng
             shape= obj.chamber.shape_for_ng();
-            [elec_pos, elec_shape, elec_obj] = obj.elec_layout.elec_for_ng(obj.chamber)
 
-
-            
-
-
-
-            
+            % electrodes data for eidors model generation function with ng
+            elec_pos = [];
+            elec_shape = [];
+            elec_obj= {};
+            for i=1:length(obj.elec_layout)
+                [elec_pos_i, elec_shape_i, elec_obj_i, error] = obj.elec_layout.data_for_ng(obj.chamber);
+                if error.code
+                    error
+                    errordlg(error.msg);
+                    return;
+                end
+                elec_pos = cat(1,elec_pos, elec_pos_i);
+                elec_shape = cat(1,elec_shape, elec_shape_i);
+                elec_obj= cat(1, elec_obj, elec_obj_i);
+            end
         end
 
 
