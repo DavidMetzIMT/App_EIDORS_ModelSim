@@ -13,24 +13,23 @@ classdef EIT_setup < handle
             %UNTITLED2 Construct an instance of this class
             %   Detailed explanation goes here
             obj.chamber= EIT_chamber();
-            obj.inj= EIT_pattern();
-            obj.meas= EIT_pattern();
+            obj.pattern= EIT_pattern();
             obj.elec_layout= EIT_elec_layout();
         end
 
         function obj = set.chamber(obj, chamber)
             %UNTITLED2 Construct an instance of this class
             %   Detailed explanation goes here
-            if isa(chamber_in, 'EIT_chamber')
+            if isa(chamber, 'EIT_chamber')
                 obj.chamber= chamber;
             else
-                errordlg('Chamber has to be an EIT_Chamber cls')
+                errordlg('Chamber has to be an EIT_Chamber cls');
             end
         end
 
-        function obj = reset_elec_layout(obj)
+        function reset_elec_layout(obj)
             %reset_elec_layout clear the electrode layouts
-            obj.elec_layout=EIT_elec_layout()
+            obj.elec_layout=EIT_elec_layout();
         end
 
         function obj = add_elec_layout(obj, layout)
@@ -52,10 +51,32 @@ classdef EIT_setup < handle
             if isa(pattern, 'EIT_pattern') 
                 obj.pattern= pattern;
             else
-                errordlg('Chamber has to be an EIT_Chamber cls')
+                errordlg('Chamber has to be an EIT_Chamber cls');
             end
      
         end
+
+        function struct4gui = get_elec_layout_4_gui(obj)
+            for i=1:length(obj.elec_layout)
+                struct4gui(i)=obj.elec_layout(i).get_struct_4_gui();
+            end
+        end
+
+
+        function [shape, elec_pos, elec_shape, elec_obj] = data_for_ng(input)
+
+            shape= obj.chamber.shape_for_ng();
+            [elec_pos, elec_shape, elec_obj] = obj.elec_layout.elec_for_ng(obj.chamber)
+
+
+            
+
+
+
+            
+        end
+
+
     end
 end
 

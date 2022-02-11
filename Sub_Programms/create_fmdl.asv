@@ -5,6 +5,7 @@ arguments % argument validator
 end
 
 fmdl = make_fwd_model_ngmkgenmodel();
+fmdl.name = eit_env;
 %%
 
 %% Set Solving Parameter fo Solving the forward model
