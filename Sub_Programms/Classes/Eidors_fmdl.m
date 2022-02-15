@@ -111,13 +111,14 @@ classdef Eidors_fmdl < handle
                 [fmdl,mat_idx] = ng_mk_cyl_models(shape_str, elec_pos, elec_shape(1,:));
             else
                 fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj,add_text);
-            end
-            for i= 1:size(fmdl.electrode,2)
-                fmdl.electrode(i).pos =elec_pos(i,:);
-                fmdl.electrode(i).shape=elec_shape(i);
-                fmdl.electrode(i).obj=elec_obj(i);
+                for i= 1:size(fmdl.electrode,2)
+                    fmdl.electrode(i).pos =elec_pos(i,:);
+                    fmdl.electrode(i).shape=elec_shape(i);
+                    fmdl.electrode(i).obj=elec_obj(i);
+                end
             end
             
+
             fmdl.get_all_meas = 1;
 
             obj.set_fmdl_except(fmdl, {'name', 'solve', 'jacobian', 'system_mat', 'misc'});
