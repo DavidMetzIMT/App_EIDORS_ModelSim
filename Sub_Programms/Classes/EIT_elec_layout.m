@@ -22,7 +22,7 @@ classdef EIT_elec_layout
                                     0,   1,   1 ; % 'Array_Grid 45'
                                     0,   1,   1 ; % 'Array_PolkaDot 0'
                                     0,   1,   1 ; % 'Array_PolkaDot 45'
-        ];  
+        ];
     end
     methods
         
@@ -118,7 +118,7 @@ classdef EIT_elec_layout
             error = build_error('', 0);
 
             %% Format the number of electrodes
-            [n_XY, n_tot, error] = format_elec_n(obj.elecNb, obj.layoutDesign);
+            [n_XY, n_tot, error] = obj.get_nb_elec();
             if error.code>0 return; end
             
             %% Generate parameters for the selected electrode placement
@@ -223,6 +223,57 @@ classdef EIT_elec_layout
                 return; % ??
             end
         end
+
+        function [n_XY, n_tot, error] = get_nb_elec(obj)
+            % format the electrodes numbers
+            % if elec_n = [integer part of elec_nb, 100*fractional part of elec_nb ]
+            % return n_XY = 
+        
+            error = build_error('', 0);
+            n_tot=0;
+        
+            % is the number of electrodes a float -> elec_nX, elec_nY for arrays 
+            elec_n= obj.elecNb;
+            elec_n = [
+                round(elec_n-mod(elec_n,1))
+                round(mod(elec_n,1)*100)];
+        
+            % check if electrode number > 0
+            if ~elec_n(1)>0
+                error = build_error('Electrode number should be > 0 ', 1);
+                return;
+            end
+        
+            n_XY= elec_n; 
+            layout_design=obj.layoutDesign;
+            switch layout_design
+                case 'Ring'
+        
+                case {'Array_Grid 0', 'Array_Grid 45'}
+                    if elec_n(2) == 0 
+                        if ~(round(sqrt(elec_n(1)))^2==elec_n(1)) % verify if n is a^2
+                            warndlg('number of electrodes set to 16 (please give a a^2 number of electrodes for square Array_Grid) ');
+                            n_XY=[4, 4];
+                        else
+                            n_XY=[round(sqrt(elec_n(1))),round(sqrt(elec_n(1)))];
+                        end
+                    end
+                    
+                % case {'Array_PolkaDot 0', 'Array_PolkaDot 45'} 
+        
+                otherwise
+                    error = build_error('Electrode Design not implemented', 1);
+                    return;
+            end
+            if n_XY(2)>0
+                n_tot= n_XY(1)*n_XY(2);
+            else
+                n_tot= n_XY(1);
+            end
+        
+            
+        end
+
     end
 end
 
@@ -251,54 +302,7 @@ function [xyz, nxyz, error] = get_normalized_layout(layout_design ,n_XY)
     
 end
 
-function [n_XY, n_tot, error] = format_elec_n(elec_nb, layout_design)
-    % format the electrodes numbers
-    % if elec_n = [integer part of elec_nb, 100*fractional part of elec_nb ]
-    % return n_XY = 
 
-    error = build_error('', 0);
-    n_tot=0;
-
-    % is the number of electrodes a float -> elec_nX, elec_nY for arrays 
-    elec_n= elec_nb;
-    elec_n = [
-        round(elec_n-mod(elec_n,1))
-        round(mod(elec_n,1)*100)];
-
-    % check if electrode number > 0
-    if ~elec_n(1)>0
-        error = build_error('Electrode number should be > 0 ', 1);
-        return;
-    end
-
-    n_XY= elec_n; 
-    switch layout_design
-        case 'Ring'
-
-        case {'Array_Grid 0', 'Array_Grid 45'}
-            if elec_n(2) == 0 
-                if ~(round(sqrt(elec_n(1)))^2==elec_n(1)) % verify if n is a^2
-                    warndlg('number of electrodes set to 16 (please give a a^2 number of electrodes for square Array_Grid) ');
-                    n_XY=[4, 4];
-                else
-                    n_XY=[round(sqrt(elec_n(1))),round(sqrt(elec_n(1)))];
-                end
-            end
-            
-        % case {'Array_PolkaDot 0', 'Array_PolkaDot 45'} 
-
-        otherwise
-            error = build_error('Electrode Design not implemented', 1);
-            return;
-    end
-    if n_XY(2)>0
-        n_tot= n_XY(1)*n_XY(2);
-    else
-        n_tot= n_XY(1);
-    end
-
-    
-end
 
 function [layout_r, f_pos, c_pos, n_vec, error] = param_for_elec_place(elec_place, layout_size, chamber_radius, chamber_limits)
     % Returns the parameters dependent fro each electrodes placemenent

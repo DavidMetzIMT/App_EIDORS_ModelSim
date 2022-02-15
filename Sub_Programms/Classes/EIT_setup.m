@@ -86,15 +86,25 @@ classdef EIT_setup < handle
             elec_shape = [];
             elec_obj= {};
             for i=1:length(obj.elec_layout)
-                [elec_pos_i, elec_shape_i, elec_obj_i, error] = obj.elec_layout.data_for_ng(obj.chamber);
+                [elec_pos_i, elec_shape_i, elec_obj_i, error] = obj.elec_layout(i).data_for_ng(obj.chamber);
                 if error.code
-                    error
-                    errordlg(error.msg);
                     return;
                 end
                 elec_pos = cat(1,elec_pos, elec_pos_i);
                 elec_shape = cat(1,elec_shape, elec_shape_i);
-                elec_obj= cat(1, elec_obj, elec_obj_i);
+                elec_obj= cat(2, elec_obj, elec_obj_i); % on second axis...
+            end
+        end
+
+        function [stimulation,meas_select, error] = generate_patterning(obj)
+            n_tot=0
+            for i=1:length(obj.elec_layout)
+                [n_XY, n, error] = obj.elec_layout(i).get_nb_elec();
+                n_tot =n_tot+n;
+            end
+            [stimulation,meas_select, error]= obj.pattern.make(n_tot, length(obj.elec_layout));
+            if error.code
+                return;
             end
         end
 

@@ -5,7 +5,7 @@ classdef EIT_env < handle
     properties
         setup EIT_setup % regroup the data for the chamber/pattern
         fwd_model Eidors_fmdl % the forward model from EIDORS
-        inv_model %Eidors_imdl % the inverse model from EIDORS
+        inv_model Eidors_imdl % the inverse model from EIDORS
         sim EIT_sim_env % simulation env for simulation with EIDORS
         rec EIT_rec_env %Reconstruction environmnent with EIDORS
         
@@ -15,6 +15,11 @@ classdef EIT_env < handle
         % Pattern -> moved to EIT_setup
         flag
     end
+
+    properties (Access=private)
+        FMDL_GEN=0;
+        
+    end
     
     methods
         function obj = EIT_env()
@@ -23,6 +28,7 @@ classdef EIT_env < handle
             obj.sim=EIT_sim_env();
             obj.rec=EIT_rec_env();
             obj.fwd_model= Eidors_fmdl();
+            obj.FMDL_GEN=0;
         end
 
         function success = save(obj, folder, filename)
@@ -51,10 +57,14 @@ classdef EIT_env < handle
         function [fmdl, success] = create_fwd_model(obj, add_text)
             %create the foward model and return the fmdl fpr EIDORS/for plot...
 
+            obj.FMDL_GEN=0;
+            fmdl =0;
+            success=0;
+
             [shape_str, elec_pos, elec_shape, elec_obj, error] = obj.setup.data_for_ng();
             if error.code
-                fmdl =0;
-                success=0;
+                error
+                errordlg(error.msg);
                 return
             end
 
@@ -63,10 +73,38 @@ classdef EIT_env < handle
                 shape_str, elec_pos, elec_shape, elec_obj, add_text);
 
             success=1;
+            obj.FMDL_GEN=1;
             
         end
 
+        function success = generate_pattern(obj)
+
+            success=0;
+            if ~obj.FMDL_GEN % test if an fwd_model has beeen succefully generated
+                error= build_error('Generate first a Forward Model!',1)
+                errordlg(error.msg);
+                return;
+            end 
+            
+            %% Generate the pattern
+            [stimulation, meas_select, error] = obj.setup.generate_patterning()
+            if error.code
+                error
+                errordlg(error.msg);
+                return;
+            end
+            %% Set the pattern in the fwd_model
+            obj.fwd_model.set_pattern(stimulation, meas_select);
+
+            success=1;
+        end
+
+
     end 
+
+    % --------------------------------------------------------------------------
+    %% PRIVATE METHODS
+    % --------------------------------------------------------------------------
 
     methods (Access=private)
 
