@@ -65,8 +65,9 @@ classdef EIT_chamber
                 -obj.height()/2,obj.height()/2];
         end
 
-        function r = radius(obj)
-            % return the radius of the comprised circle 
+        function r = min_radius(obj)
+            % return the radius of the comprised circle
+            % radius in the xy_plane
 
             val= obj.form;
             switch val
@@ -74,9 +75,8 @@ classdef EIT_chamber
                     r= obj.length()/2;        
 
                 case obj.FORMS{2} % 'Cubic'
-                    r= min([obj.length(),obj.width()])/2
-                    % r= sqrt(obj.length()^2+obj.height()^2); % to define
-
+                    r= min([obj.length(),obj.width()])/2;
+                    
                 case obj.FORMS{3} % '2D_Circ'
                     r= obj.length()/2;
             end
@@ -138,7 +138,7 @@ classdef EIT_chamber
             %Returns the shape string used to generate a fmdl with EIDORS 
             % using "ng_mk_gen_models"
 
-            radius    = num2str(obj.radius());
+            radius    = num2str(obj.min_radius());
             length    = num2str(obj.length()/2); % centered
             depth     = num2str(obj.width()/2); % centered
             height    = num2str(obj.height()/2); % centered 
