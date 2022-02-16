@@ -12,13 +12,14 @@ classdef Eidors_fmdl < handle
         solve                 
         jacobian              
         system_mat            
-        type                  
+        type  = 'fwd_model';                
         mat_idx               
         normalize_measurements
         misc                  
         get_all_meas          
         stimulation           
-        meas_select           
+        meas_select
+        % coarse2fine           
 
     end
 
@@ -46,7 +47,8 @@ classdef Eidors_fmdl < handle
             obj.misc        =0;          
             obj.get_all_meas     =0;     
             obj.stimulation    =0;       
-            obj.meas_select     =0;  
+            obj.meas_select     =0;
+            % obj.coarse2fine=0;  
 
         end
 

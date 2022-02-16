@@ -126,9 +126,8 @@ end
 function pattern = get_pattern_params(pattern_typ, special_user)
 
     special_pattern=special_user;
-    special_pattern=replace(special_pattern,'[','');
-    special_pattern=replace(special_pattern,']','');
-    special_pattern= str2num(special_pattern);
+    special_pattern = str2num_array(special_pattern)
+
     switch pattern_typ
         case 'user defined'
             pattern = special_pattern;

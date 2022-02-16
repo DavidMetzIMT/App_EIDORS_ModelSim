@@ -14,7 +14,7 @@ classdef EIT_elec_layout
     end
     properties (Access=private)
         ELEC_FORMS ={'Circular', 'Rectangular', 'Point'};
-        LAYOUT_DESIGN = {'Ring', 'Array_Grid 0', 'Array_Grid 45'}%, 'Array_PolkaDot 0', 'Array_PolkaDot 45'};
+        LAYOUT_DESIGN = {'Ring', 'Array_Grid 0', 'Array_Grid 45'};%, 'Array_PolkaDot 0', 'Array_PolkaDot 45'};
         ELEC_PLACE ={'Wall', 'Top', 'Bottom'};
         ALLOW_ELEC_PLACEMENT = [ % 'Wall', 'Top', 'Bottom'
                                     1,   1,   1 ; % 'Ring'

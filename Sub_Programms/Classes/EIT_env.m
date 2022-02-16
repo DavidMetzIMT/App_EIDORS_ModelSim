@@ -28,6 +28,7 @@ classdef EIT_env < handle
             obj.sim=EIT_sim_env();
             obj.rec=EIT_rec_env();
             obj.fwd_model= Eidors_fmdl();
+            obj.inv_model= Eidors_imdl();
             obj.FMDL_GEN=0;
         end
 
@@ -99,7 +100,31 @@ classdef EIT_env < handle
             success=1;
         end
 
+        function set_sim(obj, medium, objects)
+            % Medium
+            obj.sim.mediumConduct= medium;
+            
+            % Objects (struct)
+            obj.sim.reset_objects();
+            for i=1:length(objects)
+                object=objects(i);
+                obj.sim.add_object(EIT_object(object));           
+            end
+            
+        end
 
+        function solve_fwd(obj, add_object_inFEM)
+
+            if add_object_inFEM==1
+                warndlg('add object in FEM is not implemented yet')
+            end
+
+            obj.sim.fmdl= obj.fwd_model.fmdl();
+
+            obj.sim.solve_fwd()
+            
+        end
+        
     end 
 
     % --------------------------------------------------------------------------
