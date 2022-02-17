@@ -76,7 +76,7 @@ classdef EIT_setup < handle
         end
 
 
-        function [shape, elec_pos, elec_shape, elec_obj, error] = data_for_ng(obj)
+        function [shape, elec_pos, elec_shape, elec_obj, z_contact, error] = data_for_ng(obj)
             %Returns the data needed for the generation of a fmdel with EIDORS 
             % using "ng_mk_gen_models":
             % shape, elec_pos, elec_shape, elec_obj
@@ -89,15 +89,17 @@ classdef EIT_setup < handle
             % electrodes data for eidors model generation function with ng
             elec_pos = [];
             elec_shape = [];
+            z_contact=[];
             elec_obj= {};
             for i=1:length(obj.elec_layout)
-                [elec_pos_i, elec_shape_i, elec_obj_i, error] = obj.elec_layout(i).data_for_ng(obj.chamber);
+                [elec_pos_i, elec_shape_i, elec_obj_i, z_contact_i, error] = obj.elec_layout(i).data_for_ng(obj.chamber);
                 if error.code
                     return;
                 end
                 elec_pos = cat(1,elec_pos, elec_pos_i);
                 elec_shape = cat(1,elec_shape, elec_shape_i);
                 elec_obj= cat(2, elec_obj, elec_obj_i); % on second axis...
+                z_contact= cat(1, z_contact, z_contact_i);
             end
         end
 

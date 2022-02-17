@@ -138,7 +138,7 @@ classdef Eidors_fmdl < handle
             obj.misc=a;
         end
 
-        function fmdl = gen_fmdl_ng(obj, chamber, shape_str, elec_pos, elec_shape, elec_obj, add_text)
+        function fmdl = gen_fmdl_ng(obj, chamber, shape_str, elec_pos, elec_shape, elec_obj, z_contact, add_text)
             %Generate the fmdl (meshing, etc) with EIDORS using 
             % "ng_mk_cyl_models" for 2D
             % "ng_mk_gen_models" for 3D
@@ -154,6 +154,7 @@ classdef Eidors_fmdl < handle
                     fmdl.electrode(i).pos =elec_pos(i,:);
                     fmdl.electrode(i).shape=elec_shape(i);
                     fmdl.electrode(i).obj=elec_obj(i);
+                    fmdl.electrode(i).z_contact=z_contact(i);
                 end
             end
             

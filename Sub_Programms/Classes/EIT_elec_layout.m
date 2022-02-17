@@ -7,6 +7,7 @@ classdef EIT_elec_layout < handle
         elecPlace % Wall, Top, Bottom
         layoutDesign % Ring, Grid, Polka Dot
         layoutSize % X, Y, Z
+        zContact%
     end
 
     properties (Access = protected)
@@ -46,6 +47,7 @@ classdef EIT_elec_layout < handle
                 obj.elecPlace=var.Position; % Wall, Top, Bottom
                 obj.layoutDesign=var.Design; % Ring, Grid, Polka Dot
                 obj.layoutSize=var.Diameter; % X, Y, Z
+                obj.zContact=var.Zcontact;
             else
                 obj.reset = 1;
                 obj.elecNb=16; % number of electrodes
@@ -54,6 +56,7 @@ classdef EIT_elec_layout < handle
                 obj.elecPlace='Wall'; % Wall, Top, Bottom
                 obj.layoutDesign='Ring'; % Ring, Grid, Polka Dot
                 obj.layoutSize=4; % X, Y, Z
+                obj.zContact=0.01;
             end
         end
 
@@ -70,6 +73,7 @@ classdef EIT_elec_layout < handle
             var.Form            = obj.elecForm; 
             var.Diameter_Width  = obj.elecSize(1);
             var.Height          = obj.elecSize(2);
+            var.Zcontact =obj.zContact;
         end
 
         function cellarray = supported_elec_forms(obj)
@@ -96,7 +100,7 @@ classdef EIT_elec_layout < handle
             r= obj.elecSize(1)/2;
         end
 
-        function [elec_pos, elec_shape, elec_obj, error] = data_for_ng(obj, chamber)
+        function [elec_pos, elec_shape, elec_obj, z_contact, error] = data_for_ng(obj, chamber)
             % Returns data about the electrodes needed to generate a fmdl with EIDORS 
             % using "ng_mk_gen_models"
             % elec_pos = [position vector, normal vector (to the electrode surface)]
@@ -114,6 +118,7 @@ classdef EIT_elec_layout < handle
             elec_pos=[];
             elec_shape=[]; 
             elec_obj={};
+            z_contact=[];
 
             error = build_error('', 0);
 
@@ -150,6 +155,9 @@ classdef EIT_elec_layout < handle
             
             %% Generate object of electrodes
             elec_obj = gen_elec_obj(obj.elecPlace, n_tot);
+
+            %% Generate z-contact of electrodes
+            z_contact= ones(n_tot,1)*obj.zContact;
             
             %% Test length of the ouput values
             if length(elec_obj)~= size(elec_pos, 1)
@@ -158,6 +166,10 @@ classdef EIT_elec_layout < handle
             end
             if size(elec_shape, 1)~=size(elec_pos, 1)
                 error = build_error('elec_pos and elec_shape don''t have same size', 1);
+                return;
+            end
+            if length(z_contact)~= size(elec_pos, 1)
+                error = build_error('elec_pos and z_contact don''t have same size', 1);
                 return;
             end
 
