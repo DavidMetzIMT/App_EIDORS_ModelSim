@@ -61,13 +61,27 @@ classdef EIT_rec_env < handle
             %verify that a fmdl has been cearted!
 
 
-            meas=load(uigetfile('.m', path));
+            meas=load(uigetfile('.mat', path));
+
+            f=fieldnames(meas)
+            if isempty(find(strcmp(f, 'X_ih'))) | isempty(find(strcmp(f, 'X_h')))
+                errordlg('Loaded file should contain a variable Xih and Xh')
+                return;
+            end
 
             % verify if data has same length as expected!!
-
-            obj.set_data_meas(meas.Xih, meas.Xh);
-
-
+            
+            if length(meas.X_ih) ~= length(obj.data_ih.meas)
+                errordlg(['X_ih should have a size of ' num2str(size(obj.data_ih.meas)) ] )
+                return;
+            end
+            if length(meas.X_h)~= length(obj.data_h.meas)
+                errordlg(['X_h should have a size of ' num2str(size(obj.data_ih.meas)) ])
+                return;
+            end
+            
+            obj.data_ih.meas=meas.X_ih;
+            obj.data_h.meas=meas.X_h;
             
         end
 
