@@ -122,8 +122,31 @@ classdef EIT_env < handle
             obj.sim.fmdl= obj.fwd_model.fmdl();
 
             obj.sim.solve_fwd()
+
+            % Load per default meas in rec env
+            obj.rec.set_data_meas(obj.sim.data_ih, obj.sim.data_h)
             
         end
+
+        function solve_inv(obj, load_meas_path)
+
+            % set fmdl in imdl
+            obj.inv_model.set_fwd_model( ...
+                obj.fwd_model);
+
+            % set inv model for rec
+            obj.rec.imdl=   obj.inv_model.imdl();
+
+            % load measuremnt if path is given!
+            if ~strcmp(load_meas_path,'')
+                obj.rec.load_measurements(load_meas_path)
+            end
+            % solve inverso model
+            obj.rec.solve_inv()
+            
+        end
+
+
         
     end 
 

@@ -4,16 +4,13 @@ classdef EIT_sim_env < handle
     
     properties
         name ='Simulation default'
-        fmdl % Eidors_fmdl % the forward model from EIDORS
-        imdl % Eidors_imdl % the inverse model from EIDORS
+        fmdl % the forward model from EIDORS
         objects EIT_object % objects put in the chamber
         mediumConduct % conductivity of the medium
         img_h % homogenious image only medium from EIDORS
         img_ih % inhomogenious image with the objects from EIDORS
         data_h % meas data for img_h from EIDORS (solving the fmdl)
         data_ih % meas data for img_ih from EIDORS (solving the fmdl)
-        iimg  % inverse image from EIDORS (solving the imdl)
-        greit % metrics fro evaluation the iimg
     end
     
     methods
@@ -61,6 +58,9 @@ classdef EIT_sim_env < handle
             obj.data_ih = fwd_solve(obj.img_ih);
         end
 
+        
+
+
         function gen_homogenious_image(obj)
             obj.img_h = mk_image(obj.fmdl, obj.mediumConduct);
             obj.img_h.fwd_solve.get_all_nodes=0;
@@ -69,7 +69,7 @@ classdef EIT_sim_env < handle
         function gen_inhomogenious_image(obj)
 
             for o=1:size(obj.objects,2)
-                conduct(:,:,o) = obj.objects(o).get_conduct_data(obj.fmdl)
+                conduct(:,:,o) = obj.objects(o).get_conduct_data(obj.fmdl);
             end
 
             % handling the cell overlapping by taking only the max value of
@@ -97,6 +97,9 @@ classdef EIT_sim_env < handle
             obj.img_ih = mk_image(obj.fmdl, conduct_data);
 
         end
+
+
+        
         
     end
 end

@@ -45,7 +45,6 @@ classdef EIT_object
             
         end
 
-
         function var = get_struct_4_gui(obj)
             % attention here the order count
             var.Type        = obj.type; 
@@ -56,17 +55,15 @@ classdef EIT_object
         end
 
         function obj=set.pos(obj, value)
-
             if length(value)~=3
                 warndlg('Position of object has been set to [0,0,0]');
                 obj.pos= [0,0,0];
             else
-                obj.pos= value
+                obj.pos= value;
 
             end
             
         end
-
 
         function output = allowed_type(obj)
             output =obj.OBJ_TYPE;
@@ -85,14 +82,13 @@ classdef EIT_object
                     func = @(x,y,z) (x-p(1)).^2 + (y-p(2)).^2+(z-p(3)).^2 <= d(1)^2;
 
                 case obj.OBJ_TYPE{2}%'Sphere'
-                    func = @(x,y,z) (x-p(1)).^2 + (y-p(2)).^2+(z-p(3)).^2 <= d(1)^2;
+                    func = @(x,y,z) (x-p(1)).^2 + (y-p(2)).^2+(z-p(3)).^2 <= 5^2;
                     
                 case obj.OBJ_TYPE{3}%'Cylinder'
                     func = @(x,y,z) (x-p(1)).^2 + (y-p(2)).^2 <= (ones(size(y))*d(1)).^2 & z>=p(3);
             end
         end
         
-
         function conduct = get_conduct_data(obj, fmdl)
             % return the conductivity vector correspoding of the object for
             %the FEM elem defined in fmdl
@@ -100,7 +96,6 @@ classdef EIT_object
             % conduct = [elem_data for layer1, elem_data for layer2,...]
 
             layer_conduct=obj.conduct;
-
             for layer=1:size(layer_conduct,1)
                 % generating the whole random cell (cytoplasm)
                 layer_conduct = layer_conduct(layer,1);
@@ -110,7 +105,7 @@ classdef EIT_object
                     layer_ratio = 1;
                 end
 
-                select_fcn = obj.object_func(layer_ratio)
+                select_fcn = obj.object_func(layer_ratio);
                 % to simplify
                 conduct(:,layer) = (elem_select(fmdl, select_fcn)~=0)*layer_conduct;
             end
