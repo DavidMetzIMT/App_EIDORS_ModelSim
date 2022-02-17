@@ -1,4 +1,4 @@
-classdef EIT_pattern
+classdef EIT_pattern < handle
     %UNTITLED2 Summary of this class goes here
     %   Detailed explanation goes here
     
@@ -14,6 +14,11 @@ classdef EIT_pattern
 
     properties (Access=private)
         GENERATING_FUNCTIONS={'Ring patterning','Array patterning','3D patterning'};
+        PATTERNS= {
+            {'{ad}';'{op}';'user defined'};
+            {'array_ad_simple';'array_ad_full';'array_ad_line';'array_op'};
+            {'3d_ad_0';'3d_ad_1';'3d_ad_2';'3d_ad_3';'3d_adop_user';'3d_op_inoutplane';'3d_op'};
+        }
     end
     
     methods
@@ -36,20 +41,26 @@ classdef EIT_pattern
                 obj.patternOption=varargin{6};
                 obj.patternFunc=varargin{7};
             else % default values >>> TODO
-                % obj.injAmplitude = varargin{1};
-                % obj.injType=varargin{1};
-                % obj.injSpecial= varargin{1};
-                % obj.measType=varargin{1}; 
-                % obj.measSpecial=varargin{1};
-                % obj.patternOption=varargin{1}; 
-                % obj.patternFunc=varargin{1}; 
+                obj.injAmplitude = 1;
+                obj.injSpecial= '[1 2]';
+                obj.measSpecial='[1 2]';
+                obj.patternOption='meas_current';
+                obj.init_pattern_func(obj.GENERATING_FUNCTIONS{1});
             end
-
         end
 
 
 
         %% Setter 
+        function init_pattern_func(obj, value)
+            
+            obj.patternFunc=value;
+            p=obj.get_patterns();
+            obj.injType=p{1};
+            obj.measType=p{1};
+            
+        end
+
         function obj = set.injAmplitude(obj, value)
             obj.injAmplitude = value;
             
@@ -85,10 +96,14 @@ classdef EIT_pattern
             
         end
 
-        %% Getter
         function val = get_generating_func(obj)
             val= obj.GENERATING_FUNCTIONS;
             
+        end
+
+        function val = get_patterns(obj)
+            indx= find(strcmp(obj.GENERATING_FUNCTIONS,obj.patternFunc));
+            val= obj.PATTERNS{indx};
         end
 
         function [stimulation,meas_select, error] = make(obj, n_elec, n_row)
@@ -126,7 +141,7 @@ end
 function pattern = get_pattern_params(pattern_typ, special_user)
 
     special_pattern=special_user;
-    special_pattern = str2num_array(special_pattern)
+    special_pattern = str2num_array(special_pattern);
 
     switch pattern_typ
         case 'user defined'

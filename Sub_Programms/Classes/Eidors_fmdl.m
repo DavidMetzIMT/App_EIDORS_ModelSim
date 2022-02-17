@@ -22,10 +22,16 @@ classdef Eidors_fmdl < handle
         % coarse2fine           
 
     end
+    properties (Access = protected)
+        initialized
+    end
 
-    % properties (Access = private)
-    %     type = 'fwd_model'
-    % end
+    properties (Access = private)
+        SOLVER = {'eidors_default', 'fwd_solve_1st_order', 'aa_fwd_solve'}
+        JACOBIAN = {'eidors_default', 'jacobian_adjoint','aa_calc_jacobian'}
+        SYS_MAT = {'eidors_default','system_mat_1st_order', 'aa_calc_system_mat'}
+        PERM_SYM = {'n'}
+    end
     
     methods
         function obj = Eidors_fmdl()
@@ -36,21 +42,44 @@ classdef Eidors_fmdl < handle
             obj.boundary_numbers  =0;    
             obj.gnd_node      =0;        
             obj.np_fwd_solve =0;         
-            obj.name       =0;           
+            obj.name       ='fdml_default_name';           
             obj.electrode  =0;           
-            obj.solve       =0;          
-            obj.jacobian     =0;         
-            obj.system_mat    =0;        
+            obj.solve       =obj.SOLVER{1};          
+            obj.jacobian     =obj.JACOBIAN{1};      
+            obj.system_mat    =obj.SYS_MAT{1};       
             obj.type       =0;           
             obj.mat_idx   =0;            
             obj.normalize_measurements=0;
-            obj.misc        =0;          
+            a.perm_sym= obj.PERM_SYM{1};
+            obj.misc=a;
+                      
             obj.get_all_meas     =0;     
             obj.stimulation    =0;       
             obj.meas_select     =0;
-            % obj.coarse2fine=0;  
+            % obj.coarse2fine=0; 
+            
+            obj.initialized=0;
 
         end
+
+
+        function cellarray = supported_solvers(obj)
+            %Return Supported fmdl solver
+            cellarray = obj.SOLVER;
+        end
+        function cellarray = supported_jacobians(obj)
+            %Return Supported fmdl  jacobian
+            cellarray = obj.JACOBIAN;
+        end
+        function cellarray = supported_sys_mats(obj)
+            %Return Supported fmdl system mat
+            cellarray = obj.SYS_MAT;
+        end
+        function cellarray = supported_perm_sym(obj)
+            %Return Supported fmdl perm sym
+            cellarray = obj.PERM_SYM;
+        end
+
 
         function fmdl4EIDORS = fmdl(obj) % to EIDORS
             %Returns the present object as a structure for use in EIDORS
@@ -61,7 +90,7 @@ classdef Eidors_fmdl < handle
         function obj = set_fmdl(obj, fmdl) % from EIDORS 
             %Set the present object using the fmdl structure from EIDORS
             % only the fields of fmdl also present in obj will be updated
-
+            obj.initialized=0;
             props_o = fieldnames(obj);
             props_f = fieldnames(fmdl);
             for i= 1:length(props_o)
@@ -72,12 +101,14 @@ classdef Eidors_fmdl < handle
                     % errordlg('The chamber form ist not correct');
                 end
             end
+            obj.initialized=2;
         end
 
         function set_pattern(obj, stimulation, meas_select)
-
+            obj.initialized=0;
             obj.stimulation = stimulation;
             obj.meas_select = meas_select;
+            obj.initialized=2;
         end
 
         function set_fmdl_except(obj, fmdl, fields)
@@ -114,14 +145,10 @@ classdef Eidors_fmdl < handle
             % additional properties are added to the electrodes for further use
             % the solving part wil be left as it was and should be set if not 
             % already done!
-
+            obj.initialized=0;
             if strcmp(chamber.form,'2D_Circ')
                 [fmdl,mat_idx] = ng_mk_cyl_models(shape_str, elec_pos, elec_shape(1,:));
             else
-                shape_str
-                elec_pos
-                elec_shape
-                elec_obj
                 fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj,add_text);
                 for i= 1:size(fmdl.electrode,2)
                     fmdl.electrode(i).pos =elec_pos(i,:);
@@ -136,14 +163,18 @@ classdef Eidors_fmdl < handle
             obj.set_fmdl_except(fmdl, {'name', 'solve', 'jacobian', 'system_mat', 'misc'});
 
             fmdl=obj.fmdl();
+            obj.initialized=1;
         end
 
         function [inj, meas] = extract_pattern_for_display(obj)
             % return the patren as elctodes numbers tables
             % inj= [inj-, inj+]
             % meas= [meas-, meas+, inj#]
-
             inj=[];
+            meas=[];
+            if obj.initialized<2;
+                return;
+            end
             for t = 1:size(obj.stimulation,2)
                 p=obj.stimulation(t).stim_pattern;
                 amplitude= sum(abs(p))/2;
@@ -152,7 +183,6 @@ classdef Eidors_fmdl < handle
                 inj(t,:)=[abs(p(end)) abs(p(1))];
             end
 
-            meas=[];
             for inj_nr=1:size(obj.stimulation,2)
                 for t = 1:size(obj.stimulation(inj_nr).meas_pattern,1)
                     p=obj.stimulation(inj_nr).meas_pattern(t,:)';

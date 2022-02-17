@@ -82,13 +82,13 @@ classdef EIT_env < handle
 
             success=0;
             if ~obj.FMDL_GEN % test if an fwd_model has beeen succefully generated
-                error= build_error('Generate first a Forward Model!',1)
+                error= build_error('Generate first a Forward Model!',1);
                 errordlg(error.msg);
                 return;
             end 
             
             %% Generate the pattern
-            [stimulation, meas_select, error] = obj.setup.generate_patterning()
+            [stimulation, meas_select, error] = obj.setup.generate_patterning();
             if error.code
                 error
                 errordlg(error.msg);

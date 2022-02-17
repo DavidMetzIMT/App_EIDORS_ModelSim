@@ -15,7 +15,6 @@ classdef EIT_object
 
     properties (Access = private)
         OBJ_TYPE ={'Cell', 'Sphere', 'Cylinder'};
-        
     end
     
     methods
@@ -45,6 +44,17 @@ classdef EIT_object
             end
             
         end
+
+
+        function var = get_struct_4_gui(obj)
+            % attention here the order count
+            var.Type        = obj.type; 
+            var.Position    = [ '[' num2str(obj.pos) ']']; 
+            var.Dimensions  = [ '[' num2str(obj.dim) ']']; 
+            var.Conductivity= [ '[' num2str(obj.conduct) ']']; 
+            
+        end
+
 
         function output = allowed_type(obj)
             output =obj.OBJ_TYPE;

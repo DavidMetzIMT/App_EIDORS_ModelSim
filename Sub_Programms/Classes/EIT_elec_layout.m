@@ -1,4 +1,4 @@
-classdef EIT_elec_layout
+classdef EIT_elec_layout < handle
 
     properties (Access = public)
         elecNb % number of electrodes

@@ -1,4 +1,4 @@
-classdef EIT_chamber
+classdef EIT_chamber < handle
     properties
         name % User specific name
         boxSize % X, Y, Z

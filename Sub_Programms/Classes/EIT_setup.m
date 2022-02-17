@@ -71,6 +71,11 @@ classdef EIT_setup < handle
         end
 
 
+        function output = get_struct_4_gui(input)
+            
+        end
+
+
         function [shape, elec_pos, elec_shape, elec_obj, error] = data_for_ng(obj)
             %Returns the data needed for the generation of a fmdel with EIDORS 
             % using "ng_mk_gen_models":
@@ -97,7 +102,7 @@ classdef EIT_setup < handle
         end
 
         function [stimulation,meas_select, error] = generate_patterning(obj)
-            n_tot=0
+            n_tot=0;
             for i=1:length(obj.elec_layout)
                 [n_XY, n, error] = obj.elec_layout(i).get_nb_elec();
                 n_tot =n_tot+n;
