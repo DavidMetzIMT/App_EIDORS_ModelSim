@@ -55,6 +55,18 @@ classdef EIT_object
             
         end
 
+        function obj=set.pos(obj, value)
+
+            if length(value)~=3
+                warndlg('Position of object has been set to [0,0,0]');
+                obj.pos= [0,0,0];
+            else
+                obj.pos= value
+
+            end
+            
+        end
+
 
         function output = allowed_type(obj)
             output =obj.OBJ_TYPE;
