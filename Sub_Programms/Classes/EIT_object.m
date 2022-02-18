@@ -48,11 +48,17 @@ classdef EIT_object
         function var = get_struct_4_gui(obj)
             % attention here the order count
             var.Type        = obj.type; 
-            var.Position    = [ '[' num2str(obj.pos) ']']; 
-            var.Dimensions  = [ '[' num2str(obj.dim) ']']; 
-            var.Conductivity= [ '[' num2str(obj.conduct) ']']; 
-            
+            var.Position    = num_array2str(obj.pos); 
+            var.Dimensions  = num_array2str(obj.dim); 
+            var.Conductivity= num_array2str(obj.conduct); 
         end
+
+        function format = get_format_4_gui(obj)
+            % attention here the order count
+            format={obj.OBJ_TYPE, 'char', 'char', 'char' };
+        end
+
+
 
         function obj=set.pos(obj, value)
             if length(value)~=3
