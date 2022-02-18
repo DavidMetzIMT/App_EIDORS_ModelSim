@@ -8,6 +8,8 @@ classdef EIT_env < handle
         inv_model Eidors_imdl % the inverse model from EIDORS
         sim EIT_sim_env % simulation env for simulation with EIDORS
         rec EIT_rec_env %Reconstruction environmnent with EIDORS
+
+        user_entry UserEntry
         
         % old to move/rename some where else... 
         meshQuality
@@ -29,6 +31,7 @@ classdef EIT_env < handle
             obj.rec=EIT_rec_env();
             obj.fwd_model= Eidors_fmdl();
             obj.inv_model= Eidors_imdl();
+            obj.user_entry=UserEntry();
             obj.FMDL_GEN=0;
         end
 
