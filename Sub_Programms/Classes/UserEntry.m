@@ -4,7 +4,6 @@ classdef UserEntry < handle
         type= 'user_entry';
         name =''                      % file name, which contains suitable nets for invers solving
         samplesAmount = [];
-        eit_env EIT_env
 
         mediumsConductRange = [];     % = 5; % or e.g [5 10], one number indicates the maximum possible conductivity of the buffer, two numbers means the range of possible conductivity of the buffer        
         objectType=[]                % cells, antibodies, invsolver
@@ -83,9 +82,29 @@ classdef UserEntry < handle
 
 
         % @Mantas it is useless as the properties are public...
-%         function set.net_file_name(obj, in) 
-%             obj.net_file_name = in;   
-%         end
+        function set.objectConductRange(obj, range_in) 
+
+            for layer =1:size(range_in,1) % we have a multiple layer cell
+                range(layer,:)= range_in(layer,:);
+                len= size(range(layer,:),2);
+                switch len
+                    case 1
+                        range(layer,1:3)=[range(layer,1) range(layer,1) 1];
+                    case 2
+                        range(layer,1:3)=[range(layer,:) 1];
+                    case 3
+                        if range(layer,3)>1
+                            errordlg(['Wrong Conduct range: layer ratio (>1) on layer:', num2str(layer)]);
+                            return;
+                        end
+                    otherwise
+                        errordlg(['Wrong Conduct range']);
+                        return;
+                end
+            end
+
+            obj.objectConductRange = range;
+        end
 %         
 %         function set.chamber_type(obj, in) 
 %             obj.chamber_type = in;   
