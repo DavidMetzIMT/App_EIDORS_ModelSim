@@ -1,6 +1,9 @@
-classdef EIT_sim_env < handle
+classdef EIT_sim_env < matlab.mixin.Copyable % a hanlde with copy methods
     %UNTITLED3 Summary of this class goes here
     %   Detailed explanation goes here
+
+
+    
     
     properties
         name ='Simulation default'
@@ -58,8 +61,6 @@ classdef EIT_sim_env < handle
             obj.data_ih = fwd_solve(obj.img_ih);
         end
 
-        
-
 
         function gen_homogenious_image(obj)
             obj.img_h = mk_image(obj.fmdl, obj.mediumConduct);
@@ -97,9 +98,11 @@ classdef EIT_sim_env < handle
             obj.img_ih = mk_image(obj.fmdl, conduct_data);
 
         end
-
-
-        
-        
+    end
+    methods (Access = protected)
+        function copy = copyElement(obj)
+            copy = copyElement@matlab.mixin.Copyable(obj); %shallow copy of all elements
+            % copy.PipeVault = copy(this.PipeVault); %Deep copy of pipevault which is handle...
+        end
     end
 end
