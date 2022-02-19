@@ -12,10 +12,10 @@ classdef EIT_env < handle
         user_entry UserEntry
         
         % old to move/rename some where else... 
-        meshQuality
+%         meshQuality
         % chamber -> moved to EIT_setup
         % Pattern -> moved to EIT_setup
-        flag
+%         flag
     end
 
     properties (Access=private)
@@ -35,10 +35,21 @@ classdef EIT_env < handle
             obj.FMDL_GEN=0;
         end
 
+        function success = save_auto(obj, folder, filename)
+            %SAVE Save an EIT_env in a mat file
+            success=0;
+            par = obj.set_param4saving(folder, filename, 1);
+            if ~par.success
+                warndlg('Saving aborted!');
+                return;
+            end
+            success= obj.save_p(par);
+        end
+
         function success = save(obj, folder, filename)
             %SAVE Save an EIT_env in a mat file
-            success=0;     
-            par = obj.set_param4saving(folder, filename);
+            success=0;
+            par = obj.set_param4saving(folder, filename, 0);
             if ~par.success
                 warndlg('Saving aborted!');
                 return;
@@ -104,6 +115,7 @@ classdef EIT_env < handle
         end
 
         function set_sim(obj, medium, objects)
+
             % Medium
             obj.sim.mediumConduct= medium;
             
@@ -111,7 +123,11 @@ classdef EIT_env < handle
             obj.sim.reset_objects();
             for i=1:length(objects)
                 object=objects(i);
-                obj.sim.add_object(EIT_object(object));           
+                if isa(object, 'EIT_object')
+                    obj.sim.add_object(object);
+                else
+                    obj.sim.add_object(EIT_object(object));
+                end          
             end
             
         end
@@ -173,16 +189,20 @@ classdef EIT_env < handle
             end
         end
         
-        function par = set_param4saving(obj, folder, filename)
+        function par = set_param4saving(obj, folder, filename, autosave)
+            
             par.ext= '.mat';
             par.filter= ['*' par.ext];
             %check folder, filename
             [par.folder, par.filename] = obj.check_folder_filename(folder, filename);
-
-            promptText = 'Enter file to save environement variables'; % text used by loading saving dialogboxes
-            par.filepath= path_join(par.folder, par.filename); 
-            [par.filename,par.folder, par.success] = uiputfile(par.filter,promptText,par.filepath);
+            par.success=1;
+            if autosave == 0
+                promptText = 'Enter file to save environement variables'; % text used by loading saving dialogboxes
+                par.filepath= path_join(par.folder, par.filename); 
+                [par.filename,par.folder, par.success] = uiputfile(par.filter,promptText,par.filepath);
+            end
             par.filepath= path_join(par.folder, par.filename);
+
         end
         
         function success= save_p(obj, par)
@@ -213,7 +233,7 @@ classdef EIT_env < handle
         function [new_env, success]=  load_p(obj, par)
             if exist(par.filepath)
                 tmp = load(par.filepath);
-                new_env= tmp.eit_env
+                new_env= tmp.eit_env;
                 success=1;
             else
                 new_env='empty';

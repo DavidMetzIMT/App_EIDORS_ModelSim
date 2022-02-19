@@ -60,6 +60,18 @@ classdef EIT_object
 
 
 
+
+        function obj=set.type(obj, value)
+            if isempty(find(strcmp(obj.OBJ_TYPE, value)))
+                errordlg('wrong type value for the object');
+            else
+                obj.type= value;
+            end
+
+        end
+
+
+
         function obj=set.pos(obj, value)
             if length(value)~=3
                 warndlg('Position of object has been set to [0,0,0]');
@@ -118,6 +130,27 @@ classdef EIT_object
             
         end
 
+        function obj = generate_random(obj, user_entry, chamber)
+
+            obj.type=user_entry.objectType; % set type
+            obj.pos= chamber.get_random_pt(); % generate a position in chamber
+
+            % generate a dimension (radius)
+            obj.dim=random_val_from_range(user_entry.objectDimRange(1,:));
+            
+            % generate conductivity
+            range_conduct = user_entry.objectConductRange; % should be ok to used
+            for layer =1:size(range_conduct,1) % we have a multiple layer cell
+                obj.conduct(layer,1)=random_val_from_range(range_conduct(layer,1:2));
+                obj.conduct(layer,2)= range_conduct(layer,3); % ratio
+            end
+            
+        end
+
+
+
+
     end
 end
+
 

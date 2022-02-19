@@ -169,6 +169,25 @@ classdef EIT_chamber < handle
             end 
         end
 
+        function pt = get_random_pt(obj)
+            % retrun a pt in the the chamber!
+
+            z= obj.height()*(-1/2+rand());
+            type= obj.form;
+            switch type
+                case {obj.FORMS{1}, obj.FORMS{3}} % 'Cylinder' ||'2D_Circ'
+                    r = obj.min_radius()*rand();
+                    alpha = 2*pi()*rand();
+                    pt = [r*cos(alpha) r*sin(alpha) z];
+
+                case obj.FORMS{2} % 'Cubic'
+                    pt = [obj.length()*(-1/2+rand()) obj.width()*(-1/2+rand()) z];
+                    
+                otherwise
+                    errordlg('wrong form of the chamber')
+            end 
+            
+        end
     end
- 
+
 end
