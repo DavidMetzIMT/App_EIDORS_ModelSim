@@ -1,6 +1,5 @@
 classdef EIT_env < handle
-    %EIT_env define the enviromment vabiables used for the eit
-    
+    %EIT_ENV Enviromment vabiables used for the eit
     
     properties
         setup EIT_setup % regroup the data for the chamber/pattern
@@ -9,7 +8,7 @@ classdef EIT_env < handle
         sim EIT_sim_env % simulation env for simulation with EIDORS
         rec EIT_rec_env %Reconstruction environmnent with EIDORS
 
-        user_entry UserEntry
+        user_entry UserEntry %
         
         % old to move/rename some where else... 
 %         meshQuality
@@ -25,7 +24,8 @@ classdef EIT_env < handle
     
     methods
         function obj = EIT_env()
-            %SAVE Save n EIT_env in a mat file
+            %EIT_ENV Constructor
+            % init properties to default values
             obj.setup=EIT_setup();
             obj.sim=EIT_sim_env();
             obj.rec=EIT_rec_env();
@@ -36,7 +36,9 @@ classdef EIT_env < handle
         end
 
         function success = save_auto(obj, folder, filename)
-            %SAVE Save an EIT_env in a mat file
+            %SAVE_AUTO Save automatically the environement in a mat-file 
+            % using the passed folder and filename
+            % if folder/filename are not not correct the savving will be aborted
             success=0;
             par = obj.set_param4saving(folder, filename, 1);
             if ~par.success
@@ -133,6 +135,7 @@ classdef EIT_env < handle
         end
 
         function solve_fwd(obj, add_object_inFEM)
+            
 
             if add_object_inFEM==1
                 warndlg('add object in FEM is not implemented yet')
@@ -165,8 +168,6 @@ classdef EIT_env < handle
             
         end
 
-
-        
     end 
 
     % --------------------------------------------------------------------------

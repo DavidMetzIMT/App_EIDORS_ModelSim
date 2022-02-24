@@ -1,5 +1,8 @@
+
+NOT USED for the moment
 classdef Eidors_data
-    % Eidors_data describe the eit data 
+    % Eidors_data describe the eit data
+
 
     properties
         name

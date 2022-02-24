@@ -1,12 +1,20 @@
 classdef EIT_object
-    %EIT_object Summary of this class goes here
-    %   Detailed explanation goes here
-    
+    %EIT_OBJECT Define an object placed in the chamber
+    %   object has the properties
+    %       - type : type of the object "allowed_type" return valid types
+    %       - pos : position of the object
+    %       - dim : dimension of the object
+    %       - conduct :  layer conductivity of the object (for ex [0.1,1; 0.2,0.60] for a cell with 60% nucleus)
+    %                    conduct(i,1): conduct layer i
+    %                    conduct(i,2): is size ratio of layer i
+
     properties
-        type % cell, cylinder, sphere
-        pos % X, Y, Z
-        dim % depend on the type
-        conduct
+        type % type of the object "allowed_type"-method return valid types
+        pos  % position of the object
+        dim  % dimension of the object
+        conduct % layer conductivity of the object (for ex [0.1,1; 0.2,0.60] for a cell with 60% nucleus)
+                % conduct(i,1): conduct layer i
+                % conduct(i,2): is size ratio of layer i
     end
 
     properties (Access = protected)
@@ -14,31 +22,33 @@ classdef EIT_object
     end
 
     properties (Access = private)
-        OBJ_TYPE ={'Cell', 'Sphere', 'Cylinder'};
+        OBJ_TYPE ={'Cell', 'Sphere', 'Cylinder'}; %Object types implemented
     end
     
     methods
         function obj = EIT_object(varargin)
-            % Set the prperties from the object electrodes layout
-            % varargin{1} >> struct :
-            %                           --Number % of electrode
-            %                           --Form % of the electrode: Circular, Rectangular, Point
-            %                           --Diameter_Width % electrode width
-            %                           --Height % electrode height
-            %                           --Position % position in the chamber Wall, Top, Bottom
-            %                           --Design % Ring, Grid, Polka Dot
-            %                           --Diameter % Diameter design
+            %EIT_OBJECT Constructor Set object properties using varargin
+            % 
+            % if varargin is not passed default values will be set
+            % varargin{1} >> has to have the following struct (given by the "get_struct_4_gui"-method):
+            %    - Type % type of the objectsee "allowed_type"-method. Default = 'Cell'
+            %    - Position % Position of the object. Default = [0,0,0]
+            %    - Dimensions % Dimension of object . Default = [0.1]
+            %    - Conductivity %layer conductivity of the object (for ex [0.1,1; 0.2,0.60] for a cell with 60% nucleus)
+            %                        conduct(i,1): conduct layer i
+            %                        conduct(i,2): is size ratio of layer i
+            %                   Default = [0.2] (equivalent to [0.2,1])
             if nargin==1
                 var= varargin{1};
                 obj.reset = 0;
-                obj.type=var.Type; % 'Cell', 'Sphere', 'Cylinder'
-                obj.pos=str2num_array(var.Position); % position of the object
-                obj.dim=str2num_array(var.Dimensions); % dimension of the objectr
-                obj.conduct=str2num_array(var.Conductivity); % conductivity
+                obj.type=var.Type; 
+                obj.pos=str2num_array(var.Position); 
+                obj.dim=str2num_array(var.Dimensions); 
+                obj.conduct=str2num_array(var.Conductivity);
             else
                 obj.reset = 1;
-                obj.type=obj.OBJ_TYPE{1};
-                obj.pos=[0,0,0];
+                obj.type=obj.OBJ_TYPE{1}; % 'Cell'
+                obj.pos=[0,0,0]; 
                 obj.dim=[0.1]; 
                 obj.conduct=[0.2]; 
             end
@@ -46,6 +56,8 @@ classdef EIT_object
         end
 
         function var = get_struct_4_gui(obj)
+            %GET_STRUCT_4_GUI Return the object as a struct (this struct should be used to create an EIT_object)
+            
             % attention here the order count
             var.Type        = obj.type; 
             var.Position    = num_array2str(obj.pos); 
@@ -54,44 +66,52 @@ classdef EIT_object
         end
 
         function format = get_format_4_gui(obj)
+            %GET_FORMAT_4_GUI Return format of each field of the returned struct from "get_struct_4_gui"-method 
+
             % attention here the order count
             format={obj.OBJ_TYPE, 'char', 'char', 'char' };
         end
 
-
-
-
         function obj=set.type(obj, value)
+            %SET.TYPE Set type of the object
+
+            % check if a valid object type has been passed
             if isempty(find(strcmp(obj.OBJ_TYPE, value)))
                 errordlg('wrong type value for the object');
+                obj.type= obj.OBJ_TYPE{1}; % set default value
             else
                 obj.type= value;
             end
-
         end
 
-
-
         function obj=set.pos(obj, value)
-            if length(value)~=3
-                warndlg('Position of object has been set to [0,0,0]');
-                obj.pos= [0,0,0];
-            else
-                obj.pos= value;
+            %SET.POS Set position of the object
 
+            % check if the passed postion has 3 elements
+            val= reshape(value,1,[]); %flatten the input array/vector
+            if length(val)~=3 % if the length is different 
+                warndlg('Position of object has been set to [0,0,0]');
+                obj.pos= [0,0,0]; % set default value
+            else
+                obj.pos= val;
             end
-            
         end
 
         function output = allowed_type(obj)
+            %ALLOWED_TYPE Return the implemented object types
             output =obj.OBJ_TYPE;
         end
 
         function value = is_reset(obj)
+            %IS_RESET Return if the present object has been resetted to default values
             value = obj.reset;
         end
 
         function func = object_func(obj, ratio)
+            %OBJECT_FUNC Return a 3D function f(x,y,z) which assert if the pt (xyz) is contained in the object
+            % the func return logical array of size (nb_points, 1)
+            % artion can be used to select a defined pourcentage of the object
+
             p = obj.pos;
             d = obj.dim*ratio; % d(1) is radius
             type =obj.type;
@@ -108,10 +128,11 @@ classdef EIT_object
         end
         
         function conduct = get_conduct_data(obj, fmdl)
-            % return the conductivity vector correspoding of the object for
-            %the FEM elem defined in fmdl
-            % depending on the object different conduct for each layers are returned
-            % conduct = [elem_data for layer1, elem_data for layer2,...]
+            %GET_CONDUCT_DATA Return a conductivity vector/array correspoding to the object for the passed fmdl (from EIDORS)
+            %   the length of thh vector correxpond to the nb of FEM elems contained
+            %   in that fmdl
+            %   conductivity array is : 
+            %             conduct(1:nb_elems, i) = conduct of layer i
 
             layer_conduct=obj.conduct;
             for layer=1:size(layer_conduct,1)
@@ -131,6 +152,17 @@ classdef EIT_object
         end
 
         function obj = generate_random(obj, user_entry, chamber)
+            %GENERATE_RANDOM Generate a random object out of user entry and chamber object
+            %   type is set from the user entry
+            %   pos is randomly generate out of the passed chamber
+            %   dim is randomly genrateed out of the range from user entry
+            %   conduct is randomly generated out of the range from user entry
+
+            arguments
+                obj
+                user_entry UserEntry
+                chamber EIT_chamber
+            end
 
             obj.type=user_entry.objectType; % set type
             obj.pos= chamber.get_random_pt(); % generate a position in chamber

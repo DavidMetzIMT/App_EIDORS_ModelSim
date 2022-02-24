@@ -17,6 +17,7 @@ classdef EIT_chamber < handle
     methods
         function obj = EIT_chamber(varargin)
             %EIT_CHAMBER Constructor Set chamber properties using varargin
+            %
             % if varargin is not passed default values will be set 
             % varargin:
             %     name= varargin{1}; % User specific name; Default:'NameDesignOfChamber'
@@ -78,17 +79,17 @@ classdef EIT_chamber < handle
         end
 
         function obj = set.form(obj, val)
-            %Setter for "form"
+            %SET.FORM Set form of the chamber  7 
 
-            % check if correct form has been transmitted
+            % check if a valid form type has been passed
             if ~any(strcmp(obj.FORMS,val))
                 return;
             end
 
             % set the value
             obj.form=val;
-
-            sign_size= sum(obj.boxSize>0 .* [1,2,5]);
+            obj.boxSize>0
+            sign_size= sum(double(obj.boxSize>0) .* [1,2,5])
             % 1 (x>0), 2 (y>0) , 3(x,y>0), 5(z>0), 6(x, z>0), 7(y, z>0), 8(x, y, z>0)
 
             % and operate some automatic changes depending the form selected  
