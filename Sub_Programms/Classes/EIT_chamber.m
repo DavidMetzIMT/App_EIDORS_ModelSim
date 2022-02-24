@@ -1,14 +1,13 @@
 classdef EIT_chamber < handle
     properties
-        name % User specific name
-        boxSize % X, Y, Z
-        femRefinement
-        form % Cylinder, Cube, Circle, Rectangular
+        name % User specific name for the chamber
+        boxSize %Dimension of the chamber in X, Y, Z
+        femRefinement % Refinement value for FEM mesh generation
+        form % Form of the Chamber "supported_forms"-method return the valid supported form types
     end
 
     properties (Access=private)
         FORMS ={'Cylinder', 'Cubic', '2D_Circ'};
-        %ELEC_PLACE ={'Wall', 'Top', 'Bottom'};
         ALLOW_ELEC_PLACEMENT = [ % 'Wall', 'Top', 'Bottom'
             1,   1,   1 ; % 'Cylinder' 
             0,   1,   1 ; % 'Cubic'
@@ -17,7 +16,8 @@ classdef EIT_chamber < handle
     end
     methods
         function obj = EIT_chamber(varargin)
-            % Set the properties of an object chamber
+            %EIT_CHAMBER Constructor Set chamber properties using varargin
+            % if varargin is not passed default values will be set 
             % varargin:
             %     name= varargin{1}; % User specific name; Default:'NameDesignOfChamber'
             %     boxSize=varargin{2}; % X, Y, Z; Default: [1,1,1]
@@ -38,27 +38,24 @@ classdef EIT_chamber < handle
         end
 
         function value = length(obj)
-            %Return the size of the chamber in x direction defined as length
-
+            %LENGTH Return the length of the chamber (size in X direction)
             value = obj.boxSize(1);
         end
 
         function value = width(obj)
-            %Return the size of the chamber in y direction defined as width
-
+            %WIDTH Return the width of the chamber (size in Y direction)
             value = obj.boxSize(2);            
         end
 
         function value = height(obj)
-            %Return the size of the chamber in Z direction defined as height
-
+            %HEIGHT Return the height of the chamber (size in Z direction)
             value = obj.boxSize(3);
         end
         
         function l = box_limits(obj)
-            %Returns the limits of the chamber in the 3 xyz directions
-            % l= [minX, maxX; minY, maxY; minZ, maxZ]
-
+            %BOX_LIMITS Return the overall box size of the chamber in XYZ
+            %
+            % limits = [minX, maxX; minY, maxY; minZ, maxZ]
             l=[
                 -obj.length()/2,obj.length()/2;
                 -obj.width()/2,obj.width()/2;
@@ -66,9 +63,7 @@ classdef EIT_chamber < handle
         end
 
         function r = min_radius(obj)
-            % return the radius of the comprised circle
-            % radius in the xy_plane
-
+            %MIN_RADIUS Return the radius of a comprised circle in XY plane
             val= obj.form;
             switch val
                 case obj.FORMS{1} % 'Cylinder'
@@ -82,7 +77,6 @@ classdef EIT_chamber < handle
             end
         end
 
-
         function obj = set.form(obj, val)
             %Setter for "form"
 
@@ -94,50 +88,55 @@ classdef EIT_chamber < handle
             % set the value
             obj.form=val;
 
+            sign_size= sum(obj.boxSize>0 .* [1,2,5]);
+            % 1 (x>0), 2 (y>0) , 3(x,y>0), 5(z>0), 6(x, z>0), 7(y, z>0), 8(x, y, z>0)
+
             % and operate some automatic changes depending the form selected  
             switch val
                 case obj.FORMS{1} % 'Cylinder'
-                    % set box size in x and y identical
-                    if obj.boxSize(1)>0 
-                        obj.boxSize(2)=obj.boxSize(1);
-                    elseif obj.boxSize(2)>0
-                        obj.boxSize(1)=obj.boxSize(2);
-                    else 
-                        errordlg('Negative X Y dimensions not suported' );
+                    if sign_size < 6 % x, z or y, z or x,y,z have to be >0
+                        errordlg('Negative or zero XY dimensions are not supported' );
+                        return;
                     end
+
+                    % set box size in x and y identical
+                    max_xy=max(obj.boxSize(1:2));
+                    obj.boxSize(1:2)= size(obj.boxSize(1:2)) .*max_xy;
+
                 case obj.FORMS{2} % 'Cubic'
+                    if sign_size < 8 % all size have to be >0
+                        errordlg('Negative or zero XYZ dimensions are not supported' );
+                        return;
+                    end
 
                 case obj.FORMS{3} % '2D_Circ'
-                    % set z size to 0 as it is 2D!
-                    obj.boxSize(3)=0; 
-                    % set box size in x and y identical
-                    if obj.boxSize(1)>0 
-                        obj.boxSize(2)=obj.boxSize(1);
-                    elseif obj.boxSize(2)>0
-                        obj.boxSize(1)=obj.boxSize(2);
-                    else 
-                        errordlg('Negative X Y dimensions not suported' );
+                    if sign_size < 1 % x or y or x,y have to be >0
+                        errordlg('Negative or zero XY dimensions are not supported' );
+                        return;
                     end
+
+                    obj.boxSize(3)=0; % set z size to 0 as it is 2D!
+                    % set box size in x and y identical
+                    max_xy=max(obj.boxSize(1:2));
+                    obj.boxSize(1:2)= size(obj.boxSize(1:2)) .*max_xy;
             end
             
         end
 
         function val = supported_forms(obj)
-            %Returns the supported chamber forms
-
+            %SUPPORTED_FORMS Returns the supported forms of chamber
             val = obj.FORMS;
         end
-        function val = allowed_placement(obj)
-            %Returns the supported chamber forms
 
+        function val = allowed_placement(obj)
+            %ALLOWED_PLACEMENT Returns the allowed electrode position placements in the chamber
             index_actual_form = find(strcmp(obj.FORMS,obj.form));
             val = obj.ALLOW_ELEC_PLACEMENT(index_actual_form, :);
         end
 
         function shape = shape_for_ng(obj)
-            %Returns the shape string used to generate a fmdl with EIDORS 
-            % using "ng_mk_gen_models"
-
+            %SHAPE_FOR_NG Returns the shape string used to generate a fmdl with EIDORS 
+            % for more detail see "ng_mk_gen_models"
             radius    = num2str(obj.min_radius());
             length    = num2str(obj.length()/2); % centered
             depth     = num2str(obj.width()/2); % centered
@@ -170,8 +169,7 @@ classdef EIT_chamber < handle
         end
 
         function pt = get_random_pt(obj)
-            % retrun a pt in the the chamber!
-
+            %GET_RANDOM_PT Return a random point in the the chamber
             z= obj.height()*(-1/2+rand());
             type= obj.form;
             switch type
