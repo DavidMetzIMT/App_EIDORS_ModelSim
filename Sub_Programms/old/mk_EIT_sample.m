@@ -14,6 +14,7 @@ classdef mk_EIT_sample
     end
 
     methods (Access = public)
+        
         function obj = mk_EIT_sample(user_entry)
             obj = obj.mk_homogeneous_fwd_solve(user_entry);
             if ~contains(user_entry.type_of_artefacts, 'Random')
