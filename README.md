@@ -33,12 +33,9 @@ Simulation id based on the toolbox `EIDORS`
 	
 ## 2. Installation
 
-`app_eidors_modelsim` is purely matlab based.
-run the app by calling the class
+`app_eidors_modelsim` is purely matlab based. no installion is needed
+download the 
 
->> FwdModel_App
-or 
->> app= FwdModel_App();
 
 
 ### 2.1 Install global
