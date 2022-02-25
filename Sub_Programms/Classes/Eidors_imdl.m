@@ -15,14 +15,22 @@ classdef Eidors_imdl < handle
     end
 
     methods 
-        function obj = Eidors_imdl(obj,args)
+        function obj = Eidors_imdl(obj)
+            obj.name= 'imdl_defaulft_name';
+            obj.solve= 'eidors_default';
+            obj.RtR_prior = 'eidors_default';
+            obj.R_prior= ''; % provided if no RtR_prior
+            hyperparameter.value= 0.01;
+            obj.hyperparameter = hyperparameter;
+            jacobian_bkgnd.value= 1;
+            obj.jacobian_bkgnd = jacobian_bkgnd;
             obj.meas_icov='default_meas_icov';
-            
+            obj.reconst_type='difference';
+            % obj.fwd_model
         end
 
         function imdl4EIDORS = imdl(obj) % to EIDORS
             %Returns the present object as a structure for use in EIDORS
-
             imdl4EIDORS = struct(obj);
         end
 
@@ -30,7 +38,7 @@ classdef Eidors_imdl < handle
             %Set the solving part of the fwd_model
             obj.name= name;
             obj.solve= solve;
-            obj.RtR_prior= str2func(RtR_prior);
+            obj.RtR_prior= RtR_prior;
             obj.R_prior= R_prior;
 
             hyperparameter.value= hyper_value;

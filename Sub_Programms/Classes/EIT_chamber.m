@@ -88,8 +88,7 @@ classdef EIT_chamber < handle
 
             % set the value
             obj.form=val;
-            obj.boxSize>0
-            sign_size= sum(double(obj.boxSize>0) .* [1,2,5])
+            sign_size= sum(double(obj.boxSize>0) .* [1,2,5]);
             % 1 (x>0), 2 (y>0) , 3(x,y>0), 5(z>0), 6(x, z>0), 7(y, z>0), 8(x, y, z>0)
 
             % and operate some automatic changes depending the form selected  
