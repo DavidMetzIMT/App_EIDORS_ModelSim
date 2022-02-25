@@ -101,7 +101,7 @@ classdef EIT_chamber < handle
 
                     % set box size in x and y identical
                     max_xy=max(obj.boxSize(1:2));
-                    obj.boxSize(1:2)= size(obj.boxSize(1:2)) .*max_xy;
+                    obj.boxSize(1:2)= [1,1] .*max_xy;
 
                 case obj.FORMS{2} % 'Cubic'
                     if sign_size < 8 % all size have to be >0
@@ -118,9 +118,8 @@ classdef EIT_chamber < handle
                     obj.boxSize(3)=0; % set z size to 0 as it is 2D!
                     % set box size in x and y identical
                     max_xy=max(obj.boxSize(1:2));
-                    obj.boxSize(1:2)= size(obj.boxSize(1:2)) .*max_xy;
+                    obj.boxSize(1:2)= [1,1] .*max_xy;
             end
-            
         end
 
         function val = supported_forms(obj)

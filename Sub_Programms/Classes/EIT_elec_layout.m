@@ -1,13 +1,14 @@
 classdef EIT_elec_layout < handle
+    %EIT_ELEC_LAYOUT Class defining an electrode layout
 
     properties (Access = public)
         elecNb % number of electrodes
-        elecForm % Circular, Rectangular, Point
-        elecSize % width, height
-        elecPlace % Wall, Top, Bottom
-        layoutDesign % Ring, Grid, Polka Dot
-        layoutSize % X, Y, Z
-        zContact%
+        elecForm % form of the electrode Circular, Rectangular, Point
+        elecSize % width, height of the electrode
+        elecPlace % where in the chamber the electrode are placed e.g.Wall, Top, Bottom
+        layoutDesign % Design of the electrode layout, e.g. Ring, Grid, Polka Dot
+        layoutSize % Design size (X, Y, Z)
+        zContact% Impedance contact of the electrodes
     end
 
     properties (Access = protected)
@@ -28,43 +29,48 @@ classdef EIT_elec_layout < handle
     methods
         
         function obj = EIT_elec_layout(varargin)
-            % Set the prperties from the object electrodes layout
-            % varargin{1} >> struct :
-            %                           --Number % of electrode
-            %                           --Form % of the electrode: Circular, Rectangular, Point
-            %                           --Diameter_Width % electrode width
-            %                           --Height % electrode height
-            %                           --Position % position in the chamber Wall, Top, Bottom
-            %                           --Design % Ring, Grid, Polka Dot
-            %                           --Diameter % Diameter design
+            %EIT_ELEC_LAYOUT Constructor set the prperties from the object electrodes layout
+            %
+            % if varargin is not passed default values will be set
+            % varargin{1} >> has to have the following struct (given by the "get_struct_4_gui"-method):
+            %       - Number 
+            %       - Form 
+            %       - Diameter_Width 
+            %       - Height
+            %       - Position
+            %       - Design 
+            %       - Diameter
+
 
             if nargin==1
                 var= varargin{1};
                 obj.reset = 0;
-                obj.elecNb=var.Number; % number of electrodes
-                obj.elecForm=var.Form; % Circular, Rectangular, Point
-                obj.elecSize=[var.Diameter_Width, var.Height]; % width, height
-                obj.elecPlace=var.Position; % Wall, Top, Bottom
-                obj.layoutDesign=var.Design; % Ring, Grid, Polka Dot
-                obj.layoutSize=var.Diameter; % X, Y, Z
+                obj.elecNb=var.Number; 
+                obj.elecForm=var.Form; 
+                obj.elecSize=[var.Diameter_Width, var.Height]; 
+                obj.elecPlace=var.Position; 
+                obj.layoutDesign=var.Design; 
+                obj.layoutSize=var.Diameter;
                 obj.zContact=var.Zcontact;
             else
                 obj.reset = 1;
-                obj.elecNb=16; % number of electrodes
-                obj.elecForm='Circular'; % Circular, Rectangular, Point
-                obj.elecSize=[0.5, 0]; % width, height
-                obj.elecPlace='Wall'; % Wall, Top, Bottom
-                obj.layoutDesign='Ring'; % Ring, Grid, Polka Dot
-                obj.layoutSize=4; % X, Y, Z
-                obj.zContact=0.01;
+                obj.elecNb=16; 
+                obj.elecForm=obj.ELEC_FORMS{1}; %'Circular'
+                obj.elecSize=[0.5, 0]; 
+                obj.elecPlace=obj.ELEC_PLACE{1}; % Wall
+                obj.layoutDesign=obj.LAYOUT_DESIGN{1}; %'Ring'
+                obj.layoutSize = 4;
+                obj.zContact = 0.01;
             end
         end
 
         function value = is_reset(obj)
+            %IS_RESET Return if the present object has been resetted to default values
             value = obj.reset;
         end
 
         function var = get_struct_4_gui(obj)
+            %GET_STRUCT_4_GUI Return the layout as a struct (this struct should be used to create an EIT_elec_layout)
             % attention here the order count
             var.Design          = obj.layoutDesign; 
             var.Diameter        = obj.layoutSize; 
@@ -77,8 +83,8 @@ classdef EIT_elec_layout < handle
         end
 
         function format = get_format_4_gui(obj)
+            %GET_FORMAT_4_GUI Return format of each field of the returned struct from "get_struct_4_gui"-method 
             % attention here the order count
-            object=EIT_object();
             format={...
                 obj.supported_layouts(),...
                 'numeric',...
@@ -92,32 +98,35 @@ classdef EIT_elec_layout < handle
         end
 
         function cellarray = supported_elec_forms(obj)
-            %Return Supported electrode forms
+            %SUPPORTED_ELEC_FORMS Return all supported electrode forms
             cellarray = obj.ELEC_FORMS;
         end
         function cellarray = supported_layouts(obj)
-            %Return Supported arrDesign designs
+            %SUPPORTED_LAYOUTS Return all supported electrodes layouts
             cellarray = obj.LAYOUT_DESIGN;
         end
         function cellarray = supported_elec_pos(obj)
-            %Return Supported electrode position
+            %SUPPORTED_ELEC_POS Return all supported electrode placement
             cellarray = obj.ELEC_PLACE;
         end
 
         function val = allowed_placement(obj)
-            % returns the supported chamber forms
+            %ALLOWED_PLACEMENT Return the allowed placement for the actual design
             index_actual_layout = find(strcmp(obj.LAYOUT_DESIGN, obj.layoutDesign));
             val = obj.ALLOW_ELEC_PLACEMENT(index_actual_layout, :);
         end
 
         function r = elec_radius(obj)
+            %ELEC_RADIUS Return the actual radius of the electrode
+            %       radius = elecSize(1)/2
+            
             % TODO change that with the forms....
             r= obj.elecSize(1)/2;
         end
 
         function [elec_pos, elec_shape, elec_obj, z_contact, error] = data_for_ng(obj, chamber)
-            % Returns data about the electrodes needed to generate a fmdl with EIDORS 
-            % using "ng_mk_gen_models"
+            %DATA_FOR_NG Returns data about the electrodes used to generate a fmdl with EIDORS 
+            % for more detail see "ng_mk_gen_models"
             % elec_pos = [position vector, normal vector (to the electrode surface)]
             %                  array size (eletrodes nb, 6)
             % elec_shape =  [elecsize1 elecsize2, fem_refinemet used for elec](see "ng_mk_gen_models")
@@ -195,8 +204,12 @@ classdef EIT_elec_layout < handle
         end
 
         function error = check_layout(obj,n_XY, n_tot, layout_r, chamber)
-            % Check layout (if layout is compatible with electrode placement,
-            % chamber form and if elctrodes are contained in cahmber and not overlapping)
+            %CHECK_LAYOUT  Check the electrode layout c
+            %   it check:
+            %       - the compatiblity between layout, electrode placement,
+            %       chamber form 
+            %       - if electrodes are contained in chamber
+            %       - if electrodes are not overlapping
 
             error = build_error('', 0);
             %% Check if electrode placement is compatible with layout design 
@@ -252,7 +265,7 @@ classdef EIT_elec_layout < handle
         end
 
         function [n_XY, n_tot, error] = get_nb_elec(obj)
-            % format the electrodes numbers
+            %GET_NB_ELEC check and compute the electrodes numbers
             % if elec_n = [integer part of elec_nb, 100*fractional part of elec_nb ]
             % return n_XY = 
         
@@ -275,7 +288,6 @@ classdef EIT_elec_layout < handle
             layout_design=obj.layoutDesign;
             switch layout_design
                 case 'Ring'
-        
                 case {'Array_Grid 0', 'Array_Grid 45'}
                     if elec_n(2) == 0 
                         if ~(round(sqrt(elec_n(1)))^2==elec_n(1)) % verify if n is a^2
@@ -285,9 +297,7 @@ classdef EIT_elec_layout < handle
                             n_XY=[round(sqrt(elec_n(1))),round(sqrt(elec_n(1)))];
                         end
                     end
-                    
                 % case {'Array_PolkaDot 0', 'Array_PolkaDot 45'} 
-        
                 otherwise
                     error = build_error('Electrode Design not implemented', 1);
                     return;
@@ -296,22 +306,24 @@ classdef EIT_elec_layout < handle
                 n_tot= n_XY(1)*n_XY(2);
             else
                 n_tot= n_XY(1);
-            end
-        
-            
+            end            
         end
-
     end
 end
 
+
+% ******************************************************************************
+% ******************************************************************************
+% ******************************************************************************
+% ******************************************************************************
+
 function [xyz, nxyz, error] = get_normalized_layout(layout_design ,n_XY)
-    % Returns the position and normal vector of the electrodes for a normalized 
+    %GET_NORMALIZED_LAYOUT Returns the position and normal vector of the electrodes for a normalized 
     % layout with a specific radius 1 (normalized) centered in (0,0,0)
 
     error = build_error('', 0);
     xyz=[0, 0, 0];
     nxyz=[0, 0, 0];
-
     switch layout_design
         case 'Ring'
             [xyz, nxyz] = make_ring_inPlaneXY(n_XY(1));
@@ -326,13 +338,10 @@ function [xyz, nxyz, error] = get_normalized_layout(layout_design ,n_XY)
             error = build_error('Electrode Design not implemented', 1);
             return;
     end
-    
 end
 
-
-
 function [layout_r, f_pos, c_pos, n_vec, error] = param_for_elec_place(elec_place, layout_size, chamber_radius, chamber_limits)
-    % Returns the parameters dependent fro each electrodes placemenent
+    %PARAM_FOR_ELEC_PLACE Return the parameters dependent for each electrodes placement
     % - layout_r: specifific lenght of the layout to use 
     % - f_pos : factor vector to scale the position of the electrodes
     % - c_pos : center of the electrodes layout
@@ -364,7 +373,7 @@ end
 
 
 function [elec_shape, error] = gen_elec_shape(elec_form, elec_size,elec_n_tot, fem_refinement, ELEC_FORMS)
-    % Generate the shape vector of the electrodes neede for ng fmdl generation
+    %GEN_ELEC_SHAPE Generate the shape vector of the electrodes neede for ng fmdl generation
     % see "ng_mk_gen_models" for the definition of the shape depending on the form selected
     % the shape is defined for each electrode
 
@@ -387,7 +396,7 @@ function [elec_shape, error] = gen_elec_shape(elec_form, elec_size,elec_n_tot, f
 end
 
 function elec_obj = gen_elec_obj(elec_place, elec_n_tot)
-    % Generate the object vector of the electrodes needed for ng fmdl generation
+    %GEN_ELEC_OBJ Generate the object vector of the electrodes needed for ng fmdl generation
     % see "ng_mk_gen_models" for the definition of the object
     % the object (wall, top, bottom) is defined for each electrode
     
@@ -399,7 +408,7 @@ end
 
 
 function [X] = RotationZ(pos, rot_angle)
-    % Rotate the position vector containing
+    %ROTATIONZ Rotate the electrode position vector arround Z 
     % pos= [x, y, z, nx, ny, nz]
     % rotation angle = [rotX, RotY, RotZ] 
     
@@ -410,11 +419,10 @@ function [X] = RotationZ(pos, rot_angle)
         0, 0, 1];
     Rz= [Rz,zeros(size(Rz));zeros(size(Rz)), Rz];
     X=(Rz*pos')';
-    
 end
 
 function [xyz, nxyz] = make_ring_inPlaneXY(n)
-    % create a ring arragement of n points in the xy plane 
+    %MAKE_RING_INPLANEXY Create a ring arragement of n points in the xy plane 
     % and centered in (0,0,0) with a radius of 1
     % it returns the positions xyz, the direction vector
     % and the total number of electrodes
@@ -424,11 +432,10 @@ function [xyz, nxyz] = make_ring_inPlaneXY(n)
 
     xyz = [cos(theta), sin(theta), zeros(n,1)]; 
     nxyz = [cos(theta), sin(theta), ones(n,1)]; %here ones because the electrode can also be oriented in Z
-    
 end
 
 function [xyz, nxyz] = make_grid_inPlaneXY(n_XY)
-    % create a grid arragement of points in the xy plane 
+    %MAKE_GRID_INPLANEXY Create a grid arragement of points in the xy plane 
     % and centered in (0,0,0) with a radius of 1
     % 
     % n_XY=[nb electrode in X, nb electrodes in Y]
@@ -448,25 +455,15 @@ function [xyz, nxyz] = make_grid_inPlaneXY(n_XY)
         end
     end
     [x,y] = meshgrid(vector(1).v,vector(2).v);
-    n_tot=n_XY(1)*n_XY(2); 
-
-    % else % square array
-    %     if ~(round(sqrt(n_XY(1)))^2==n_XY(1)) % verify if n is a^2
-    %         warndlg('number of electrodes set to 16 (please give a a^2 number of electrodes for square Array_Grid) ');
-    %         elec_n=[16, 0];
-    %     end
-    %     width_grid = d/sqrt(2);
-    %     [x,y] = meshgrid(linspace( -width_grid/2,width_grid/2,sqrt(n_XY(1))));
-    %     elec_n_tot=n_XY(1);
-    % end
+    n_tot=n_XY(1)*n_XY(2);
 
     xyz = [x(1:end)', y(1:end)', zeros(n_tot,1)];
     nxyz = [zeros(n_tot,1), zeros(n_tot,1), ones(n_tot,1)];
-    
 end
 
 
 function [xyz, nxyz] = make_polkaDot_inPlaneXY(n_XY)
+    %MAKE_POLKADOT_INPLANEXY Create a polkadot arragement of points in the xy plane 
 
     %     if size(elec_n,2)==2
     %         if (sum(mod(elec_n,2))==0)
@@ -500,7 +497,6 @@ function [xyz, nxyz] = make_polkaDot_inPlaneXY(n_XY)
     %     x=x(1:2:end);
     %     y=y(1:2:end);
     %     elec_n= max(size(x(:)));
-    
 end
 
 

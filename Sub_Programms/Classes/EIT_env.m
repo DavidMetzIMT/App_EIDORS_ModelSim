@@ -1,31 +1,22 @@
 classdef EIT_env < handle
-    %EIT_ENV Enviromment vabiables used for the eit
+    %EIT_ENV Enviromment used for the simulation reconstruction of EIT measurements using the EIDORS Toolbox
     
     properties
-        setup EIT_setup % regroup the data for the chamber/pattern
-        fwd_model Eidors_fmdl % the forward model from EIDORS
-        inv_model Eidors_imdl % the inverse model from EIDORS
-        sim EIT_sim_env % simulation env for simulation with EIDORS
-        rec EIT_rec_env %Reconstruction environmnent with EIDORS
-
-        user_entry UserEntry %
-        
-        % old to move/rename some where else... 
-%         meshQuality
-        % chamber -> moved to EIT_setup
-        % Pattern -> moved to EIT_setup
-%         flag
+        setup EIT_setup % Regroup the data for the Measeuement setups (chamber electrode, pattern)
+        fwd_model Eidors_fmdl % the forward model aslike in EIDORS
+        inv_model Eidors_imdl % the inverse model aslike in EIDORS
+        sim EIT_sim_env % Simulation env for simulation with EIDORS
+        rec EIT_rec_env % Reconstruction environmnent with EIDORS
+        user_entry UserEntry % user entry for generation of AI datasets
     end
 
     properties (Access=private)
         FMDL_GEN=0;
-        
     end
     
     methods
         function obj = EIT_env()
-            %EIT_ENV Constructor
-            % init properties to default values
+            %EIT_ENV Constructor set properties to default values
             obj.setup=EIT_setup();
             obj.sim=EIT_sim_env();
             obj.rec=EIT_rec_env();
@@ -37,30 +28,38 @@ classdef EIT_env < handle
 
         function success = save_auto(obj, folder, filename)
             %SAVE_AUTO Save automatically the environement in a mat-file 
-            % using the passed folder and filename
-            % if folder/filename are not not correct the savving will be aborted
+            %       using the passed folder and filename
+            %       if folder/filename don not form a valid path the saving will be aborted
             success=0;
             par = obj.set_param4saving(folder, filename, 1);
             if ~par.success
                 warndlg('Saving aborted!');
                 return;
             end
-            success= obj.save_p(par);
+            success= obj.save_env(par.filepath);
         end
 
         function success = save(obj, folder, filename)
             %SAVE Save an EIT_env in a mat file
+            %       the user will be asked to select the mat-fil where to save
+            %       the passed folder and filename are used as defaulft values
+            %       for the dialog
+            
             success=0;
             par = obj.set_param4saving(folder, filename, 0);
             if ~par.success
                 warndlg('Saving aborted!');
                 return;
             end
-            success= obj.save_p(par);
+            success= obj.save_env(par.filepath);
         end
 
         function [new_env, success] = load(obj, folder, filename)
-            %LOAD load an EIT_env mat file and return the contained env variable
+            %LOAD Load an EIT_env mat file and return the contained env variable
+            %       the user will be asked to select the mat-fil where to load
+            %       the passed folder and filename are used as defaulft values
+            %       for the dialog
+            
             success=0 ;
             new_env='';
             par = obj.set_param4loading(folder, filename);
@@ -68,11 +67,18 @@ classdef EIT_env < handle
                 warndlg('Loading cancelled!');
                 return;
             end
-            [new_env, success]= obj.load_p(par);
+            [new_env, success]= obj.load_env(par.filepath);
         end
 
-        function [fmdl, success] = create_fwd_model(obj, add_text)
-            %create the foward model and return the fmdl fpr EIDORS/for plot...
+        function [fmdl, success] = create_fwd_model(obj, chamber, elec_layout, add_text)
+            %CREATE_FWD_MODEL Create the foward model
+            % it returns the fmdl for EIDORS/for plots ... and if creation succeed
+
+            obj.setup.chamber= chamber;
+            obj.setup.reset_elec_layout()
+            for i=1:length(elec_layout)
+                obj.setup.add_elec_layout(elec_layout(i));
+            end
 
             obj.FMDL_GEN=0;
             fmdl =0;
@@ -91,12 +97,19 @@ classdef EIT_env < handle
 
             success=1;
             obj.FMDL_GEN=1;
-            
+
         end
 
-        function success = generate_pattern(obj)
+        function success = generate_pattern(obj, pattern)
+            %GENERATE_PATTERN Generate the pattern for the fwd_model
+            % it returns if generation succeed
 
             success=0;
+            if ~isa(pattern, 'EIT_pattern')
+                return;
+            end
+
+            obj.setup.pattern= pattern;
             if ~obj.FMDL_GEN % test if an fwd_model has beeen succefully generated
                 error= build_error('Generate first a Forward Model!',1);
                 errordlg(error.msg);
@@ -117,47 +130,37 @@ classdef EIT_env < handle
         end
 
         function set_sim(obj, medium, objects)
+            %SET_SIM Set the simulation environement for new mediums and objects
 
-            % Medium
             obj.sim.mediumConduct= medium;
-            
-            % Objects (struct)
             obj.sim.reset_objects();
             for i=1:length(objects)
-                object=objects(i);
-                if isa(object, 'EIT_object')
-                    obj.sim.add_object(object);
-                else
-                    obj.sim.add_object(EIT_object(object));
-                end          
+                    obj.sim.add_object(objects(i));
             end
-            
         end
 
         function solve_fwd(obj, add_object_inFEM)
-            
-
+            %SOLVE_FWD Solve in the simulation environement the foward model
             if add_object_inFEM==1
                 warndlg('add object in FEM is not implemented yet')
             end
 
             obj.sim.fmdl= obj.fwd_model.fmdl();
-
             obj.sim.solve_fwd()
 
             % Load per default meas in rec env
             obj.rec.set_data_meas(obj.sim.data_ih, obj.sim.data_h)
-            
         end
 
         function solve_inv(obj, load_meas_path)
+            %SOLVE_INV Solve in the reconstruction environement the inverse model of the simulated measurements or loaded measurement
+            % to load extern measurement set the path 
 
             % set fmdl in imdl
-            obj.inv_model.set_fwd_model( ...
-                obj.fwd_model);
+            obj.inv_model.fwd_model(obj.fwd_model);
 
             % set inv model for rec
-            obj.rec.imdl=   obj.inv_model.imdl();
+            obj.rec.imdl= obj.inv_model.imdl();
 
             % load measuremnt if path is given!
             if ~strcmp(load_meas_path,'')
@@ -165,9 +168,7 @@ classdef EIT_env < handle
             end
             % solve inverso model
             obj.rec.solve_inv()
-            
         end
-
     end 
 
     % --------------------------------------------------------------------------
@@ -176,26 +177,12 @@ classdef EIT_env < handle
 
     methods (Access=private)
 
-        function [folder, filename] = check_folder_filename(obj, folder, filename)
-            if (strcmp(folder,'') || ~isaValidFolder(folder))
-                folder = pwd; % default
-            else
-                folder= folder;
-            end
-            %check filename
-            if strcmp(filename,'')
-                filename = 'filename'; % default
-            else
-                filename= filename;
-            end
-        end
-        
         function par = set_param4saving(obj, folder, filename, autosave)
-            
+            %SET_PARAM4SAVING set the parameters for saving (filepath)
             par.ext= '.mat';
             par.filter= ['*' par.ext];
             %check folder, filename
-            [par.folder, par.filename] = obj.check_folder_filename(folder, filename);
+            [par.folder, par.filename] = check_folder_filename(folder, filename);
             par.success=1;
             if autosave == 0
                 promptText = 'Enter file to save environement variables'; % text used by loading saving dialogboxes
@@ -203,27 +190,28 @@ classdef EIT_env < handle
                 [par.filename,par.folder, par.success] = uiputfile(par.filter,promptText,par.filepath);
             end
             par.filepath= path_join(par.folder, par.filename);
-
-        end
-        
-        function success= save_p(obj, par)
-            delete(par.filepath);
-            % create folder (if already exist will raise a warning)
-            index= strfind(par.filepath,'\');
-            mkdir(par.filepath(1:index(end)-1));
-            % save the whole env 
-            eit_env= obj;
             % appending .mat
             par.filepath= [replace(par.filepath, par.ext,'') par.ext];
-            save(par.filepath,'eit_env');
-            success = logical(exist(par.filepath));
+        end
+        
+        function success= save_env(obj, filepath)
+            %SAVE_ENV SAVE an eit enviromment 
+            delete(filepath);
+            % create folder (if already exist will raise a warning)
+            index= strfind(filepath,'\');
+            mkdir(filepath(1:index(end)-1));
+            % save the whole env 
+            eit_env= obj;
+            save(filepath,'eit_env');
+            success = logical(exist(filepath));
         end
 
         function par = set_param4loading(obj, folder, filename)
+            %SET_PARAM4LOADING set the paarmeter for loading (filepath)
             par.ext= '.mat';
             par.filter= ['*' par.ext];
             %check folder, filename
-            [par.folder, par.filename] = obj.check_folder_filename(folder, filename);
+            [par.folder, par.filename] = check_folder_filename(folder, filename);
 
             promptText = 'Select file to import environement variables'; % text used by loading saving dialogboxes
             par.filepath= path_join(par.folder, par.filename); 
@@ -231,20 +219,16 @@ classdef EIT_env < handle
             par.filepath= path_join(par.folder, par.filename);
         end
 
-        function [new_env, success]=  load_p(obj, par)
-            if exist(par.filepath)
-                tmp = load(par.filepath);
+        function [new_env, success]=  load_env(obj, filepath)
+            %LOAD_ENV Load an eit enviromment  
+            if exist(filepath)
+                tmp = load(filepath);
                 new_env= tmp.eit_env;
                 success=1;
             else
                 new_env='empty';
                 success=0;
             end
-        end
-
-        function myFun(obj, val)
-            obj.val= val
-            
         end
     
     end

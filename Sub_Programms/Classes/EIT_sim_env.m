@@ -1,13 +1,9 @@
 classdef EIT_sim_env < matlab.mixin.Copyable % a hanlde with copy methods
-    %UNTITLED3 Summary of this class goes here
-    %   Detailed explanation goes here
-
-
-    
-    
+    %EIT_SIM_ENV Simulation environement of EIT Measurements using EIDORS Toolbox
+    %      
     properties
         name ='Simulation default'
-        fmdl % the forward model from EIDORS
+        fmdl % "fwd_model" object from EIDORS
         objects EIT_object % objects put in the chamber
         mediumConduct % conductivity of the medium
         img_h % homogenious image only medium from EIDORS
@@ -18,18 +14,22 @@ classdef EIT_sim_env < matlab.mixin.Copyable % a hanlde with copy methods
     
     methods
         function obj = EIT_sim_env()
-
+            %EIT_SIM_ENV Constructor create a default object (see "EIT_object") in a medium with a condutivity of 1
             obj.objects= EIT_object();
             obj.mediumConduct=1;
-            
         end
+        
+        function reset_objects(obj)
+            %RESET_OBJECTS Reset the objects to one default EIT_object
+            %     in that case obj.objects(1).is_reset()==true
+            obj.objects=EIT_object();
+        end
+        
         function add_object(obj, object)
-            %UNTITLED3 Construct an instance of this class
-            %   Detailed explanation goes here
-            % obj.objects(length(obj.objects)+1)= EIT_object(struct_object);
-            %add_elec_layout append an electrode layout
+            %ADD_OBJECT Append an EIT_object to obj.objetcs
+            %   
             if isa(object, 'EIT_object')
-                if obj.objects.is_reset()
+                if obj.objects(1).is_reset()
                     obj.objects(1)= object;
                 else
                     obj.objects(length(obj.objects) + 1 ) = object;
@@ -39,21 +39,16 @@ classdef EIT_sim_env < matlab.mixin.Copyable % a hanlde with copy methods
             end
         end
 
-        function reset_objects(obj)
-            %reset_elec_layout clear the electrode layouts
-            obj.objects=EIT_object();
-        end
 
         function struct4gui = get_objects_4_gui(obj)
-            %Returns the objects as a struct array for the display 
-            %in gui
-
+            %GET_OBJECTS_4_GUI Returns the objects as a struct array for the display in gui
             for i=1:length(obj.objects)
                 struct4gui(i)=obj.objects(i).get_struct_4_gui();
             end
         end
         
         function solve_fwd(obj)
+            %SOLVE_FWD Solve the fwd problem of the homogenious and inhomogenious image to get the corresponding measurements 
             obj.gen_homogenious_image();
             obj.gen_inhomogenious_image();
             
@@ -63,11 +58,17 @@ classdef EIT_sim_env < matlab.mixin.Copyable % a hanlde with copy methods
 
 
         function gen_homogenious_image(obj)
+            %GEN_HOMOGENIOUS_IMAGE Generate the homogenious image "img_h" 
+            %      by setting the conductivity of the chamber using the 
+            %      conductivity of the medium
             obj.img_h = mk_image(obj.fmdl, obj.mediumConduct);
             obj.img_h.fwd_solve.get_all_nodes=0;
         end
 
         function gen_inhomogenious_image(obj)
+            %GEN_INHOMOGENIOUS_IMAGE Generate the inhomogenious image "img_ih" 
+            %      by setting the conductivity of the chamber using the
+            %      conductivity of the medium and those of the objects
 
             for o=1:size(obj.objects,2)
                 conduct(:,:,o) = obj.objects(o).get_conduct_data(obj.fmdl);
@@ -97,6 +98,20 @@ classdef EIT_sim_env < matlab.mixin.Copyable % a hanlde with copy methods
 
             obj.img_ih = mk_image(obj.fmdl, conduct_data);
 
+        end
+
+        function set.fmdl(obj, fwd_model)
+            %SETTER of fmdl
+            %   if fwd_model can be an obj from the class "Eidors_fmdl" or 
+            %   an fwd_model object from EIDORS toolbox 
+            if  isequal(class(fwd_model),'Eidors_fmdl')
+                fwd_model=fwd_model.fmdl();
+            end
+            if valid_fwd_model(fwd_model)
+                obj.fwd_model=fwd_model;
+            else
+                disp('ERROR TYPE: fwd_model could not be set')
+            end
         end
     end
     methods (Access = protected)

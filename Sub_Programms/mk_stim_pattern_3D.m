@@ -1,4 +1,4 @@
-function [stimulation,meas_select]=mk_stim_3Dpattern(inj_pat_typ,meas_pat_typ,options,amplitude)
+function [stimulation,meas_select]=mk_stim_pattern_3D(inj_pat_typ,meas_pat_typ,options,amplitude)
 
 
 global EIDORS

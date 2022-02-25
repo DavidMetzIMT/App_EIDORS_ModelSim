@@ -1,5 +1,5 @@
 function isValid = isaValidFolder(path)
-    % isaValidFolder check if a path:
+    %ISAVALIDFOLDER check if path is a valid folder
     % is a valid path (return 1) or already exist (return 2)
     % return 0 if is not a valid path
     isValid=0;

@@ -1,6 +1,6 @@
 classdef EIT_pattern < handle
-    %UNTITLED2 Summary of this class goes here
-    %   Detailed explanation goes here
+    %EIT_PATTERN Data about the injection and measurement pattern 
+    %   
     
     properties
         injAmplitude % amplitude of the injection current in A
@@ -16,14 +16,14 @@ classdef EIT_pattern < handle
         GENERATING_FUNCTIONS={'Ring patterning','Array patterning','3D patterning'};
         PATTERNS= {
             {'{ad}';'{op}';'user defined'};
-            {'array_ad_simple';'array_ad_full';'array_ad_line';'array_op'};
-            {'3d_ad_0';'3d_ad_1';'3d_ad_2';'3d_ad_3';'3d_adop_user';'3d_op_inoutplane';'3d_op'};
+            {'array_ad_simple';'array_ad_full';'array_ad_line';'array_op';'user defined'};
+            {'3d_ad_0';'3d_ad_1';'3d_ad_2';'3d_ad_3';'3d_op_inoutplane';'3d_op';'user defined'};
         }
     end
     
     methods
         function obj = EIT_pattern(varargin)
-            % Set the properties of an object pattern
+            %EIT_PATTERN Constructor set the properties of an object pattern
             % varargin:
             %        obj.injAmplitude = varargin{1}; % amplitude of the injection current in A
             %        obj.injType=varargin{2}; % ad, op,....
@@ -49,64 +49,28 @@ classdef EIT_pattern < handle
             end
         end
 
-
-
-        %% Setter 
         function init_pattern_func(obj, value)
-            
+            %INIT_PATTERN_FUNC Init itself for a given patterning function
             obj.patternFunc=value;
             p=obj.get_patterns();
             obj.injType=p{1};
             obj.measType=p{1};
-            
-        end
-
-        function obj = set.injAmplitude(obj, value)
-            obj.injAmplitude = value;
-            
-        end
-
-        function obj = set.injType(obj, value)
-            obj.injType=value;
-            
-        end
-
-        function obj = set.injSpecial(obj, value)
-            obj.injSpecial= value;
-            
-        end
-
-        function obj = set.measType(obj, value)
-            obj.measType=value; 
-            
-        end
-
-        function obj = set.measSpecial(obj, value)
-            obj.measSpecial=value; 
-            
-        end
-
-        function obj = set.patternOption(obj, value)
-            obj.patternOption=value;
-                       
-        end
-
-        function obj = set.patternFunc(obj, value)
-            obj.patternFunc=value;
-            
         end
 
         function val = get_generating_func(obj)
+            %GET_GENERATING_FUNC Return the available patterning functions
             val= obj.GENERATING_FUNCTIONS;
-            
         end
 
         function val = get_patterns(obj)
+            %GET_PATTERNS Returns the implemented patterns type for a patterning function
+            
             indx= find(strcmp(obj.GENERATING_FUNCTIONS,obj.patternFunc));
             val= obj.PATTERNS{indx};
         end
 
         function [stimulation,meas_select, error] = make(obj, n_elec, n_row)
+            %MAKE Generate the "stimulation" and "meas_select" variables to define fmdl in EIDORS
 
             stimulation = 0; 
             meas_select = 0;
@@ -126,7 +90,7 @@ classdef EIT_pattern < handle
                 % case obj.GENERATING_FUNCTIONS{2} %'Array patterning'
                 %     [stimulation,meas_select]=mk_stim_pattern_Array(inj,meas,option,amplitude);
                 % case obj.GENERATING_FUNCTIONS{3} %''3D patterning'
-                %     [stimulation,meas_select]=mk_stim_3Dpattern(inj,meas,option,amplitude);
+                %     [stimulation,meas_select]=mk_stim_pattern_3D(inj,meas,option,amplitude);
                     
                 otherwise
                     error = build_error('generating patterning not implemented', 1);
@@ -139,17 +103,16 @@ classdef EIT_pattern < handle
 end
 
 function pattern = get_pattern_params(pattern_typ, special_user)
+    %GET_PATTERN_PARAMS Return the pattern corresponding to pattern typ
+    %       if pattern_typ is user_defined
+    %       > pattern = special_user
+    %       otherwise pattern = pattern_typ
 
     special_pattern=special_user;
     special_pattern = str2num_array(special_pattern);
-
-    switch pattern_typ
-        case 'user defined'
-            pattern = special_pattern;
-        case '3d_adop_user'
-            pattern = special_pattern;
-        otherwise
-            pattern = pattern_typ;
+    pattern = pattern_typ;
+    if strcmp(lower(pattern_typ), 'user defined')
+        pattern = special_pattern;
     end
-    
+
 end

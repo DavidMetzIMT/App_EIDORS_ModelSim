@@ -1,41 +1,33 @@
 classdef EIT_setup < handle
-    %UNTITLED2 Summary of this class goes here
-    %   Detailed explanation goes here
+    %EIT_SETUP Describe an EIT measurement setup
+    %  it comprise the data about the measurement chamber 
+    %  with the electrodes layout placed in the chamber  
+    %  and the injections/measurement pattern
     
     properties
         chamber EIT_chamber
-        pattern EIT_pattern
         elec_layout EIT_elec_layout
+        pattern EIT_pattern
     end
     
     methods
         function obj = EIT_setup()
-            %UNTITLED2 Construct an instance of this class
-            %   Detailed explanation goes here
+            %EIDORS_IMDL Constructor set default values
             obj.chamber= EIT_chamber();
-            obj.pattern= EIT_pattern();
             obj.elec_layout= EIT_elec_layout();
-        end
-
-        function obj = set.chamber(obj, chamber)
-            %UNTITLED2 Construct an instance of this class
-            %   Detailed explanation goes here
-            if isa(chamber, 'EIT_chamber')
-                obj.chamber= chamber;
-            else
-                errordlg('Chamber has to be an EIT_Chamber cls');
-            end
+            obj.pattern= EIT_pattern();
         end
 
         function reset_elec_layout(obj)
-            %reset_elec_layout clear the electrode layouts
+            %RESET_ELEC_LAYOUT reset the electrode layout to one default "EIT_elec_layout"
+            % in that case obj.elec_layout(1).is_reset()==true
             obj.elec_layout=EIT_elec_layout();
         end
-
+        
         function obj = add_elec_layout(obj, layout)
-            %add_elec_layout append an electrode layout
+            %ADD_ELEC_LAYOUT Append an EIT_elec_layout to obj.elec_layout
             if isa(layout, 'EIT_elec_layout')
-                if obj.elec_layout.is_reset()
+                if obj.elec_layout(1).is_reset()
                     obj.elec_layout(1)= layout;
                 else
                     obj.elec_layout(length(obj.elec_layout) + 1 ) = layout;
@@ -45,9 +37,19 @@ classdef EIT_setup < handle
             end
         end
         
+        function obj = set.chamber(obj, chamber)
+            %SETTER of chamber
+            %   chamber must be an "EIT_chamber"object
+            if isa(chamber, 'EIT_chamber')
+                obj.chamber= chamber;
+            else
+                errordlg('Chamber has to be an EIT_Chamber cls');
+            end
+        end
+        
         function obj = set.pattern(obj, pattern)
-            %METHOD1 Summary of this method goes here
-            %   Detailed explanation goes here
+            %SETTER of pattern
+            %   chamber must be an "EIT_pattern"object
             if isa(pattern, 'EIT_pattern') 
                 obj.pattern= pattern;
             else
@@ -56,28 +58,15 @@ classdef EIT_setup < handle
      
         end
 
-        function ch = get.chamber(obj)
-            %Returns the chamber object
-            ch= obj.chamber;            
-        end
-
         function struct4gui = get_elec_layout_4_gui(obj)
-            %Returns the electrodes layout as a struct array for the display 
-            %in gui
-
+            %GET_ELEC_LAYOUT_4_GUI Returns the electrodes layout as a struct array for the display in gui
             for i=1:length(obj.elec_layout)
                 struct4gui(i)=obj.elec_layout(i).get_struct_4_gui();
             end
         end
 
-
-        function output = get_struct_4_gui(input)
-            
-        end
-
-
         function [shape, elec_pos, elec_shape, elec_obj, z_contact, error] = data_for_ng(obj)
-            %Returns the data needed for the generation of a fmdel with EIDORS 
+            %DATA_FOR_NG Returns the data needed for the generation of a fmdl with EIDORS 
             % using "ng_mk_gen_models":
             % shape, elec_pos, elec_shape, elec_obj
             % also an error flag containing .code (>0 error)
@@ -104,6 +93,8 @@ classdef EIT_setup < handle
         end
 
         function [stimulation,meas_select, error] = generate_patterning(obj)
+            %GENERATE_PATTERNING Return the patterning var for the fwd_model
+            %  
             n_tot=0;
             for i=1:length(obj.elec_layout)
                 [n_XY, n, error] = obj.elec_layout(i).get_nb_elec();
