@@ -7,7 +7,7 @@ classdef Eidors_toolbox < handle
         local_path = ''; % local path of the "startup.m"-file to start EIDORS toolbox 
     end
     properties (Access = private)
-        default_path = {'/usr/local/EIDORS/eidors/startup.m'}%, 'C:\EIDORS\eidors\startup.m'}; % Default path for unix and pc
+        default_path = {'/usr/local/EIDORS/eidors/startup.m', 'C:\EIDORS\eidors\startup.m'}; % Default path for unix and pc
         defauft_local_path_file='eidors_toolbox_local_path.mat';
     
     end
