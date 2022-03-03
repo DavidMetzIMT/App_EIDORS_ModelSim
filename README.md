@@ -1,21 +1,18 @@
-# App_EIDORS_ModelSim
+# app_eidors_modelsim
 
-Electrical Impedance Tomography (EIT) - Model Simulation software
-
-# 
+Model Simulation Reconstruction software for Electrical Impedance Tomography (EIT)
 
 Thank you for the interest in `app_eidors_modelsim`!
 
-`app_eidors_modelsim` is **a MATLAB-based, open-source framework for Electrical Impedance Tomography (EIT) reconstruction.**
-
+`app_eidors_modelsim` is a MATLAB-based, open-source framework for Modeling 
+Simulation Reconstruction of Electrical Impedance Tomography (EIT) setup.
 
 
 ## 1. Introduction
 
 ### 1.1 Dependencies
 
-Simulation id based on the toolbox `EIDORS` 
-
+This MATLAB-based framework is based on the toolbox [`EIDORS`](http://eidors3d.sourceforge.net/)
 
 ### 1.2 Features
  - [x] Generation Forward model
@@ -36,23 +33,18 @@ Simulation id based on the toolbox `EIDORS`
     - [x] Simulation results (FEM/ measurements Uplots)
  - [x] Generation of dataset for AI
     - [x] Generation of Simulation of measurements
-    - [x] 
-    - [x] 
+    - [x] Samples data extraction for python-based AI computation
 
 	
 ## 2. Installation
 
 
+`app_eidors_modelsim` is an MATLAB-App based. No special insatllation is needed.
 
+besides this package, the EIDORS toolbox is needed:
+- Download the toolbox "eidors-v3.10-ng.zip" [here](http://eidors3d.sourceforge.net/download.shtml)
+- extract it on your local machine (prefer those path '/usr/local/EIDORS', 'C:\EIDORS')
 
-
-### 2.1 Install global
-
-`app_eidors_modelsim` is an MATLAB-App based. no installion is needed
-download the 
-
-
-### 2.2 Install 
 
 ## 3. Run the app
 
@@ -60,18 +52,50 @@ Run the script 'start.m'
 ```
 >> start.m
 ```
-### 3.1 examples of apps
 
+### 3.1 Examples of Forward Model
 
-### 3.2 (3D) forward and inverse computing
+#### 3.1.1 Examples of Chamber designs with differents electrodes combination
 
+**Circle_elec_ring_wall**
 
-## 4. Contribute to `app_eidors_modelsim`.
+![Circle_elec_ring_wall](/doc/images/Circle_elec_ring_wall.png)
 
+**Cylinder_elec_ring_wall**
 
+![Cylinder_elec_ring_wall](/doc/images/Cylinder_elec_ring_wall.png)
 
-## 5. Cite our work.
+**Cylinder_elec_ring_top**
 
+![Cylinder_elec_ring_top](/doc/images/Cylinder_elec_ring_top.png)
+
+**Cylinder_elec_ring_bot**
+
+![Cylinder_elec_ring_bot](/doc/images/Cylinder_elec_ring_bot.png)
+
+**Cylinder_elec_ring_top_array_bot**
+
+![Cylinder_elec_ring_top_array_bot](/doc/images/Cylinder_elec_ring_top_array_bot.png)
+
+**Cubic_elec_ring_top_array_bot**
+
+![Cubic_elec_ring_top_array_bot](/doc/images/Cubic_elec_ring_top_array_bot.png)
+
+#### 3.1.2 Examples of Forward Model
+
+#### 3.1.3 Examples of Forward Model
+
+### 3.2 Simulation / Forward Solving (2D/3D)
+#### 3.2.2 Example of simulation
+#### 3.2.1 Object definition
+
+### 3.2 Reconstruction / Inverse Solving (2D/3D)
+
+### 3.3 Generation of AI
+#### 3.3.1 Example of dataset generation
+#### 3.3.2 
+
+## 4. Cite our work.
 
 **If you find `app_eidors_modelsim` useful, please cite our work!**
 

@@ -49,7 +49,8 @@ classdef Eidors_toolbox < handle
             %IS_RUNNING check if the toolbox has been loaded / started
             
             global eidors_objects;            
-            output=isfield(eidors_objects,'max_cache_size');%exist('show_fem');
+            output=isfield(eidors_objects,'max_cache_size');%
+            output = output && exist('show_fem');
             if output
                 disp(['EIDORS Toolbox has been started']);
             end

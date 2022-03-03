@@ -1,4 +1,6 @@
-path=pwd;
+path= mfilename('fullpath');
+[path, fName, fExt] = fileparts(path);
+cd(path);
 disp(['Add to "Matlab-PATH" all subfolder from: ' path]);
 addpath(genpath(path));
-app = FwdModel_App;
+app = FwdModel_App(path);
