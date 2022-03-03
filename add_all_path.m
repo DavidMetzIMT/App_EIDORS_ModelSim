@@ -1,4 +1,10 @@
+function add_all_path(path)
 
-% add complete path load use functions
-current_path= pwd;
-addpath(genpath(pwd))
+    if nargin == 0
+        path=pwd;
+    end
+
+    disp(['Add to "Matlab-PATH" all subfolder from: ' path]);
+    addpath(genpath(path));
+    
+end
