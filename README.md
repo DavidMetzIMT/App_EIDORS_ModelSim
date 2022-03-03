@@ -1,35 +1,44 @@
 # App_EIDORS_ModelSim
 
-Electrical Impedance Tomography (EIT) application
+Electrical Impedance Tomography (EIT) - Model Simulation software
 
 # 
 
 Thank you for the interest in `app_eidors_modelsim`!
 
-`app_eidors_modelsim` is **a python-based, open-source framework for Electrical Impedance Tomography (EIT) reconstruction.**
+`app_eidors_modelsim` is **a MATLAB-based, open-source framework for Electrical Impedance Tomography (EIT) reconstruction.**
 
-using a Sciospec EIT32-device from the compagny Sciospec
+
 
 ## 1. Introduction
 
 ### 1.1 Dependencies
 
-Simulation id based on the toolbox `EIDORS`
+Simulation id based on the toolbox `EIDORS` 
 
 
 ### 1.2 Features
+ - [x] Generation Forward model
+    - [x] Setting of the forward solver
+    - [x] Generation of measurement chamber 2D (circle) and 3D (cylinder/cubic) using netgen
+    - [x] Generation of electrodes layout ring and array (only for 3D on top or bottom surface)
+    - [x] Generation of injection and measurements pattern
+ - [x] Simulation of measurements
+    - [x] Setting of the conductivity by adding objects (cells, sphere, cylinder) in the chamber
+    - [x] Solving of the forward problem
+ - [x] Reconstruction of measurements
+    - [x] Setting of the inverse solver
+    - [x] Loading real measurement or simulation 
+    - [x] Solving of the inverse problem 
+ - [x] Plotting
+    - [x] FEM mesh of the forward model
+    - [x] Pattern
+    - [x] Simulation results (FEM/ measurements Uplots)
+ - [x] Generation of dataset for AI
+    - [x] 
+    - [x] Pattern
+    - [x] Simulation
 
- - [x] 
- - [x] 
- - [x] 
- - [x] 
- - [x] 
- - [x] 
- - [x] 
- - [x] 
- - [ ] 
- - [x] 
- - [ ] 
 	
 ## 2. Installation
 
@@ -52,7 +61,7 @@ $ python setup.py install
 
 
 
-**Note:** the following images may be outdated due to that the parameters of a EIT algorithm may be changed in different versions of `pyEIT`. And it is there in the code, so just run the demo.
+**Note:** 
 
 ### 3.1 examples of apps
 
