@@ -1,1 +1,0 @@
-delete(findall(0));

@@ -35,34 +35,31 @@ Simulation id based on the toolbox `EIDORS`
     - [x] Pattern
     - [x] Simulation results (FEM/ measurements Uplots)
  - [x] Generation of dataset for AI
+    - [x] Generation of Simulation of measurements
     - [x] 
-    - [x] Pattern
-    - [x] Simulation
+    - [x] 
 
 	
 ## 2. Installation
 
-`app_eidors_modelsim` is purely matlab based. no installion is needed
-download the 
+
 
 
 
 ### 2.1 Install global
 
-NOT TESTED YET!!!
-
-$ python setup.py build
-$ python setup.py install
+`app_eidors_modelsim` is an MATLAB-App based. no installion is needed
+download the 
 
 
 ### 2.2 Install 
 
 ## 3. Run the app
 
-
-
-**Note:** 
-
+Run the script 'start.m' 
+```
+>> start.m
+```
 ### 3.1 examples of apps
 
 
