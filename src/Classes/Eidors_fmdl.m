@@ -91,6 +91,9 @@ classdef Eidors_fmdl < handle
             % only the fields of fmdl also present in obj will be updated
 
             obj.initialized=0;
+            if isa(fmdl, 'Eidors_fmdl') 
+                fmdl= fmdl.fmdl();
+            end
             [pass errstr]=valid_fwd_model(fmdl);
             if ~pass
                 disp('ERROR TYPE: fwd_model should be an EIDORS "fwd_model" object')

@@ -58,6 +58,17 @@ classdef UserEntry < handle
                 obj.srcFileSize         = 250; 
             end 
         end
+        
+        function set.samplesAmount(obj, val)
+            %SETTER of samplesAmount 
+            %  check if the sample amount is not 0 or negativ
+            if val <= 0
+                error('Samples amount should not be <= 0')
+                return;
+            end
+            obj.samplesAmount=val;
+        end
+
 
         function var = get_struct_4_gui(obj)
             %GET_STRUCT_4_GUI Return the user entries as a struct (this struct should be used to create a UserEntry)
@@ -110,62 +121,7 @@ classdef UserEntry < handle
 
             obj.objectConductRange = range;
         end
-%         
-%         function set.chamber_type(obj, in) 
-%             obj.chamber_type = in;   
-%         end
-%         
-%         function set.chamber_height(obj, in) 
-%             obj.chamber_height =  in;   
-%         end
-%         
-%         function set.chamber_radius(obj, in) 
-%             obj.chamber_radius =  in;   
-%         end
-%         
-%         function set.mesh_size(obj, in) 
-%             obj.mesh_size =  in;   
-%         end
-%         
-%         function set.range_num_of_cells(obj, in) 
-%             obj.range_num_of_cells = in;   
-%         end
-%         
-%         function set.range_buffer_conductivity(obj, in)
-%             obj.range_buffer_conductivity = in;   
-%         end
-%         
-%         function set.range_cell_conductivity(obj, in) 
-%             obj.range_cell_conductivity = in;  
-%         end
-%         
-%         function set.range_cell_radius(obj, in)   
-%             obj.range_cell_radius = in;   
-%         end
-%        
-%         function set.cell_nucleus(obj, in)   
-%             obj.cell_nucleus = in;   
-%         end
-%         
-%         function set.SNR(obj, in) 
-%             obj.SNR = in;   
-%         end
-%         
-%         function set.inv_solver_name(obj, in) 
-%             obj.inv_solver_name = in;   
-%         end
-%         
-%         function set.num_trainingData(obj, in) 
-%             obj.num_trainingData = in;   
-%         end
-%         
-%         function set.NN(obj, in) 
-%             obj.NN = in;   
-%         end
-%         
-%         function set.invSolver(obj, in) 
-%             obj.invSolver = in;   
-%         end
+
     end
 end
 

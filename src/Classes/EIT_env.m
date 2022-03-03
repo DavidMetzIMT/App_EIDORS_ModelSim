@@ -7,7 +7,6 @@ classdef EIT_env < handle
         inv_model Eidors_imdl % the inverse model aslike in EIDORS
         sim EIT_sim_env % Simulation env for simulation with EIDORS
         rec EIT_rec_env % Reconstruction environmnent with EIDORS
-        user_entry UserEntry % user entry for generation of AI datasets
     end
 
     properties (Access=private)
@@ -22,8 +21,37 @@ classdef EIT_env < handle
             obj.rec=EIT_rec_env();
             obj.fwd_model= Eidors_fmdl();
             obj.inv_model= Eidors_imdl();
-            obj.user_entry=UserEntry();
             obj.FMDL_GEN=0;
+        end
+
+        function update_from_file(obj, path)
+            %UPDATE Update fields with value from new_env
+            %       it only update the filed which exist in both environment
+
+            [fPath, fName, fExt] = fileparts(path);
+            %set the field from the new env!
+            [new_env, success, path ]=  obj.load(fPath,[fName, fExt]);
+            if success==0
+                return;
+            end
+            obj.update(new_env)
+        end
+
+
+        function update(obj, new_env)
+            %UPDATE Update fields with value from new_env
+            %       it only update the filed which exist in both environment
+
+            %set the field from the new env!
+            new_f= fieldnames(new_env);
+            old_f= fieldnames(obj);
+            for i=1:length(new_f)
+                field= new_f{i};
+                if ~isempty(find(strcmp(old_f, field)))
+                    value = getfield(new_env,field);
+                    setfield(obj,field,value);
+                end
+            end
         end
 
         function success = save_auto(obj, folder, filename)
@@ -33,7 +61,7 @@ classdef EIT_env < handle
             success=0;
             par = obj.set_param4saving(folder, filename, 1);
             if ~par.success
-                warndlg('Saving aborted!');
+                % warndlg('Saving aborted!');
                 return;
             end
             success= obj.save_env(par.filepath);
@@ -48,26 +76,29 @@ classdef EIT_env < handle
             success=0;
             par = obj.set_param4saving(folder, filename, 0);
             if ~par.success
-                warndlg('Saving aborted!');
+                % warndlg('Saving aborted!');
                 return;
             end
             success= obj.save_env(par.filepath);
         end
 
-        function [new_env, success] = load(obj, folder, filename)
+        function [new_env, success, path] = load(obj, folder, filename)
             %LOAD Load an EIT_env mat file and return the contained env variable
             %       the user will be asked to select the mat-fil where to load
             %       the passed folder and filename are used as defaulft values
             %       for the dialog
+            %       it return also the loaded path
             
             success=0 ;
             new_env='';
+            path= '';
             par = obj.set_param4loading(folder, filename);
             if ~par.success
-                warndlg('Loading cancelled!');
+                % warndlg('Loading cancelled!');
                 return;
             end
             [new_env, success]= obj.load_env(par.filepath);
+            path= par.filepath;
         end
 
         function [fmdl, success] = create_fwd_model(obj, chamber, elec_layout, add_text)
@@ -220,15 +251,27 @@ classdef EIT_env < handle
         end
 
         function [new_env, success]=  load_env(obj, filepath)
-            %LOAD_ENV Load an eit enviromment  
-            if exist(filepath)
-                tmp = load(filepath);
-                new_env= tmp.eit_env;
-                success=1;
-            else
-                new_env='empty';
-                success=0;
+            %LOAD_ENV Load an eit enviromment 
+            % i load only the varaible contained in the mat file having the save
+            % class as it self!
+            new_env='';
+            success=0; 
+            if ~exist(filepath)
+                return
             end
+            tmp = load(filepath); %load the mat file
+            field_tmp= fieldnames(tmp);
+            for i=1:length(field_tmp)
+                field= field_tmp{i}
+                cls= class(getfield(tmp, field))
+                class(obj)
+                if strcmp(class(obj), cls)
+                    new_env= getfield(tmp, field);
+                    success=1;
+                    return;
+                end
+            end
+            
         end
     
     end

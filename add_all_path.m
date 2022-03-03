@@ -1,4 +1,4 @@
-function add_all_2_path(path)
+function add_all_path(path)
 
     if nargin == 0
         path=pwd;

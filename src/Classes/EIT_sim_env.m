@@ -28,15 +28,16 @@ classdef EIT_sim_env < matlab.mixin.Copyable % a hanlde with copy methods
         function add_object(obj, object)
             %ADD_OBJECT Append an EIT_object to obj.objetcs
             %   
-            if isa(object, 'EIT_object')
-                if obj.objects(1).is_reset()
-                    obj.objects(1)= object;
-                else
-                    obj.objects(length(obj.objects) + 1 ) = object;
-                end
-            else
+            if ~isa(object, 'EIT_object')
                 errordlg('object has to be an EIT_object cls')
+                return;
             end
+            if obj.objects(1).is_reset()
+                obj.objects(1)= object;
+            else
+                obj.objects(length(obj.objects) + 1 ) = object;
+            end
+
         end
 
 
@@ -104,15 +105,35 @@ classdef EIT_sim_env < matlab.mixin.Copyable % a hanlde with copy methods
             %SETTER of fmdl
             %   if fwd_model can be an obj from the class "Eidors_fmdl" or 
             %   an fwd_model object from EIDORS toolbox 
+            if isempty(fwd_model)
+                obj.fmdl=fwd_model;
+                return;
+            end
             if  isequal(class(fwd_model),'Eidors_fmdl')
                 fwd_model=fwd_model.fmdl();
             end
             if valid_fwd_model(fwd_model)
-                obj.fwd_model=fwd_model;
+                obj.fmdl=fwd_model;
             else
                 disp('ERROR TYPE: fwd_model could not be set')
             end
         end
+
+        function clean_fmdl(obj)
+            obj.fmdl=[];
+            obj.img_h.fwd_model=[];
+            obj.img_ih.fwd_model=[];
+            
+        end
+
+        function output = reset_fmdl(obj, fmdl)
+            obj.fmdl=fmdl;
+            obj.img_h.fwd_model=fmdl;
+            obj.img_ih.fwd_model=fmdl;
+            
+        end
+
+
     end
     methods (Access = protected)
         function copy = copyElement(obj)

@@ -24,6 +24,10 @@ classdef Eidors_toolbox < handle
             % if passed the path of the used "startup.m"-file to start EIDORS toolbox will be saved for further starts!  
             
             if obj.is_running()
+                path= which('startup.m');
+                [fPath, fName, fExt] = fileparts(path);
+                obj.local_path= path;
+                obj.save_local_path();
                 return;
             end
             % loading default paths from local_path_file and run the toolbox
@@ -43,7 +47,9 @@ classdef Eidors_toolbox < handle
 
         function output = is_running(obj)
             %IS_RUNNING check if the toolbox has been loaded / started
-            output=exist('show_fem');
+            
+            global eidors_objects;            
+            output=isfield(eidors_objects,'max_cache_size');%exist('show_fem');
             if output
                 disp(['EIDORS Toolbox has been started']);
             end
