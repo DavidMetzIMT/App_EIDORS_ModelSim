@@ -130,7 +130,7 @@ classdef EIT_dataset < EIT_env
             if ~strcmp(obj.dir_path, fPath)
                 obj.dir_path= fPath;
                 obj.build_output_dirs();
-                obj.save_dataset_in_mat();
+                % obj.save_dataset_in_mat();
             end
         end
 
