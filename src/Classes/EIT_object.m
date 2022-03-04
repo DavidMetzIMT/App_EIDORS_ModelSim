@@ -134,12 +134,11 @@ classdef EIT_object
             %   conductivity array is : 
             %             conduct(1:nb_elems, i) = conduct of layer i
 
-            layer_conduct=obj.conduct;
-            for layer=1:size(layer_conduct,1)
+            for layer=1:size(obj.conduct,1)
                 % generating the whole random cell (cytoplasm)
-                layer_conduct = layer_conduct(layer,1);
-                if size(layer_conduct,2)>1
-                    layer_ratio = layer_conduct(layer,2);
+                layer_conduct = obj.conduct(layer,1);
+                if size(obj.conduct,2)>1
+                    layer_ratio = obj.conduct(layer,2);
                 else
                     layer_ratio = 1;
                 end
