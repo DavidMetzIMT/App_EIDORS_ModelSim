@@ -519,7 +519,7 @@ classdef EIT_dataset < EIT_env
                 dirout= uigetdir(pwd, 'Select output directory');
             end
             folder_out=[char(t) '_' obj.user_entry.name];  
-            path = path_join(dir_out, folder_out);
+            path = path_join(dirout, folder_out);
             disp(['Dataset will be saved in:' path])
             obj.dir_path= path;
         end   

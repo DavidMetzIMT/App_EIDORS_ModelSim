@@ -116,7 +116,7 @@ classdef Eidors_toolbox < handle
 
             % load "local_path" contained in the local_path_file (if found)
             path= obj.local_path_file;
-            if ~isempty(path) & exist(path)
+            if ~isempty(path) & isfile(path)
                 file=load(path);
                 obj.local_path= file.local_path;
             end
@@ -177,7 +177,13 @@ classdef Eidors_toolbox < handle
             %SAVE_LOCAL_PATH Save the path of the "startup.m"-file to start EIDORS toolbox 
 
             local_path= obj.local_path;
-            folder= obj.local_path_file;
+
+            [folder, fName, fExt] = fileparts(obj.local_path_file);
+
+            if strcmp(fExt,'')
+                folder =obj.local_path_file;
+            end
+            
             if isempty(obj.local_path_file) | ~exist(obj.local_path_file)
                 [folder] = uigetdir(pwd, 'Select folder to save EIDORS toolbox local path');
             end
