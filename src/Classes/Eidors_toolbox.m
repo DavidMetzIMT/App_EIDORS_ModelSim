@@ -12,8 +12,11 @@ classdef Eidors_toolbox < handle
     
     end
     methods
-        function obj = Eidors_toolbox()
+        function obj = Eidors_toolbox(varargin)
             %EIDORS_TOOLBOX Constructor
+            if nargin==1
+                obj.local_path_file=varargin{1};
+            end
             obj.search_local_path_file();
             obj.start(obj.local_path_file);
         end
@@ -174,10 +177,11 @@ classdef Eidors_toolbox < handle
             %SAVE_LOCAL_PATH Save the path of the "startup.m"-file to start EIDORS toolbox 
 
             local_path= obj.local_path;
+            folder= obj.local_path_file;
             if isempty(obj.local_path_file) | ~exist(obj.local_path_file)
                 [folder] = uigetdir(pwd, 'Select folder to save EIDORS toolbox local path');
-                obj.local_path_file= path_join(folder,obj.defauft_local_path_file);
             end
+            obj.local_path_file= path_join(folder,obj.defauft_local_path_file);
             save(obj.local_path_file,'local_path');
         end
 
