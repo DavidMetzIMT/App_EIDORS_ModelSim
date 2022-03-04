@@ -394,7 +394,7 @@ classdef EIT_dataset < EIT_env
 
             disp(['Extract samples data for AI (Python):Start...']);
             %load all src_data
-            [src_data, idx_src_data]=obj.load_src_data([1:obj.nSamples]);
+            [src_data, idx_src_data]=obj.load_data('src_data',[1:obj.nSamples]);
 
             nMeas= size(obj.fwd_model.meas_select, 1); 
             nElem= size(obj.fwd_model.elems, 1);
