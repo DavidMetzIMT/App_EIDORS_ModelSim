@@ -516,11 +516,11 @@ classdef EIT_dataset < EIT_env
             %NEW_ACTUAL_PATH Generate a new directory for the generation of new samples
             t = datetime('now','TimeZone','local','Format','yyyyMMdd_HHmmss');
             if ~exist(dirout,'dir')
-                dirout=pwd;
+                dirout= uigetdir(pwd, 'Select output directory');
             end
-            out_path= uigetdir(dirout, 'Select output directory');
             folder_out=[char(t) '_' obj.user_entry.name];  
-            path = path_join(out_path, folder_out);
+            path = path_join(dir_out, folder_out);
+            disp(['Dataset will be saved in:' path])
             obj.dir_path= path;
         end   
         
