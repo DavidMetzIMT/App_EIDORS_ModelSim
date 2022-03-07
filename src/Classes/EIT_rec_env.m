@@ -12,6 +12,7 @@ classdef EIT_rec_env < handle
     end
 
     properties (Access = private)
+        type= 'EIT_rec_env'
         REC_TYPE ={'difference'}; % Reconstruction type supported
     end
     

@@ -22,6 +22,7 @@ classdef EIT_object
     end
 
     properties (Access = private)
+        type = 'EIT_object'
         OBJ_TYPE ={'Cell', 'Sphere', 'Cylinder'}; %Object types implemented
     end
     

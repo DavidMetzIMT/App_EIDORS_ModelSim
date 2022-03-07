@@ -7,6 +7,7 @@ classdef EIT_chamber < handle
     end
 
     properties (Access=private)
+        type = 'EIT_chamber'
         FORMS ={'Cylinder', 'Cubic', '2D_Circ'};
         ALLOW_ELEC_PLACEMENT = [ % 'Wall', 'Top', 'Bottom'
             1,   1,   1 ; % 'Cylinder' 

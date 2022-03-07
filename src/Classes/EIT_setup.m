@@ -9,6 +9,10 @@ classdef EIT_setup < handle
         elec_layout EIT_elec_layout
         pattern EIT_pattern
     end
+
+    properties (Access = private)
+        type= 'EIT_setup'
+    end
     
     methods
         function obj = EIT_setup()

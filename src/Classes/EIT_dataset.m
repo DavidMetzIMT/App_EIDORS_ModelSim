@@ -61,6 +61,7 @@ classdef EIT_dataset < EIT_env
 
         function obj = EIT_dataset()
             %EIT_DATASET Constructor set properties to default values
+            obj.type='EIT_dataset'
             obj.user_entry=UserEntry();
             obj.init()
         end

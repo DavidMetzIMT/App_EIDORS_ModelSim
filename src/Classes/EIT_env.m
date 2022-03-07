@@ -8,8 +8,9 @@ classdef EIT_env < handle
         sim EIT_sim_env % Simulation env for simulation with EIDORS
         rec EIT_rec_env % Reconstruction environmnent with EIDORS
     end
-
+    
     properties (Access=private)
+        type='EIT_env'
         FMDL_GEN=0;
     end
     

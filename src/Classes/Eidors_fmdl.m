@@ -13,7 +13,6 @@ classdef Eidors_fmdl < handle
         solve                 
         jacobian              
         system_mat            
-        type  = 'fwd_model';                
         mat_idx               
         normalize_measurements
         misc                  
@@ -28,6 +27,7 @@ classdef Eidors_fmdl < handle
     end
 
     properties (Access = private)
+        type  = 'fwd_model';  
         SOLVER = {'eidors_default', 'fwd_solve_1st_order', 'aa_fwd_solve'}
         JACOBIAN = {'eidors_default', 'jacobian_adjoint','aa_calc_jacobian'}
         SYS_MAT = {'eidors_default','system_mat_1st_order', 'aa_calc_system_mat'}

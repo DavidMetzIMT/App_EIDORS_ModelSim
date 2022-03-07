@@ -15,6 +15,10 @@ classdef UserEntry < handle
         srcFileSize         = 250  % nb of single data per src batch files
         
     end
+
+    properties (Access = private)
+        type = 'user_entry'; % type of the class still needed??
+    end
     
     methods 
         function obj = UserEntry(varargin)

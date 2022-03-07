@@ -5,6 +5,9 @@ classdef AI_sample
         Voltages
         Conduct
     end
+    properties (Access = private)
+        type  = 'AI_sample'; 
+    end 
     
     methods
         function obj = AI_sample(voltages, conduct)

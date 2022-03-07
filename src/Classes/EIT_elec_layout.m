@@ -15,6 +15,7 @@ classdef EIT_elec_layout < handle
         reset
     end
     properties (Access=private)
+        type = 'EIT_elec_layout'
         ELEC_FORMS ={'Circular', 'Rectangular', 'Point'};
         LAYOUT_DESIGN = {'Ring', 'Array_Grid 0', 'Array_Grid 45'};%, 'Array_PolkaDot 0', 'Array_PolkaDot 45'};
         ELEC_PLACE ={'Wall', 'Top', 'Bottom'};
