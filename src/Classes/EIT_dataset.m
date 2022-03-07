@@ -52,6 +52,10 @@ classdef EIT_dataset < EIT_env
         dir_path                % Absolute path of the dataset top folder
         user_entry UserEntry    % User entry for generation of AI datasets
     end
+
+    properties (Access = private)
+        time_computation
+    end
     
     methods
 
@@ -242,7 +246,8 @@ classdef EIT_dataset < EIT_env
             
             eidors_cache('off');% batch_size= 10e6; %Bytes
             src_data=[];
-            tStart= tic;     
+            tStart= tic;
+            obj.time_computation= tStart;     
             for i=1:obj.nSamples
                 new_src_data=obj.build_new_src_data(i);
                 obj.display_progress(i); % display the generation progress
@@ -299,8 +304,9 @@ classdef EIT_dataset < EIT_env
             end
 
             if mod(indx,batch_display)==0
-                disp(['                 Training Data #', num2str(indx) '/' num2str(obj.nSamples), '; time: ', num2str(toc),'s'])
-                tic
+                time = ['Generation of' num2str(batch_display) ' data lasted: ' num2str(toc(obj.time_computation)) 's']
+                disp(['                 Training Data #', num2str(indx) '/' num2str(obj.nSamples), ';' time] )
+                obj.time_computation= tic;
             end
         end
 
