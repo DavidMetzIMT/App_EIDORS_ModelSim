@@ -1,5 +1,6 @@
 classdef EIT_chamber < handle
     properties
+        type = 'eit_chamber'
         name % User specific name for the chamber
         boxSize %Dimension of the chamber in X, Y, Z
         femRefinement % Refinement value for FEM mesh generation
@@ -7,7 +8,6 @@ classdef EIT_chamber < handle
     end
 
     properties (Access=private)
-        type = 'EIT_chamber'
         FORMS ={'Cylinder', 'Cubic', '2D_Circ'};
         ALLOW_ELEC_PLACEMENT = [ % 'Wall', 'Top', 'Bottom'
             1,   1,   1 ; % 'Cylinder' 

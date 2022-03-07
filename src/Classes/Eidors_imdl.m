@@ -2,6 +2,7 @@ classdef Eidors_imdl < handle
     % EIDORS_IMDL Class version of the Eidors inv_model object
 
     properties
+        type = 'inv_model'  
         name % name if the inverse model
         solve % solver of the inverse model
         RtR_prior % RtR_prior of the inverse model (for the solver)
@@ -11,10 +12,6 @@ classdef Eidors_imdl < handle
         meas_icov % optional
         reconst_type % reconstruction type (difference, static/absolute)
         fwd_model % associated forward model object from EIDORS
-    end
-
-    properties (Access=private)
-        type = 'inv_model'  
     end
 
     methods 

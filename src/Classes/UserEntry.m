@@ -1,8 +1,8 @@
 classdef UserEntry < handle
     % USERENTRY Regroups user entries for the generation of EIT dataset for AI
   
-    properties ( Access = public )
-        type                = 'user_entry'; % type of the class still needed??
+    properties
+        type = 'user_entry'; % type of the class still needed??
         name                = ''   % EIT dataset name correspoding to the given parameters 
         samplesAmount       = [];  % total samples amout/number
         mediumsConductRange = [];  % conductivity range of the medium, e.g. [0.1,0.3]       
@@ -14,10 +14,6 @@ classdef UserEntry < handle
         samplesFileSize     = 1000 % nb of samples per samples batch files
         srcFileSize         = 250  % nb of single data per src batch files
         
-    end
-
-    properties (Access = private)
-        type = 'user_entry'; % type of the class still needed??
     end
     
     methods 
@@ -53,7 +49,7 @@ classdef UserEntry < handle
                 obj.name                = 'Dataset_name'; 
                 obj.samplesAmount       = 10000; 
                 obj.mediumsConductRange = [1, 2]; 
-                obj.objectType          = object.type; 
+                obj.objectType          = object.cat; 
                 obj.objectAmountRange   = [1, 2];
                 obj.objectDimRange      = [0.1, 0.2]; 
                 obj.objectConductRange  = [0.1, 0.2]; 
@@ -96,7 +92,7 @@ classdef UserEntry < handle
 
             % attention here the order count
             object=EIT_object();
-            format={'char', 'numeric', 'char', object.allowed_type(), 'char', 'char', 'char','numeric','numeric','numeric' };
+            format={'char', 'numeric', 'char', object.allowed_categories(), 'char', 'char', 'char','numeric','numeric','numeric' };
         end
 
 

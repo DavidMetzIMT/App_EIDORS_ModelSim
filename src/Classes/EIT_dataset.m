@@ -25,6 +25,7 @@ classdef EIT_dataset < EIT_env
 
 
     properties
+        
         name                    % Name of the file to save this env
         src_indx                % Array indicating where the #i src_data is saved
                                 % e.g. src_indx = [
@@ -57,11 +58,12 @@ classdef EIT_dataset < EIT_env
         time_computation
     end
     
+    
     methods
 
         function obj = EIT_dataset()
             %EIT_DATASET Constructor set properties to default values
-            obj.type='EIT_dataset'
+            obj.type='eit_dataset'
             obj.user_entry=UserEntry();
             obj.init()
         end

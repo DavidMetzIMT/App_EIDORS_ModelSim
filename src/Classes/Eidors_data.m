@@ -5,15 +5,12 @@ classdef Eidors_data
 
 
     properties
+        type = 'data'
         name
         time % Unix time
         meas
         configuration % optional
         fwd_model Eidors_fmdl % optional
-    end
-    
-    properties (Access = private)
-        type = 'data'
     end
 
     methods (MethodAttributes)

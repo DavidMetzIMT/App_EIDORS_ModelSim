@@ -2,6 +2,7 @@ classdef EIT_sim_env < matlab.mixin.Copyable % a hanlde with copy methods
     %EIT_SIM_ENV Simulation environement of EIT Measurements using EIDORS Toolbox
     %      
     properties
+        type  = 'eit_sim_env';  
         name ='Simulation default'
         fmdl % "fwd_model" object from EIDORS
         objects EIT_object % objects put in the chamber
@@ -11,8 +12,8 @@ classdef EIT_sim_env < matlab.mixin.Copyable % a hanlde with copy methods
         data_h % meas data for img_h from EIDORS (solving the fmdl)
         data_ih % meas data for img_ih from EIDORS (solving the fmdl)
     end
+
     properties (Access = private)
-        type  = 'EIT_sim_env';  
         SOLVER = {'eidors_default', 'fwd_solve_1st_order', 'aa_fwd_solve'}
         JACOBIAN = {'eidors_default', 'jacobian_adjoint','aa_calc_jacobian'}
         SYS_MAT = {'eidors_default','system_mat_1st_order', 'aa_calc_system_mat'}

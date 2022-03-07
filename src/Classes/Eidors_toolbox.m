@@ -3,15 +3,16 @@ classdef Eidors_toolbox < handle
     % to start, 
 
     properties
+        type= 'eidors_toolbox'
         local_path_file = ''; % mat-file containing the local_path
         local_path = ''; % local path of the "startup.m"-file to start EIDORS toolbox 
     end
+
     properties (Access = private)
-        type= 'Eidors_Toolbox'
         default_path = {'/usr/local/EIDORS/eidors/startup.m', 'C:\EIDORS\eidors\startup.m'}; % Default path for unix and pc
         defauft_local_path_file='eidors_toolbox_local_path.mat';
-    
     end
+
     methods
         function obj = Eidors_toolbox(varargin)
             %EIDORS_TOOLBOX Constructor

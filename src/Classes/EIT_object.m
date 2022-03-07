@@ -1,7 +1,7 @@
 classdef EIT_object
     %EIT_OBJECT Define an object placed in the chamber
     %   object has the properties
-    %       - type : type of the object "allowed_type" return valid types
+    %       - cat : category of the object "allowed_categories" return valid categoriess
     %       - pos : position of the object
     %       - dim : dimension of the object
     %       - conduct :  layer conductivity of the object (for ex [0.1,1; 0.2,0.60] for a cell with 60% nucleus)
@@ -9,7 +9,8 @@ classdef EIT_object
     %                    conduct(i,2): is size ratio of layer i
 
     properties
-        type % type of the object "allowed_type"-method return valid types
+        type = 'eit_object'
+        cat % category of the object "allowed_categories"-method return valid categoriess
         pos  % position of the object
         dim  % dimension of the object
         conduct % layer conductivity of the object (for ex [0.1,1; 0.2,0.60] for a cell with 60% nucleus)
@@ -22,8 +23,7 @@ classdef EIT_object
     end
 
     properties (Access = private)
-        type = 'EIT_object'
-        OBJ_TYPE ={'Cell', 'Sphere', 'Cylinder'}; %Object types implemented
+        OBJ_CATEGORIES ={'Cell', 'Sphere', 'Cylinder'}; %Object categoriess implemented
     end
     
     methods
@@ -32,7 +32,7 @@ classdef EIT_object
             % 
             % if varargin is not passed default values will be set
             % varargin{1} >> has to have the following struct (given by the "get_struct_4_gui"-method):
-            %    - Type % type of the objectsee "allowed_type"-method. Default = 'Cell'
+            %    - Type % category of the objectsee "allowed_categories"-method. Default = 'Cell'
             %    - Position % Position of the object. Default = [0,0,0]
             %    - Dimensions % Dimension of object . Default = [0.1]
             %    - Conductivity %layer conductivity of the object (for ex [0.1,1; 0.2,0.60] for a cell with 60% nucleus)
@@ -42,13 +42,13 @@ classdef EIT_object
             if nargin==1
                 var= varargin{1};
                 obj.reset = 0;
-                obj.type=var.Type; 
+                obj.cat=var.Type; 
                 obj.pos=str2num_array(var.Position); 
                 obj.dim=str2num_array(var.Dimensions); 
                 obj.conduct=str2num_array(var.Conductivity);
             else
                 obj.reset = 1;
-                obj.type=obj.OBJ_TYPE{1}; % 'Cell'
+                obj.cat=obj.OBJ_CATEGORIES{1}; % 'Cell'
                 obj.pos=[0,0,0]; 
                 obj.dim=[0.1]; 
                 obj.conduct=[0.2]; 
@@ -60,7 +60,7 @@ classdef EIT_object
             %GET_STRUCT_4_GUI Return the object as a struct (this struct should be used to create an EIT_object)
             
             % attention here the order count
-            var.Type        = obj.type; 
+            var.Type        = obj.cat; 
             var.Position    = num_array2str(obj.pos); 
             var.Dimensions  = num_array2str(obj.dim); 
             var.Conductivity= num_array2str(obj.conduct); 
@@ -70,18 +70,18 @@ classdef EIT_object
             %GET_FORMAT_4_GUI Return format of each field of the returned struct from "get_struct_4_gui"-method 
 
             % attention here the order count
-            format={obj.OBJ_TYPE, 'char', 'char', 'char' };
+            format={obj.OBJ_CATEGORIES, 'char', 'char', 'char' };
         end
 
-        function obj=set.type(obj, value)
-            %SET.TYPE Set type of the object
+        function obj=set.cat(obj, value)
+            %SET.CAT Set category of the object
 
-            % check if a valid object type has been passed
-            if isempty(find(strcmp(obj.OBJ_TYPE, value)))
-                errordlg('wrong type value for the object');
-                obj.type= obj.OBJ_TYPE{1}; % set default value
+            % check if a valid object category has been passed
+            if isempty(find(strcmp(obj.OBJ_CATEGORIES, value)))
+                errordlg('wrong type/category value for the object');
+                obj.cat= obj.OBJ_CATEGORIES{1}; % set default value
             else
-                obj.type= value;
+                obj.cat= value;
             end
         end
 
@@ -98,9 +98,9 @@ classdef EIT_object
             end
         end
 
-        function output = allowed_type(obj)
-            %ALLOWED_TYPE Return the implemented object types
-            output =obj.OBJ_TYPE;
+        function output = allowed_categories(obj)
+            %ALLOWED_CATEGORIES Return the implemented object categories/types
+            output =obj.OBJ_CATEGORIES;
         end
 
         function value = is_reset(obj)
@@ -115,15 +115,15 @@ classdef EIT_object
 
             p = obj.pos;
             d = obj.dim*ratio; % d(1) is radius
-            type =obj.type;
+            type =obj.cat;
             switch type
-                case obj.OBJ_TYPE{1}%'Cell'
+                case obj.OBJ_CATEGORIES{1}%'Cell'
                     func = @(x,y,z) (x-p(1)).^2 + (y-p(2)).^2+(z-p(3)).^2 <= d(1)^2;
 
-                case obj.OBJ_TYPE{2}%'Sphere'
+                case obj.OBJ_CATEGORIES{2}%'Sphere'
                     func = @(x,y,z) (x-p(1)).^2 + (y-p(2)).^2+(z-p(3)).^2 <= 5^2;
                     
-                case obj.OBJ_TYPE{3}%'Cylinder'
+                case obj.OBJ_CATEGORIES{3}%'Cylinder'
                     func = @(x,y,z) (x-p(1)).^2 + (y-p(2)).^2 <= (ones(size(y))*d(1)).^2 & z>=p(3);
             end
         end
@@ -164,7 +164,7 @@ classdef EIT_object
                 chamber EIT_chamber
             end
 
-            obj.type=user_entry.objectType; % set type
+            obj.cat=user_entry.objectType; % set type
             obj.pos= chamber.get_random_pt(); % generate a position in chamber
 
             % generate a dimension (radius)

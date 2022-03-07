@@ -3,6 +3,7 @@ classdef EIT_pattern < handle
     %   
     
     properties
+        type= 'eit_pattern'
         injAmplitude % amplitude of the injection current in A
         injType % ad, op,....
         injSpecial %some types need some special infos
@@ -13,7 +14,6 @@ classdef EIT_pattern < handle
     end
 
     properties (Access=private)
-        type= 'EIT_pattern'
         GENERATING_FUNCTIONS={'Ring patterning','Array patterning','3D patterning'};
         PATTERNS= {
             {'{ad}';'{op}';'user defined'};

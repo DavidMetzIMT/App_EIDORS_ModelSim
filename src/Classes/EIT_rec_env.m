@@ -4,6 +4,7 @@ classdef EIT_rec_env < handle
     %   the 'data_h' and 'data_ih' and using the inverse model 'imdl'
     
     properties
+        type= 'eit_rec_env'
         imdl % the inverse model from EIDORS
         data_h % meas data for homogenious meas
         data_ih % meas data for inhomogenious meas
@@ -12,7 +13,6 @@ classdef EIT_rec_env < handle
     end
 
     properties (Access = private)
-        type= 'EIT_rec_env'
         REC_TYPE ={'difference'}; % Reconstruction type supported
     end
     

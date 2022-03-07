@@ -2,6 +2,7 @@ classdef Eidors_fmdl < handle
     % EIDORS_FMDL Class version of the Eidors fwd_model object
 
     properties
+        type  = 'fwd_model';  
         nodes                 
         elems                 
         boundary              
@@ -27,7 +28,6 @@ classdef Eidors_fmdl < handle
     end
 
     properties (Access = private)
-        type  = 'fwd_model';  
         SOLVER = {'eidors_default', 'fwd_solve_1st_order', 'aa_fwd_solve'}
         JACOBIAN = {'eidors_default', 'jacobian_adjoint','aa_calc_jacobian'}
         SYS_MAT = {'eidors_default','system_mat_1st_order', 'aa_calc_system_mat'}
@@ -48,7 +48,7 @@ classdef Eidors_fmdl < handle
             obj.solve                   = obj.SOLVER{1};          
             obj.jacobian                = obj.JACOBIAN{1};      
             obj.system_mat              = obj.SYS_MAT{1};       
-            obj.type                    = 0;           
+            obj.type  = 'fwd_model';           
             obj.mat_idx                 = 0;            
             obj.normalize_measurements  = 0;
             misc.perm_sym = obj.PERM_SYM{1};

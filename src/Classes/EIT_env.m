@@ -2,6 +2,7 @@ classdef EIT_env < handle
     %EIT_ENV Enviromment used for the simulation reconstruction of EIT measurements using the EIDORS Toolbox
     
     properties
+        type='eit_env'
         setup EIT_setup % Regroup the data for the Measeuement setups (chamber electrode, pattern)
         fwd_model Eidors_fmdl % the forward model aslike in EIDORS
         inv_model Eidors_imdl % the inverse model aslike in EIDORS
@@ -10,7 +11,6 @@ classdef EIT_env < handle
     end
     
     properties (Access=private)
-        type='EIT_env'
         FMDL_GEN=0;
     end
     

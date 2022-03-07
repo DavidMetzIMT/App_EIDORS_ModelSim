@@ -5,13 +5,10 @@ classdef EIT_setup < handle
     %  and the injections/measurement pattern
     
     properties
+        type= 'eit_setup'
         chamber EIT_chamber
         elec_layout EIT_elec_layout
         pattern EIT_pattern
-    end
-
-    properties (Access = private)
-        type= 'EIT_setup'
     end
     
     methods
