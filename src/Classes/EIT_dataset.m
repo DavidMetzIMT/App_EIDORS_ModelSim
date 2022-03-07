@@ -449,7 +449,7 @@ classdef EIT_dataset < EIT_env
             if exist(filepath, 'file')
                 delete(filepath )
             end
-            obj.save_fieldnames(filepath, struct(obj));
+            obj.save_fieldnames(filepath, struct(obj), '');
             
         end
         
@@ -477,21 +477,34 @@ classdef EIT_dataset < EIT_env
             %
 
             separator= '__';
-            if nargin ==3
-                varname = inputname(3);
-                nameupperlevels= '';
-            end
-            try
+            % if nargin ==3
+            %     varname = inputname(3);
+            %     nameupperlevels= '';
+            % end
+
+            if isstruct(object) | isobject(object)
+
+            % try
                 fields= fieldnames(object,'-full');
                 for i=1:length(fields)
+                    field= fields{i};
                     if isempty(nameupperlevels)
-                        nameup=[fields{i}];
+                        nameup=[field];
                     else
-                        nameup=[nameupperlevels separator fields{i}];
+                        nameup=[nameupperlevels separator field];
                     end
-                    obj.save_fieldnames(filename,object.(fields{i}), nameup);
+                    len= max(size(object));
+                    if len > 1
+                        for j=1:len
+                            nameup=[nameupperlevels '_' num2str(j-1,'%03.f') separator field];
+                            obj.save_fieldnames(filename,object(j).(field), nameup);
+                        end
+                    else
+                        obj.save_fieldnames(filename,object.(field), nameup);
+                    end
                 end
-            catch % if it is a variable then save
+            else
+            % catch % if it is a variable then save
                 varname2save=nameupperlevels;
                 S.(varname2save) = object;
                 
