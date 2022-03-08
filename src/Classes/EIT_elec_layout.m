@@ -1,7 +1,7 @@
 classdef EIT_elec_layout < handle
     %EIT_ELEC_LAYOUT Class defining an electrode layout
 
-    propertie
+    properties
         type = 'eit_elec_layout'
         elecNb % number of electrodes
         elecForm % form of the electrode Circular, Rectangular, Point
