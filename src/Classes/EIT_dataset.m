@@ -63,10 +63,11 @@ classdef EIT_dataset < EIT_env
 
         function obj = EIT_dataset()
             %EIT_DATASET Constructor set properties to default values
-            obj.type='eit_dataset'
+            obj.type='eit_dataset';
             obj.user_entry=UserEntry();
             obj.init()
         end
+
 
         % **********************************************************************
         % ***UTILS
@@ -106,7 +107,7 @@ classdef EIT_dataset < EIT_env
             %   automatically updated using the name provided in user_entry 
             if ~isa(user_entry, 'UserEntry')
                 error('user_entry is not a User_Entry object')
-                return
+                return;
             end
 
             obj.user_entry=user_entry;
@@ -307,7 +308,7 @@ classdef EIT_dataset < EIT_env
             end
 
             if mod(indx,batch_display)==0
-                time = ['Generation of' num2str(batch_display) ' data lasted: ' num2str(toc(obj.time_computation)) 's']
+                time = ['Generation of' num2str(batch_display) ' data lasted: ' num2str(toc(obj.time_computation)) 's'];
                 disp(['                 Training Data #', num2str(indx) '/' num2str(obj.nSamples), ';' time] )
                 obj.time_computation= tic;
             end
@@ -451,7 +452,9 @@ classdef EIT_dataset < EIT_env
             if exist(filepath, 'file')
                 delete(filepath )
             end
-            obj.save_fieldnames(filepath, struct(obj), '');
+            struct= get_structure_nested(obj);
+
+            obj.save_fieldnames(filepath, struct, '');
             
         end
         
@@ -484,7 +487,7 @@ classdef EIT_dataset < EIT_env
             %     nameupperlevels= '';
             % end
 
-            if isstruct(object) | isobject(object)
+            if isstruct(object) || isobject(object)
 
             % try
                 fields= fieldnames(object,'-full');
@@ -553,8 +556,8 @@ classdef EIT_dataset < EIT_env
                 return;
             end
             % make output dir for Src_file and Samples
-            obj.src_folder=path_join(obj.dir_path,'src_data')
-            obj.samples_folder=path_join(obj.dir_path,'samples')
+            obj.src_folder=path_join(obj.dir_path,'src_data');
+            obj.samples_folder=path_join(obj.dir_path,'samples');
             success=1;
         end
 
