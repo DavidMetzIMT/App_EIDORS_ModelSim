@@ -25,6 +25,7 @@ classdef EIT_env < handle
             obj.FMDL_GEN=0;
         end
 
+
         function update_from_file(obj, path)
             %UPDATE Update fields with value from new_env
             %       it only update the filed which exist in both environment
@@ -44,6 +45,7 @@ classdef EIT_env < handle
             %       it only update the filed which exist in both environment
 
             %set the field from the new env!
+            type=obj.type;
             new_f= fieldnames(new_env);
             old_f= fieldnames(obj);
             for i=1:length(new_f)
@@ -53,6 +55,7 @@ classdef EIT_env < handle
                     setfield(obj,field,value);
                 end
             end
+            obj.type=type ;
         end
 
         function success = save_auto(obj, folder, filename)
@@ -265,7 +268,6 @@ classdef EIT_env < handle
             for i=1:length(field_tmp)
                 field= field_tmp{i}
                 cls= class(getfield(tmp, field))
-                class(obj)
                 if strcmp(class(obj), cls)
                     new_env= getfield(tmp, field);
                     success=1;
