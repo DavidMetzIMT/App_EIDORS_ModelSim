@@ -157,12 +157,16 @@ classdef Eidors_fmdl < handle
             % the solving part wil be left as it was and should be set if not 
             % already done!
             obj.initialized=0;
-            if strcmp(chamber.form,'2D_Circ')
-                [fmdl,mat_idx] = ng_mk_cyl_models(shape_str, elec_pos, elec_shape(1,:));
-            else
-                fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj,add_text);
-            end
+            % if strcmp(chamber.form,'2D_Circ')
+            %     [fmdl,mat_idx] = ng_mk_cyl_models(shape_str, elec_pos, elec_shape(1,:));
+            % else
+            fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj,add_text);
+            % end
             
+            if strcmp(chamber.form,'2D_Circ')
+                fmdl = mdl2d_from3d(fmdl);
+            end
+
             for i= 1:size(fmdl.electrode,2)
                 fmdl.electrode(i).pos =elec_pos(i,:);
                 fmdl.electrode(i).shape=elec_shape(i);

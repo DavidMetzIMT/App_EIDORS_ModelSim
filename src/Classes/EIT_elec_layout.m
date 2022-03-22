@@ -198,10 +198,10 @@ classdef EIT_elec_layout < handle
                 return;
             end
 
-            % 2d_Circ need an other type of elec_pos data
-            if strcmp(chamber.form, '2D_Circ')
-                elec_pos=[n_tot, 1];
-            end
+            % % 2d_Circ need an other type of elec_pos data
+            % if strcmp(chamber.form, '2D_Circ')
+            %     elec_pos=[n_tot, 1];
+            % end
         end
 
         function error = check_layout(obj,n_XY, n_tot, layout_r, chamber)
