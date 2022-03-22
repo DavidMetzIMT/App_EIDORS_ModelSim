@@ -149,7 +149,7 @@ classdef Eidors_fmdl < handle
             obj.misc=misc;
         end
 
-        function fmdl = gen_fmdl_ng(obj, chamber, shape_str, elec_pos, elec_shape, elec_obj, z_contact, add_text)
+        function fmdl = gen_fmdl_ng(obj, chamber, shape_str, elec_pos, elec_shape, elec_obj,elec_pos_2d, z_contact, add_text)
             %GEN_FMDL_NG Generate the fmdl (meshing, etc) with EIDORS using 
             % "ng_mk_cyl_models" for 2D
             % "ng_mk_gen_models" for 3D
@@ -157,15 +157,15 @@ classdef Eidors_fmdl < handle
             % the solving part wil be left as it was and should be set if not 
             % already done!
             obj.initialized=0;
-            % if strcmp(chamber.form,'2D_Circ')
-            %     [fmdl,mat_idx] = ng_mk_cyl_models(shape_str, elec_pos, elec_shape(1,:));
-            % else
-            fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj,add_text);
-            % end
-            
             if strcmp(chamber.form,'2D_Circ')
-                fmdl = mdl2d_from3d(fmdl);
+                [fmdl,mat_idx] = ng_mk_cyl_models(shape_str, elec_pos_2d, elec_shape(1,:));
+            else
+                fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj,add_text);
             end
+
+            % if strcmp(chamber.form,'2D_Circ')
+            %     fmdl = mdl2d_from3d(fmdl);
+            % end
 
             for i= 1:size(fmdl.electrode,2)
                 fmdl.electrode(i).pos =elec_pos(i,:);
