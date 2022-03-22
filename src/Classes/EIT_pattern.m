@@ -52,8 +52,7 @@ classdef EIT_pattern < handle
 
         function init_pattern_func(obj, value)
             %INIT_PATTERN_FUNC Init itself for a given patterning function
-            obj.patternFunc=value;
-            p=obj.get_patterns();
+            p=obj.get_patterns(value);
             obj.injType=p{1};
             obj.measType=p{1};
         end
@@ -63,9 +62,9 @@ classdef EIT_pattern < handle
             val= obj.GENERATING_FUNCTIONS;
         end
 
-        function val = get_patterns(obj)
+        function val = get_patterns(obj, value)
             %GET_PATTERNS Returns the implemented patterns type for a patterning function
-            
+            obj.patternFunc=value;
             indx= find(strcmp(obj.GENERATING_FUNCTIONS,obj.patternFunc));
             val= obj.PATTERNS{indx};
         end

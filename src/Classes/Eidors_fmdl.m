@@ -161,12 +161,13 @@ classdef Eidors_fmdl < handle
                 [fmdl,mat_idx] = ng_mk_cyl_models(shape_str, elec_pos, elec_shape(1,:));
             else
                 fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj,add_text);
-                for i= 1:size(fmdl.electrode,2)
-                    fmdl.electrode(i).pos =elec_pos(i,:);
-                    fmdl.electrode(i).shape=elec_shape(i);
-                    fmdl.electrode(i).obj=elec_obj(i);
-                    fmdl.electrode(i).z_contact=z_contact(i);
-                end
+            end
+            
+            for i= 1:size(fmdl.electrode,2)
+                fmdl.electrode(i).pos =elec_pos(i,:);
+                fmdl.electrode(i).shape=elec_shape(i);
+                fmdl.electrode(i).obj=elec_obj(i);
+                fmdl.electrode(i).z_contact=z_contact(i);
             end
             
             fmdl.stimulation= obj.stimulation;    % take dummy struct          
