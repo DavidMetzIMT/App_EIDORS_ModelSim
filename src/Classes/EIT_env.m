@@ -119,7 +119,7 @@ classdef EIT_env < handle
             fmdl =0;
             success=0;
 
-            [shape_str, elec_pos, elec_shape, elec_obj, elec_pos_2d, z_contact, error] = obj.setup.data_for_ng();
+            [shape_str, elec_pos, elec_shape, elec_obj, z_contact, error] = obj.setup.data_for_ng();
             if error.code
                 error
                 errordlg(error.msg);
@@ -128,7 +128,7 @@ classdef EIT_env < handle
 
             fmdl = obj.fwd_model.gen_fmdl_ng(...
                 obj.setup.chamber,...
-                shape_str, elec_pos, elec_shape, elec_obj, z_contact, elec_pos_2d, add_text);
+                shape_str, elec_pos, elec_shape, elec_obj, z_contact, add_text);
 
             success=1;
             obj.FMDL_GEN=1;
