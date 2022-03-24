@@ -164,7 +164,8 @@ classdef Eidors_fmdl < handle
             % end
 
             if strcmp(chamber.form,'2D_Circ')
-                fmdl = mdl2d_from3d(fmdl);
+                fmdl = mdl2d_from3d(fmdl)
+                fmdl.electrode(1)
             end
 
             for i= 1:size(fmdl.electrode,2)

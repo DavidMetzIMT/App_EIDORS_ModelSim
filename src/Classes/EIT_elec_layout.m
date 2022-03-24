@@ -201,7 +201,10 @@ classdef EIT_elec_layout < handle
 
             % % 2d_Circ need an other type of elec_pos data
             if strcmp(chamber.form, '2D_Circ')
-                is2D = 1;
+                % is2D = 1;
+                ones(size(elec_pos(:, 3)))*chamber.get_height_2D()
+                elec_pos(:, 3) = ones(size(elec_pos(:, 3)))*chamber.get_height_2D()
+                % elec_pos_2d = [n_tot, 1]
             end
         end
 
@@ -432,8 +435,10 @@ function [xyz, nxyz] = make_ring_inPlaneXY(n)
     theta = linspace(0, 2*pi, n + 1)';
     theta(end) = []; % 0 <= theta < 2*pi 
 
-    xyz = [cos(theta), sin(theta), zeros(n,1)]; 
-    nxyz = [cos(theta), sin(theta), ones(n,1)]; %here ones because the electrode can also be oriented in Z
+    % xyz = [cos(theta), sin(theta), zeros(n,1)]; 
+    % nxyz = [cos(theta), sin(theta), ones(n,1)]; %here ones because the electrode can also be oriented in Z
+    xyz = [sin(theta), cos(theta), zeros(n,1)]; 
+    nxyz = [sin(theta), cos(theta), ones(n,1)]; %here ones because the electrode can also be oriented in Z
 end
 
 function [xyz, nxyz] = make_grid_inPlaneXY(n_XY)
