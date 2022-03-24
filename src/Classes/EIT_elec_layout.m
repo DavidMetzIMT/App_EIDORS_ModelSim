@@ -432,8 +432,24 @@ function [xyz, nxyz] = make_ring_inPlaneXY(n)
     theta = linspace(0, 2*pi, n + 1)';
     theta(end) = []; % 0 <= theta < 2*pi 
 
-    xyz = [cos(theta), sin(theta), zeros(n,1)]; 
-    nxyz = [cos(theta), sin(theta), ones(n,1)]; %here ones because the electrode can also be oriented in Z
+    p= ones(size(theta))*pi/2
+    clockwise=1;
+    start_on_top= 1
+
+    if start_on_top==1
+        p= 0
+    end
+    
+    theta= theta+p
+
+    if clockwise==1
+        xyz = [sin(theta), cos(theta), zeros(n,1)]; 
+        nxyz = [sin(theta), cos(theta), ones(n,1)]; %here ones because the electrode can also be oriented in Z
+    else
+        xyz = [cos(theta), sin(theta), zeros(n,1)]; 
+        nxyz = [cos(theta), sin(theta), ones(n,1)]; %here ones because the electrode can also be oriented in Z
+
+    end
 end
 
 function [xyz, nxyz] = make_grid_inPlaneXY(n_XY)
