@@ -201,9 +201,8 @@ classdef EIT_elec_layout < handle
 
             % % 2d_Circ need an other type of elec_pos data
             if strcmp(chamber.form, '2D_Circ')
-                % is2D = 1;
-                ones(size(elec_pos(:, 3)))*chamber.get_height_2D()
-                elec_pos(:, 3) = ones(size(elec_pos(:, 3)))*chamber.get_height_2D()
+                % ones(size(elec_pos(:, 3)))*chamber.get_height_2D()
+                elec_pos(:, 3) = 0
                 % elec_pos_2d = [n_tot, 1]
             end
         end
