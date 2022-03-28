@@ -78,7 +78,6 @@ classdef EIT_setup < handle
 
             % electrodes data for eidors model generation function with ng
             elec_pos = [];
-            % elec_pos_2d = [];
             elec_shape = [];
             z_contact=[];
             elec_obj= {};
@@ -91,7 +90,6 @@ classdef EIT_setup < handle
                 elec_shape = cat(1,elec_shape, elec_shape_i);
                 elec_obj= cat(2, elec_obj, elec_obj_i); % on second axis...
                 z_contact= cat(1, z_contact, z_contact_i);
-                % elec_pos_2d = cat(1, elec_pos_2d, elec_pos_2d_i);
             end
         end
 
