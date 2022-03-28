@@ -125,7 +125,7 @@ classdef EIT_elec_layout < handle
             r= obj.elecSize(1)/2;
         end
 
-        function [elec_pos, elec_shape, elec_obj, z_contact, elec_pos_2d, error] = data_for_ng(obj, chamber)
+        function [elec_pos, elec_shape, elec_obj, z_contact, error] = data_for_ng(obj, chamber)
             %DATA_FOR_NG Returns data about the electrodes used to generate a fmdl with EIDORS 
             % for more detail see "ng_mk_gen_models"
             % elec_pos = [position vector, normal vector (to the electrode surface)]
@@ -144,7 +144,7 @@ classdef EIT_elec_layout < handle
             elec_shape=[]; 
             elec_obj={};
             z_contact=[];
-            elec_pos_2d=[];
+            % elec_pos_2d=[];
 
             error = build_error('', 0);
 
@@ -199,10 +199,6 @@ classdef EIT_elec_layout < handle
                 return;
             end
 
-            % 2d_Circ need an other type of elec_pos data
-            if strcmp(chamber.form, '2D_Circ')
-                elec_pos_2d=[n_tot, 1];
-            end
         end
 
         function error = check_layout(obj,n_XY, n_tot, layout_r, chamber)
@@ -431,7 +427,6 @@ function [xyz, nxyz] = make_ring_inPlaneXY(n)
 
     theta = linspace(0, 2*pi, n + 1)';
     theta(end) = []; % 0 <= theta < 2*pi 
-
     p= ones(size(theta))*pi/2
     clockwise=1;
     start_on_top= 1
@@ -516,6 +511,8 @@ function [xyz, nxyz] = make_polkaDot_inPlaneXY(n_XY)
     %     y=y(1:2:end);
     %     elec_n= max(size(x(:)));
 end
+
+
 
 
 

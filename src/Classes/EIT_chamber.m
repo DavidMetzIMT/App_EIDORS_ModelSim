@@ -13,7 +13,8 @@ classdef EIT_chamber < handle
             1,   1,   1 ; % 'Cylinder' 
             0,   1,   1 ; % 'Cubic'
             1,   0,   0 ; % '2D_Circ'
-        ];      
+        ];
+        height_2D = 0      
     end
     methods
         function obj = EIT_chamber(varargin)
@@ -77,6 +78,10 @@ classdef EIT_chamber < handle
                 case obj.FORMS{3} % '2D_Circ'
                     r= obj.length()/2;
             end
+        end
+
+        function height_2D = get_height_2D(obj)
+            height_2D= obj.height_2D
         end
 
         function obj = set.form(obj, val)
@@ -162,34 +167,22 @@ classdef EIT_chamber < handle
                         'solid mainobj= top and bottom and wall -maxh=' maxh ';\n'];
 
                 case obj.FORMS{3}% '2D_Circ'
-                    shape = [0, obj.length()/2, obj.femRefinement];
+                
+                    %Need some width to let netgen work, but not too much so
+                    % that it meshes the entire region
+                    obj.height_2D = obj.min_radius()/5; % initial extimate
+                    if obj.femRefinement>0
+                        obj.height_2D = min(obj.height_2D,2*obj.femRefinement);
+                    end
 
-%                     if tank_height==0;
-%                         is2D = 1;
-                  
-%                         %Need some width to let netgen work, but not too much so
-%                         % that it meshes the entire region
-%                         tank_height = tank_radius/5; % initial extimate
-%                         if tank_maxh>0
-%                            tank_height = min(tank_height,2*tank_maxh);
-%                         end
-%                      end
+                    % obj.height_2D = height      
+                    height = num2str(obj.height_2D)  
+                    shape = [
+                        'solid wall   = cylinder (0,0,0; 0,0, ' height ';' radius '); \n', ...
+                        'solid top   = plane(0,0,' height ';0,0,1);\n' ...
+                        'solid bottom = plane(0,0,0;0,0,-1);\n' ...
+                        'solid mainobj = top and bottom and wall -maxh=' maxh ';\n']
 
-%                     shape = [
-%                         'solid wall    =     plane (-' length ',-' depth ',-' height '; 0,-1,0)' ...
-%                         'and plane (-' length ',-' depth ',-' height '; -1,0,0)'...
-%                         'and plane (' length ',' depth ',' height '; 0,1,0)'...
-%                         'and plane (' length ',' depth ',' height '; 1,0,0); \n', ...
-%                         'solid top    = plane(' length ',' depth ',' height ';0,0,1);\n' ...
-%                         'solid bottom = plane(-' length ',-' depth ',-' height ';0,0,-1);\n' ...
-%                         'solid mainobj= top and bottom and wall -maxh=' maxh ';\n'];
-
-                        
-%    fprintf(fid,'solid cyl=cylinder (0,0,0;0,0,%6.2f;%6.2f); \n', ...
-%            height, radius);
-%    fprintf(fid,['solid bigcyl= plane(0,0,0;0,0,-1)\n' ...
-%                 'and  plane(0,0,%6.2f;0,0,1)\n' ...
-%                 'and  cyl %s %s;\n'],tank_height,extra_ng,maxsz);  
                 otherwise
                     errordlg('wrong form of the chamber')
             end 
