@@ -88,8 +88,8 @@ classdef EIT_pattern < handle
                 case obj.GENERATING_FUNCTIONS{1} %'Ring patterning'
                     [stimulation, meas_select] = mk_stim_patterns_dm(n_elec,1,inj,meas,option,amplitude);
 
-                % case obj.GENERATING_FUNCTIONS{2} %'Array patterning'
-                %     [stimulation,meas_select]=mk_stim_pattern_Array(inj,meas,option,amplitude);
+                case obj.GENERATING_FUNCTIONS{2} %'Array patterning'
+                    [stimulation,meas_select]=mk_stim_pattern_Array(inj,meas,option,amplitude);
                 % case obj.GENERATING_FUNCTIONS{3} %''3D patterning'
                 %     [stimulation,meas_select]=mk_stim_pattern_3D(inj,meas,option,amplitude);
                     

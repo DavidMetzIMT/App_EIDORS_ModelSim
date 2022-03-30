@@ -12,7 +12,7 @@ classdef EIT_chamber < handle
         ALLOW_ELEC_PLACEMENT = [ % 'Wall', 'Top', 'Bottom'
             1,   1,   1 ; % 'Cylinder' 
             0,   1,   1 ; % 'Cubic'
-            1,   0,   0 ; % '2D_Circ'
+            1,   1,   1 ; % '2D_Circ'
         ];
         height_2D = 0      
     end
