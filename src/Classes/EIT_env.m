@@ -2,6 +2,8 @@ classdef EIT_env < handle
     %EIT_ENV Enviromment used for the simulation reconstruction of EIT measurements using the EIDORS Toolbox
     
     properties
+        name
+        dir_path
         type='eit_env'
         setup EIT_setup % Regroup the data for the Measeuement setups (chamber electrode, pattern)
         fwd_model Eidors_fmdl % the forward model aslike in EIDORS
@@ -23,6 +25,7 @@ classdef EIT_env < handle
             obj.fwd_model= Eidors_fmdl();
             obj.inv_model= Eidors_imdl();
             obj.FMDL_GEN=0;
+            obj.name= 'Env'
         end
 
 
@@ -204,6 +207,82 @@ classdef EIT_env < handle
             % solve inverso model
             obj.rec.solve_inv()
         end
+        
+        function make_mat_file4py(obj, path)
+            %MAKE_MAT_FILE4PY Create a mat file with all inforamtions contained in EIT_dataser for python 
+            %   get fields from eit_dataset
+            %   and save them in a mat file on the top level
+            obj.dir_path= path
+            [fPath, fName, fExt] = fileparts(obj.name);
+            filepath= path_join(obj.dir_path, [fName '_infos2py.mat']);
+            if exist(filepath, 'file')
+                delete(filepath )
+            end
+            struct= get_structure_nested(obj);
+
+            obj.save_fieldnames(filepath, struct, '');
+            
+        end
+        
+        function save_fieldnames(obj,filename, object, nameupperlevels)
+            %SAVE_FIELDNAMES Save all fields and subfield of structure/object
+            % e.g.
+            % 
+            %   object:
+            %       a:
+            %           a1
+            %           a2:
+            %               a21
+            %               a22
+            %       b
+            %       c
+            %
+            % mat-file 
+            %   a__a1
+            %   a__a2__a21
+            %   a__a2__a22
+            %   b
+            %   c
+
+            separator= '__';
+            % if nargin ==3
+            %     varname = inputname(3);
+            %     nameupperlevels= '';
+            % end
+
+            if isstruct(object) || isobject(object)
+
+            % try
+                fields= fieldnames(object,'-full');
+                for i=1:length(fields)
+                    field= fields{i};
+                    if isempty(nameupperlevels)
+                        nameup=[field];
+                    else
+                        nameup=[nameupperlevels separator field];
+                    end
+                    len= max(size(object));
+                    if len > 1
+                        for j=1:len
+                            nameup=[nameupperlevels '_' num2str(j-1,'%03.f') separator field];
+                            obj.save_fieldnames(filename,object(j).(field), nameup);
+                        end
+                    else
+                        obj.save_fieldnames(filename,object.(field), nameup);
+                    end
+                end
+            else
+            % catch % if it is a variable then save
+                varname2save=nameupperlevels;
+                S.(varname2save) = object;
+                
+                if exist(filename, 'file')
+                    save(filename,'-struct', 'S', '-append' );
+                else
+                    save(filename,'-struct', 'S');
+                end
+            end
+        end
     end 
 
     % --------------------------------------------------------------------------
@@ -236,6 +315,7 @@ classdef EIT_env < handle
             index= strfind(filepath,'\');
             mkdir(filepath(1:index(end)-1));
             % save the whole env 
+            
             eit_env= obj;
             save(filepath,'eit_env');
             success = logical(exist(filepath));

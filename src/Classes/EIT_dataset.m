@@ -26,7 +26,7 @@ classdef EIT_dataset < EIT_env
 
     properties
         
-        name                    % Name of the file to save this env
+        % name                    % Name of the file to save this env
         src_indx                % Array indicating where the #i src_data is saved
                                 % e.g. src_indx = [
                                 %           1,2,3,4,5,6,7,8,9,10
@@ -50,7 +50,7 @@ classdef EIT_dataset < EIT_env
                                 % y_13= f.y(:,samples_data_idx,:)
         samples_folder          % Absolute path of samples files
         samples_filenames       % Name of the samples files
-        dir_path                % Absolute path of the dataset top folder
+        % dir_path                % Absolute path of the dataset top folder
         user_entry UserEntry    % User entry for generation of AI datasets
     end
 
@@ -442,84 +442,84 @@ classdef EIT_dataset < EIT_env
         end
 
         
-        function make_mat_file4py(obj)
-            %MAKE_MAT_FILE4PY Create a mat file with all inforamtions contained in EIT_dataser for python 
-            %   get fields from eit_dataset
-            %   and save them in a mat file on the top level
+        % function make_mat_file4py(obj)
+        %     %MAKE_MAT_FILE4PY Create a mat file with all inforamtions contained in EIT_dataser for python 
+        %     %   get fields from eit_dataset
+        %     %   and save them in a mat file on the top level
 
-            [fPath, fName, fExt] = fileparts(obj.name);
-            filepath= path_join(obj.dir_path, [fName '_infos2py.mat']);
-            if exist(filepath, 'file')
-                delete(filepath )
-            end
-            struct= get_structure_nested(obj);
+        %     [fPath, fName, fExt] = fileparts(obj.name);
+        %     filepath= path_join(obj.dir_path, [fName '_infos2py.mat']);
+        %     if exist(filepath, 'file')
+        %         delete(filepath )
+        %     end
+        %     struct= get_structure_nested(obj);
 
-            obj.save_fieldnames(filepath, struct, '');
+        %     obj.save_fieldnames(filepath, struct, '');
             
-        end
+        % end
         
-        function save_fieldnames(obj,filename, object, nameupperlevels)
-            %SAVE_FIELDNAMES Save all fields and subfield of structure/object
-            % e.g.
-            % 
-            %   object:
-            %       a:
-            %           a1
-            %           a2:
-            %               a21
-            %               a22
-            %       b
-            %       c
-            %
-            % mat-file 
-            %   a__a1
-            %   a__a2__a21
-            %   a__a2__a22
-            %   b
-            %   c
-            %
-            %
-            %
+        % function save_fieldnames(obj,filename, object, nameupperlevels)
+        %     %SAVE_FIELDNAMES Save all fields and subfield of structure/object
+        %     % e.g.
+        %     % 
+        %     %   object:
+        %     %       a:
+        %     %           a1
+        %     %           a2:
+        %     %               a21
+        %     %               a22
+        %     %       b
+        %     %       c
+        %     %
+        %     % mat-file 
+        %     %   a__a1
+        %     %   a__a2__a21
+        %     %   a__a2__a22
+        %     %   b
+        %     %   c
+        %     %
+        %     %
+        %     %
 
-            separator= '__';
-            % if nargin ==3
-            %     varname = inputname(3);
-            %     nameupperlevels= '';
-            % end
+        %     separator= '__';
+        %     % if nargin ==3
+        %     %     varname = inputname(3);
+        %     %     nameupperlevels= '';
+        %     % end
 
-            if isstruct(object) || isobject(object)
+        %     if isstruct(object) || isobject(object)
 
-            % try
-                fields= fieldnames(object,'-full');
-                for i=1:length(fields)
-                    field= fields{i};
-                    if isempty(nameupperlevels)
-                        nameup=[field];
-                    else
-                        nameup=[nameupperlevels separator field];
-                    end
-                    len= max(size(object));
-                    if len > 1
-                        for j=1:len
-                            nameup=[nameupperlevels '_' num2str(j-1,'%03.f') separator field];
-                            obj.save_fieldnames(filename,object(j).(field), nameup);
-                        end
-                    else
-                        obj.save_fieldnames(filename,object.(field), nameup);
-                    end
-                end
-            else
-            % catch % if it is a variable then save
-                varname2save=nameupperlevels;
-                S.(varname2save) = object;
+        %     % try
+        %         fields= fieldnames(object,'-full');
+        %         for i=1:length(fields)
+        %             field= fields{i};
+        %             if isempty(nameupperlevels)
+        %                 nameup=[field];
+        %             else
+        %                 nameup=[nameupperlevels separator field];
+        %             end
+        %             len= max(size(object));
+        %             if len > 1
+        %                 for j=1:len
+        %                     nameup=[nameupperlevels '_' num2str(j-1,'%03.f') separator field];
+        %                     obj.save_fieldnames(filename,object(j).(field), nameup);
+        %                 end
+        %             else
+        %                 obj.save_fieldnames(filename,object.(field), nameup);
+        %             end
+        %         end
+        %     else
+        %     % catch % if it is a variable then save
+        %         varname2save=nameupperlevels;
+        %         S.(varname2save) = object;
                 
-                if exist(filename, 'file')
-                    save(filename,'-struct', 'S', '-append' );
-                else
-                    save(filename,'-struct', 'S');
-                end
-            end
-        end
+        %         if exist(filename, 'file')
+        %             save(filename,'-struct', 'S', '-append' );
+        %         else
+        %             save(filename,'-struct', 'S');
+        %         end
+        %     end
+        % end
         
         
 
