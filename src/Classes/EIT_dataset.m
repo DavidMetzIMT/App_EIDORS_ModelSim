@@ -393,7 +393,7 @@ classdef EIT_dataset < EIT_env
             data=[];
             
         end
-
+        
         function extract_samples_4_AI(obj)
             %EXTRACT_SAMPLES_4_AI Extract samples for the AI training 
             %   Extracting data from all generated src_data
@@ -436,7 +436,7 @@ classdef EIT_dataset < EIT_env
             data = obj.save_batchwise(data);
 
             obj.save_dataset_in_mat();         
-            obj.make_mat_file4py();
+            obj.make_mat_file4py(obj.dir_path);
 
             disp(['Extract samples data for AI (Python):Done']);
         end
@@ -524,6 +524,7 @@ classdef EIT_dataset < EIT_env
         
 
     end
+
     methods (Access = private)
 
         function save_dataset_in_mat(obj)
