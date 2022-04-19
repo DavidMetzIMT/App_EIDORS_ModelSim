@@ -124,6 +124,7 @@ classdef EIT_object
                     func = @(x,y,z) (x-p(1)).^2 + (y-p(2)).^2+(z-p(3)).^2 <= 5^2;
                     
                 case obj.OBJ_CATEGORIES{3}%'Cylinder'
+
                     func = @(x,y,z) (x-p(1)).^2 + (y-p(2)).^2 <= (ones(size(y))*d(1)).^2 & z>=p(3);
             end
         end
@@ -169,6 +170,19 @@ classdef EIT_object
 
             % generate a dimension (radius)
             obj.dim=random_val_from_range(user_entry.objectDimRange(1,:));
+
+            if size(user_entry.objectDimRange, 1) > 1
+                cylinder_height=random_val_from_range(user_entry.objectDimRange(2,:));
+                ch_limits= chamber.box_limits();
+                if cylinder_height > chamber.boxSize(3)
+                    obj.pos(3)= ch_limits(3,1);
+                else
+                    obj.pos(3)= ch_limits(3,2) - cylinder_height;
+                end
+                
+            end
+
+            obj
             
             % generate conductivity
             range_conduct = user_entry.objectConductRange; % should be ok to used
