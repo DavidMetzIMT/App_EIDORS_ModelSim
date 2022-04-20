@@ -9,7 +9,7 @@ classdef UserEntry < handle
         objectType          = []   % type of the randomly generated objects
         objectAmountRange   = [];  % amout range of the randomly generated objects in chamber, e.g. [5 10] from 5 to 10 objects
         objectDimRange      = [];  % Dimension range of the randomly generated objects (can be 2dimensional if multiple dimenseion are required), dim(i,:) = [minRange maxRange]
-                                   % for sphere/cell [Rmin Rmax],  for cylinder [Rmin Rmax, (Lmin, Lmax)]
+                                   % for sphere/cell [Rmin, Rmax],  for cylinder [Rmin, Rmax; (Lmin, Lmax)]
         objectConductRange  = [];  % layer conductivity range of the randomly generated objects
         SNR                 = [];  % noise ratio level in dB for generation of noisy samples
         samplesFileSize     = 1000 % nb of samples per samples batch files
