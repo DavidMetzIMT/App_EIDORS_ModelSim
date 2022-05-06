@@ -97,11 +97,16 @@ classdef EIT_setup < handle
             %GENERATE_PATTERNING Return the patterning var for the fwd_model
             %  
             n_tot=0;
+            n_XY=[]
+            n_elec= []
             for i=1:length(obj.elec_layout)
-                [n_XY, n, error] = obj.elec_layout(i).get_nb_elec();
+                [n_XY_i, n, error] = obj.elec_layout(i).get_nb_elec();
+                n_XY(i, :)= n_XY_i
+                n_elec(i)= n
                 n_tot =n_tot+n;
             end
-            [stimulation,meas_select, error]= obj.pattern.make(n_tot, length(obj.elec_layout));
+
+            [stimulation,meas_select, error]= obj.pattern.make(n_tot, length(obj.elec_layout), n_elec, n_XY);
             if error.code
                 return;
             end

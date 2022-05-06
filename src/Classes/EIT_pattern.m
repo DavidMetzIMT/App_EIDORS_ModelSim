@@ -14,10 +14,14 @@ classdef EIT_pattern < handle
     end
 
     properties (Access=private)
-        GENERATING_FUNCTIONS={'Ring patterning','Array patterning','3D patterning'};
+        GENERATING_FUNCTIONS={
+            'Ring patterning',
+            'Array patterning',
+            '3D patterning'
+        };
         PATTERNS= {
             {'{ad}';'{op}';'user defined'};
-            {'array_ad_simple';'array_ad_full';'array_ad_line';'array_op';'user defined'};
+            {'array_ad_simple';'array_ad_full';'array_ad_line';'array_op'};
             {'3d_ad_0';'3d_ad_1';'3d_ad_2';'3d_ad_3';'3d_op_inoutplane';'3d_op';'user defined'};
         }
     end
@@ -70,7 +74,7 @@ classdef EIT_pattern < handle
             val= obj.PATTERNS{indx};
         end
 
-        function [stimulation,meas_select, error] = make(obj, n_elec, n_row)
+        function [stimulation,meas_select, error] = make(obj, n_tot, n_row, n_elec, n_XY)
             %MAKE Generate the "stimulation" and "meas_select" variables to define fmdl in EIDORS
 
             stimulation = 0; 
@@ -86,10 +90,23 @@ classdef EIT_pattern < handle
             gen_func= obj.patternFunc;
             switch gen_func
                 case obj.GENERATING_FUNCTIONS{1} %'Ring patterning'
+                    if n_row > 1
+                        disp("WARNING you selected a 2d pattering for mor than 2 electrodes layout")
+                    end 
+                    n_elec= n_elec(1,:) % select only first layout!
                     [stimulation, meas_select] = mk_stim_patterns_dm(n_elec,1,inj,meas,option,amplitude);
 
                 case obj.GENERATING_FUNCTIONS{2} %'Array patterning'
-                    [stimulation,meas_select]=mk_stim_pattern_Array(inj,meas,option,amplitude);
+                    if n_row > 1
+                        disp("WARNING you selected a 2d pattering for mor than 2 electrodes layout")
+                    end
+                    n_elec= n_elec(1,:) % select only first layout!
+                    n_XY= n_XY(1,:) % select only first layout!
+                    if n_XY(2)<=0
+                        error = build_error('Array patterning only for grid array', 1);
+                        return;
+                    end
+                    [stimulation, meas_select] = mk_stim_pattern_Array(n_elec,n_XY,inj,meas,option,amplitude);
                 % case obj.GENERATING_FUNCTIONS{3} %''3D patterning'
                 %     [stimulation,meas_select]=mk_stim_pattern_3D(inj,meas,option,amplitude);
                     
