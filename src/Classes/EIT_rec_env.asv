@@ -75,8 +75,8 @@ classdef EIT_rec_env < handle
             %     return;
             % end
             
-            obj.data_ih.meas=reshape(meas.X_ih,[length(meas.X_ih),1]);
-            obj.data_h.meas=reshape(meas.X_h,[length(meas.X_h),1]);
+            obj.data_ih.meas=meas.X_ih.T;
+            obj.data_h.meas=meas.X_h.T;
 
             obj.set_data_meas(obj.data_ih,obj.data_h)
         end

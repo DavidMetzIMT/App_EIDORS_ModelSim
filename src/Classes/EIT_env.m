@@ -195,7 +195,7 @@ classdef EIT_env < handle
             % to load extern measurement set the path 
 
             % set fmdl in imdl
-            obj.inv_model.fwd_model(obj.fwd_model);
+            obj.inv_model.fwd_model= obj.fwd_model;
 
             % set inv model for rec
             obj.rec.imdl= obj.inv_model.imdl();
