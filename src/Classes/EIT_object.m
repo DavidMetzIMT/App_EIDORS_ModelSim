@@ -50,7 +50,7 @@ classdef EIT_object
                 obj.reset = 1;
                 obj.cat=obj.OBJ_CATEGORIES{1}; % 'Cell'
                 obj.pos=[0,0,0]; 
-                obj.dim=[0.1]; 
+                obj.dim=[0.1, 0.0]; 
                 obj.conduct=[0.2]; 
             end
             
@@ -85,6 +85,7 @@ classdef EIT_object
             end
         end
 
+
         function obj=set.pos(obj, value)
             %SET.POS Set position of the object
 
@@ -111,21 +112,20 @@ classdef EIT_object
         function func = object_func(obj, ratio)
             %OBJECT_FUNC Return a 3D function f(x,y,z) which assert if the pt (xyz) is contained in the object
             % the func return logical array of size (nb_points, 1)
-            % artion can be used to select a defined pourcentage of the object
+            % ratio can be used to select a defined pourcentage of the object
 
             p = obj.pos;
-            d = obj.dim*ratio; % d(1) is radius
+            d = obj.dim*ratio*0.9; % d(1) is radius
             type =obj.cat;
             switch type
                 case obj.OBJ_CATEGORIES{1}%'Cell'
-                    func = @(x,y,z) (x-p(1)).^2 + (y-p(2)).^2+(z-p(3)).^2 <= d(1)^2;
+                    func = @(x,y,z) (x-p(1)).^2 + (y-p(2)).^2+(z-p(3)).^2 < d(1)^2;
 
                 case obj.OBJ_CATEGORIES{2}%'Sphere'
-                    func = @(x,y,z) (x-p(1)).^2 + (y-p(2)).^2+(z-p(3)).^2 <= 5^2;
+                    func = @(x,y,z) (x-p(1)).^2 + (y-p(2)).^2+(z-p(3)).^2 < d(1)^2;
                     
                 case obj.OBJ_CATEGORIES{3}%'Cylinder'
-
-                    func = @(x,y,z) (x-p(1)).^2 + (y-p(2)).^2 <= (ones(size(y))*d(1)).^2 & z>=p(3);
+                    func = @(x,y,z) (x-p(1)).^2 + (y-p(2)).^2 < (ones(size(y))*d(1)).^2 & z>p(3);
             end
         end
         
@@ -150,6 +150,48 @@ classdef EIT_object
                 conduct(:,layer) = (elem_select(fmdl, select_fcn)~=0)*layer_conduct;
             end
             
+        end
+
+        function add_text= get_add_text(obj, chamber, index)
+            % GET_ADD_TEXT return the additional text for fem construction of the object
+            add_text= '';
+            % i= num2str(index)
+            object= ['object' num2str(index)];
+            xc=num2str(obj.pos(1));
+            yc=num2str(obj.pos(2));
+            zc=num2str(obj.pos(3));
+            % d = obj.dim*ratio; % d(1) is radius
+            radius= num2str(obj.dim(1));
+            type =obj.cat;
+            
+            box= chamber.box_limits()
+            zmax= num2str(box(3,2));
+            shape = chamber.shape_for_ng(object, 0.999)
+            switch type
+                case obj.OBJ_CATEGORIES{1}%'Cell'
+                    add_text= [
+                        shape ...
+                        'solid ', object, 'Sph = sphere(', xc, ',', yc, ',', zc, ';', radius, ');\n'...
+                        'solid ', object, 'MainobjSph = mainobj', object, ' and ', object, 'Sph' ';\n'...
+                        'tlo ', object, 'MainobjSph', '; \n'];
+
+                case obj.OBJ_CATEGORIES{2}%'Sphere'
+                    add_text= [
+                        shape ...
+                        'solid ', object, 'Sph = sphere(', xc, ',', yc, ',', zc, ';', radius, ');\n'...
+                        'solid ', object, 'MainobjSph = mainobj', object, ' and ', object, 'Sph' ';\n'...
+                        'tlo ', object, 'MainobjSph', '; \n'];
+                    
+                case obj.OBJ_CATEGORIES{3}%'Cylinder'
+                    add_text=[
+                        shape ...
+                        'solid ', object, '_wall_cyc = cylinder (0,0,0; 0,0,1;' radius ');\n' ...
+                        'solid ', object, '_top_cyc = plane(0,0,' zmax ';0,0,1);\n' ...
+                        'solid ', object, '_bottom_cyc = plane(0,0,' zc ';0,0,-1);\n' ...
+                        'solid ', object, '_mainobj_cyc = mainobj', object, ' and ', object, '_wall_cyc and ', object, '_top_cyc and ', object, '_bottom_cyc' ';\n'...
+                        'tlo ', object, '_mainobj_cyc', ';\n'];
+                    
+            end
         end
 
         function obj = generate_random(obj, user_entry, chamber)

@@ -25,7 +25,7 @@ classdef EIT_env < handle
             obj.fwd_model= Eidors_fmdl();
             obj.inv_model= Eidors_imdl();
             obj.FMDL_GEN=0;
-            obj.name= 'Env'
+            obj.name= 'Env';
         end
 
 
@@ -179,11 +179,15 @@ classdef EIT_env < handle
 
         function solve_fwd(obj, add_object_inFEM)
             %SOLVE_FWD Solve in the simulation environement the foward model
+            
+            fmdl= obj.fwd_model.fmdl();
             if add_object_inFEM==1
-                warndlg('add object in FEM is not implemented yet')
+                add_text= obj.sim.get_add_text(obj.setup.chamber)
+                [fmdl, success] = obj.create_fwd_model(obj.setup.chamber, obj.setup.elec_layout, add_text);
+                % warndlg('add object in FEM is not implemented yet')
             end
-
-            obj.sim.fmdl= obj.fwd_model.fmdl();
+            fmdl
+            obj.sim.fmdl= fmdl
             obj.sim.solve_fwd()
 
             % Load per default meas in rec env

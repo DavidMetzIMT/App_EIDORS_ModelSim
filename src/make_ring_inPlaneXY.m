@@ -6,15 +6,15 @@ function [xyz, nxyz] = make_ring_inPlaneXY(n)
 
     theta = linspace(0, 2*pi, n + 1)';
     theta(end) = []; % 0 <= theta < 2*pi 
-    p= ones(size(theta))*pi/2
+    p= ones(size(theta))*pi/2;
     clockwise=1;
-    start_on_top= 1
+    start_on_top= 1;
 
     if start_on_top==1
-        p= 0
+        p= 0;
     end
     
-    theta= theta+p
+    theta= theta+p;
 
     if clockwise==1
         xyz = [sin(theta), cos(theta), zeros(n,1)]; 

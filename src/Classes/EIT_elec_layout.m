@@ -375,7 +375,7 @@ function [elec_shape, error] = gen_elec_shape(elec_form, elec_size,elec_n_tot, f
     % see "ng_mk_gen_models" for the definition of the shape depending on the form selected
     % the shape is defined for each electrode
 
-    error = build_error('', 0)
+    error = build_error('', 0);
     switch elec_form
         case ELEC_FORMS{1} %'Circular'
             shape=[elec_size(1)/2,0,fem_refinement];

@@ -40,8 +40,8 @@ classdef EIT_rec_env < handle
         function set_data_meas(obj, data_ih, data_h)
             %SET_DATA_MEAS Set the measurement data
 
-            pass_h = valid_data(data_h)
-            pass_ih = valid_data(data_ih)
+            pass_h = valid_data(data_h);
+            pass_ih = valid_data(data_ih);
             if (pass_h && pass_ih)
                 obj.data_ih=data_ih;
                 obj.data_h=data_h;

@@ -48,11 +48,18 @@ classdef EIT_sim_env < matlab.mixin.Copyable % a hanlde with copy methods
 
         end
 
-
         function struct4gui = get_objects_4_gui(obj)
             %GET_OBJECTS_4_GUI Returns the objects as a struct array for the display in gui
             for i=1:length(obj.objects)
                 struct4gui(i)=obj.objects(i).get_struct_4_gui();
+            end
+        end
+
+        function add_text= get_add_text(obj, chamber)
+            % GET_ADD_TEXT return the additional text for fem construction of the objects
+            add_text= '';
+            for i=1:length(obj.objects)
+                add_text=strcat(add_text, obj.objects(i).get_add_text(chamber, i));
             end
         end
         

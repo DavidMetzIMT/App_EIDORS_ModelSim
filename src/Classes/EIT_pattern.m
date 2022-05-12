@@ -93,15 +93,15 @@ classdef EIT_pattern < handle
                     if n_row > 1
                         disp("WARNING you selected a 2d pattering for mor than 2 electrodes layout")
                     end 
-                    n_elec= n_elec(1,:) % select only first layout!
+                    n_elec= n_elec(1,:); % select only first layout!
                     [stimulation, meas_select] = mk_stim_patterns_dm(n_elec,1,inj,meas,option,amplitude);
 
                 case obj.GENERATING_FUNCTIONS{2} %'Array patterning'
                     if n_row > 1
                         disp("WARNING you selected a 2d pattering for mor than 2 electrodes layout")
                     end
-                    n_elec= n_elec(1,:) % select only first layout!
-                    n_XY= n_XY(1,:) % select only first layout!
+                    n_elec= n_elec(1,:); % select only first layout!
+                    n_XY= n_XY(1,:); % select only first layout!
                     if n_XY(2)<=0
                         error = build_error('Array patterning only for grid array', 1);
                         return;

@@ -74,7 +74,7 @@ classdef EIT_setup < handle
             %                               .msg message of error 
 
             % shape string for eidors model generation function with ng
-            shape= obj.chamber.shape_for_ng();
+            shape= obj.chamber.shape_for_ng('', 1);
 
             % electrodes data for eidors model generation function with ng
             elec_pos = [];
@@ -97,12 +97,12 @@ classdef EIT_setup < handle
             %GENERATE_PATTERNING Return the patterning var for the fwd_model
             %  
             n_tot=0;
-            n_XY=[]
-            n_elec= []
+            n_XY=[];
+            n_elec= [];
             for i=1:length(obj.elec_layout)
                 [n_XY_i, n, error] = obj.elec_layout(i).get_nb_elec();
-                n_XY(i, :)= n_XY_i
-                n_elec(i)= n
+                n_XY(i, :)= n_XY_i;
+                n_elec(i)= n;
                 n_tot =n_tot+n;
             end
 
