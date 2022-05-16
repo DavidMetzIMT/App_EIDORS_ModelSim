@@ -155,19 +155,17 @@ classdef EIT_env < handle
             end 
             
             %% Generate the pattern
+            if hold_pattern
+                stim_prev= obj.fwd_model.stimulation
+                meas_select_prev = meas_select);
+            end
+            
             [stimulation, meas_select, error] = obj.setup.generate_patterning();
             if error.code
+                error
                 errordlg(error.msg);
                 return;
             end
-            
-            if hold_pattern
-                stim_prev= obj.fwd_model.stimulation
-                meas_select_prev = obj.fwd_model.meas_select
-                stimulation= [stim_prev,stimulation]
-                meas_select= [meas_select_prev;meas_select]
-            end
-            
             %% Set the pattern in the fwd_model
             obj.fwd_model.set_pattern(stimulation, meas_select);
 
