@@ -23,10 +23,21 @@ classdef EIT_rec_env < handle
             %Check rec env is ready to solve inv problem
             if ~obj.is_rec_valid() return; end
 
+            normalize = false
+
             disp('Reconstruction: Start')
             disp('please wait ...')
+            data_h = obj.data_h;
+            data_ih =obj.data_ih;
+
+            if normalize
+                disp('normalized')
+                data_h.meas = obj.data_h.meas./obj.data_h.meas;
+                data_ih.meas =obj.data_ih.meas./obj.data_h.meas;
+            end
+
             if contains(obj.imdl.reconst_type, obj.REC_TYPE{1}) % 'difference'
-                obj.iimg = inv_solve(obj.imdl, obj.data_h,obj.data_ih);
+                obj.iimg = inv_solve(obj.imdl, data_h, data_ih);
             else
                 errordlg('Recontruction typ not implemented')
                 % obj.imdl.reconst_type= 'absolute'
