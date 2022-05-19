@@ -115,8 +115,6 @@ classdef EIT_pattern < handle
                     return;
             end
         end
-
-
     end
 end
 
