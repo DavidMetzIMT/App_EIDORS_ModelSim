@@ -285,6 +285,7 @@ classdef EIT_dataset < EIT_env
             end
 
             obj.set_sim(medium_conduct, objects);
+            obj.sim.noise_SNR= obj.user_entry.SNR;
             obj.sim.name=indx; % memory the index on the sample in the name property of the sim
             
             % Solve forward problem (Generation of the Training data) using
@@ -417,8 +418,8 @@ classdef EIT_dataset < EIT_env
                 Voltages(:,i,2) = d.data_ih.meas;
                 Conduct(:,i,1) = d.img_h.elem_data;
                 Conduct(:,i,2) = d.img_ih.elem_data;
-                % Voltages(:,i,3) = d.data_hn.meas;
-                % Voltages(:,i,4) = d.data_ihn.meas;
+                Voltages(:,i,3) = d.data_hn.meas;
+                Voltages(:,i,4) = d.data_ihn.meas;
             end
 
             data=AI_sample(Voltages,Conduct)
