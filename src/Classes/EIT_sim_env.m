@@ -28,6 +28,7 @@ classdef EIT_sim_env < matlab.mixin.Copyable % a hanlde with copy methods
             %EIT_SIM_ENV Constructor create a default object (see "EIT_object") in a medium with a condutivity of 1
             obj.objects= EIT_object();
             obj.mediumConduct=1;
+            obj.noise_SNR=20;
         end
         
         function reset_objects(obj)
