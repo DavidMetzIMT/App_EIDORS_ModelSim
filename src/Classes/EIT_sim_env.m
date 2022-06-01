@@ -11,6 +11,8 @@ classdef EIT_sim_env < matlab.mixin.Copyable % a hanlde with copy methods
         img_ih % inhomogenious image with the objects from EIDORS
         data_h % meas data for img_h from EIDORS (solving the fmdl)
         data_ih % meas data for img_ih from EIDORS (solving the fmdl)
+        data_hn % meas data for img_h from EIDORS (solving the fmdl)
+        data_ihn % meas data for img_ih from EIDORS (solving the fmdl)
         noise_SNR
     end
 
