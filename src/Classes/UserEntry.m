@@ -30,7 +30,7 @@ classdef UserEntry < handle
             %       - Object_amount       % .Default : [1, 2]
             %       - Object_dimension    % .Default : [0.1, 0.2]
             %       - Object_conduct      % .Default : [0.1, 0.2] 
-            %       - Noise_SNR           % .Default : 20 
+            %       - Noise_SNR           % .Default : 20 dB
             %       - Samples_file_size   % .Default : 1000 
             %       - Src_file_size       % .Default : 250
             if nargin==1
