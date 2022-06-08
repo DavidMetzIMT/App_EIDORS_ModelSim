@@ -21,6 +21,7 @@ classdef EIT_sim_env < matlab.mixin.Copyable % a hanlde with copy methods
         JACOBIAN = {'eidors_default', 'jacobian_adjoint','aa_calc_jacobian'}
         SYS_MAT = {'eidors_default','system_mat_1st_order', 'aa_calc_system_mat'}
         PERM_SYM = {'n'}
+        reset_object= false
     end
     
     methods
@@ -35,6 +36,7 @@ classdef EIT_sim_env < matlab.mixin.Copyable % a hanlde with copy methods
             %RESET_OBJECTS Reset the objects to one default EIT_object
             %     in that case obj.objects(1).is_reset()==true
             obj.objects=EIT_object();
+            obj.reset_object= true;
         end
         
         function add_object(obj, object)
@@ -44,8 +46,9 @@ classdef EIT_sim_env < matlab.mixin.Copyable % a hanlde with copy methods
                 errordlg('object has to be an EIT_object cls')
                 return;
             end
-            if obj.objects(1).is_reset()
+            if obj.reset_object==true
                 obj.objects(1)= object;
+                obj.reset_object= false;
             else
                 obj.objects(length(obj.objects) + 1 ) = object;
             end

@@ -41,13 +41,13 @@ classdef EIT_object
             %                   Default = [0.2] (equivalent to [0.2,1])
             if nargin==1
                 var= varargin{1};
-                obj.reset = 0;
+                obj.reset = false;
                 obj.cat=var.Type; 
                 obj.pos=str2num_array(var.Position); 
                 obj.dim=str2num_array(var.Dimensions); 
                 obj.conduct=str2num_array(var.Conductivity);
             else
-                obj.reset = 1;
+                obj.reset = true;
                 obj.cat=obj.OBJ_CATEGORIES{1}; % 'Cell'
                 obj.pos=[0,0,0]; 
                 obj.dim=[0.1, 0.0]; 
@@ -164,9 +164,9 @@ classdef EIT_object
             radius= num2str(obj.dim(1));
             type =obj.cat;
             
-            box= chamber.box_limits()
+            box= chamber.box_limits();
             zmax= num2str(box(3,2));
-            shape = chamber.shape_for_ng(object, 0.999)
+            shape = chamber.shape_for_ng(object, 0.999);
             switch type
                 case obj.OBJ_CATEGORIES{1}%'Cell'
                     add_text= [
@@ -223,8 +223,6 @@ classdef EIT_object
                 end
                 
             end
-
-            obj
             
             % generate conductivity
             range_conduct = user_entry.objectConductRange; % should be ok to used

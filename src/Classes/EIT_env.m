@@ -181,7 +181,8 @@ classdef EIT_env < handle
             obj.sim.mediumConduct= medium;
             obj.sim.reset_objects();
             for i=1:length(objects)
-                    obj.sim.add_object(objects(i));
+                new_oject_in_sim= i
+                obj.sim.add_object(objects(i));
             end
         end
 
