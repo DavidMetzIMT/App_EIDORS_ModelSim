@@ -1,0 +1,5 @@
+Some details about the data to enter:
+- Type: Cell (2D compatible), Sphere, Cylinder oriented in Z-axis (from Top to Position)
+- Position: Cell > center, Sphere > center, Cylinder > bottom center
+- Dimension :for sphere/cell [Radius],  for cylinder [Radius, (Length)]
+- Conductivity: [0.2]

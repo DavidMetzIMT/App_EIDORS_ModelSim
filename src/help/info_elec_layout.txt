@@ -1,0 +1,3 @@
+For "array"-layout the Elec-Nb can be: 
+- an integer > square design 
+- a double to specify the number of rows and colums  e.g. Number = 5.02  >> nb rows (in x) = 5; nb columns (in y) = 2

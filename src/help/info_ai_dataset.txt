@@ -1,0 +1,21 @@
+Some details about the data to enter:
+- name                = ''   % EIT dataset name correspoding to the given parameters 
+- samplesAmount       = [];  % total samples amout/number
+- mediumsConductRange = [];  % conductivity range of the medium, e.g. [0.1,0.3]       
+- objectType          = []   % type of the randomly generated objects
+- objectAmountRange   = [];  % amout range of the randomly generated objects in chamber, e.g. [5 10] from 5 to 10 objects
+- objectDimRange      = [];  % Dimension range of the randomly generated objects (can be 2dimensional if multiple dimenseion are required), dim(i,:) = [minRange maxRange]
+                           % for sphere/cell [Rmin, Rmax],  for cylinder [Rmin, Rmax; (Lmin, Lmax)]
+- objectConductRange  = [];  % layer conductivity range of the randomly generated objects
+- SNR                 = [];  % noise ratio level in dB for generation of noisy samples
+- samplesFileSize     = 1000 % nb of samples per samples batch files
+- srcFileSize         = 250  % nb of single data per src batch files        
+- mediumsConductRange = [];  % conductivity range of the medium, e.g. [0.1,0.3]       
+- objectType          = []   % type of the randomly generated objects
+- objectAmountRange   = [];  % amout range of the randomly generated objects in chamber, e.g. [5 10] from 5 to 10 objects
+- objectDimRange      = [];  % Dimension range of the randomly generated objects (can be 2dimensional if multiple dimenseion are required), dim(i,:) = [minRange maxRange]
+                                   % for sphere/cell [Rmin Rmax],  for cylinder [Rmin Rmax, (Lmin, Lmax)]
+- objectConductRange  = [];  % layer conductivity range of the randomly generated objects
+- SNR                 = [];  % noise ratio level in dB for generation of noisy samples
+- samplesFileSize     = 1000 % nb of samples per samples batch files
+- srcFileSize         = 250  % nb of single data per src batch files
