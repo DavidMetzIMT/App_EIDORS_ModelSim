@@ -2,9 +2,7 @@
 
 Thank you for the interest in `App_EIDORS_ModelSim`!
 
-`App_EIDORS_ModelSim` is a MATLAB-based, open-source framework for Modeling, 
-
-Simulation and Reconstruction of Electrical Impedance Tomography (EIT) setup.
+`App_EIDORS_ModelSim` is a MATLAB-based, open-source framework for Modeling, Simulation and Reconstruction of Electrical Impedance Tomography (EIT) setup.
 
 # **1. Introduction**
 
@@ -19,7 +17,7 @@ You will need:
 
 ## **1.2 Features**
 
-This App allow a fast use of the EIDORS Toolbox
+This App implements the main functionality that the EIDORS Toolbox offers:
 
 - [x]  Generation Forward model
     - [x]  Setting of the forward solver
@@ -43,7 +41,7 @@ This App allow a fast use of the EIDORS Toolbox
 
 ## **1.2 Installation**
 
-This MATLAB-based framework is based on the toolbox [EIDORS](http://eidors3d.sourceforge.net/)
+This MATLAB-based framework is based on the toolbox [EIDORS](http://eidors3d.sourceforge.net/).
 
 ### **Windows**
 
@@ -64,92 +62,19 @@ Steps:
 
 # **2. Starting the App in MATLAB**
 
-During the start of the app EIDORS-Toolbox will be started (will be loaded in the MATLAB-PATH)
-
 Run the script 'start.m' 
 
 ```matlab
 >> cd Path\To\App_EIDORS_ModelSim
 >> start 
 ```
-<img src="./doc/images/app_global_settings.png" alt="app_global_settings" width="500"/>
+<img src="./doc/images/app_global_settings.png" alt="" width="500"/><br>
+*App start page*
+
+During the start of the app EIDORS-Toolbox will be started (will be loaded in the MATLAB-PATH)
 
 
-here on the first page you can
-- check the used EIDORS-toolbox path
-- Choose the units you want to use
-- Save/Load the eit environnement (eit_env) to save/load your work (the "export 2py" option allow to save additionaly the `eit_env` as which can be read by python (scipy) for the [`eit_app`](https://github.com/DavidMetzIMT/eit_app) and [`eit_ai`](https://github.com/DavidMetzIMT/eit_ai), see also "/file/mat_utils.py" in [`glob_utils`](https://github.com/DavidMetzIMT/glob_utils))
-
-# **3. Classes**
-
-The App uses the top level Classes for the differents tasks (modelling, simulation, reconstruction).
-Here a brief overview of the structure of it with the main functionality and data:
-
-## `EIT_env` 
-is the top level object defining a environement for modelling simulation and reconstruction of EIT setup.
-- `EIT_setup`, Setup of the measurement chamber, electrodes and injection/measurement pattern for building the forward model
-    - `EIT_chamber`<br> all informations abour the chamber for meshing, etc. Different
-        - name, User specific name for the chamber
-        - boxSize, Dimension of the chamber in X, Y, Z
-        - femRefinement, Refinement value for FEM mesh generation
-        - form, Form of the Chamber: 'Cylinder', 'Cubic', '2D_Circ';"supported_forms"-method return the valid supported forms
-    - `EIT_elec_layout`, all informations abour the electrodes for meshing, etc.
-        - elecNb, number of electrodes
-        - elecForm, form of the electrode Circular, Rectangular, Point
-        - elecSize, width, height of the electrode
-        - elecPlace, where in the chamber the electrodes are placed e.g.Wall, Top Bottom
-        - layoutDesign, Design of the electrode layout, e.g. Ring, Grid
-        - layoutSize, Design size (X, Y, Z)
-        - zContact, Impedance contact of the electrodes
-    - `EIT_pattern`, informations about the generation of injection and measurement patterns. Differrent Patterning function are available different pattern 
-        - injAmplitude, amplitude of the injection current in A
-        - injType, ad, op,....
-        - injSpecial, some types need some special infos
-        - measType, ad, op,....
-        - measSpecial, some types need some special infos
-        - patternOption, patterning function can accept some options
-        - patternFunc, patterning function
-
-- `Eidors_fmdl`, the forward model aslike in EIDORS (but as an Class)
-        nodes                 
-        elems                 
-        boundary              
-        boundary_numbers      
-        gnd_node              
-        np_fwd_solve          
-        name                  
-        electrode             
-        solve                 
-        jacobian              
-        system_mat            
-        mat_idx               
-        normalize_measurements
-        misc                  
-        get_all_meas          
-        stimulation           
-        meas_select
-- `Eidors_imdl`, the inverse model aslike in EIDORS
-- `EIT_sim_env`, Simulation environmnent with EIDORS
-- `EIT_rec_env`, Reconstruction environmnent with EIDORS
-
-```matlab
-classdef EIT_env < handle
-    %EIT_ENV Enviromment used for the simulation reconstruction of EIT measurements using the EIDORS Toolbox
-    
-    properties
-        name
-        dir_path
-        type='eit_env'
-        setup EIT_setup % Regroup the data for the Measeuement setups (chamber electrode, pattern)
-        fwd_model Eidors_fmdl % the forward model aslike in EIDORS
-        inv_model Eidors_imdl % the inverse model aslike in EIDORS
-        sim EIT_sim_env % Simulation env for simulation with EIDORS
-        rec EIT_rec_env % Reconstruction environmnent with EIDORS
-    end
-...  
-
-```
-# **4 Use of the App**
+# **3. Use of the App**
 
 The App is divided in 5 :
 - Global Settings <br>
@@ -163,10 +88,19 @@ The App is divided in 5 :
 - AI Dataset <br>
 -> Simulate measurements using the fmdl and ramdom generation of  to build a  dataset for AI training
 
-## **4.1. Global Settings**
-<img src="./doc/images/app_global_settings.png" alt="app_global_settings.png" width="500"/>
+## **3.1. Global Settings**
 
-## **4.2. Forward Model**
+here on the first page you can
+- check the used EIDORS-toolbox path
+- Choose the units you want to use
+- Save/Load the eit environnement (eit_env) to save/load your work
+
+the "export 2py" option allow to save additionaly the `eit_env` as a python-compatible-mat-file which can be read by python (scipy) for the [`eit_app`](https://github.com/DavidMetzIMT/eit_app) and [`eit_model`](https://github.com/DavidMetzIMT/eit_model), see also "/file/mat_utils.py" in [`glob_utils`](https://github.com/DavidMetzIMT/glob_utils)) for the loading of scuh file in python.
+
+<img src="./doc/images/app_global_settings.png" alt="" width="500"/><br>
+*App page: Global Settings*
+
+## **3.2. Forward Model**
 
 The forward model can be in one click build. During that build the FEM and the patterns are generated using the data entries selected in the `Chamber` and the `Pattern`-tabs.
 
@@ -178,60 +112,59 @@ The build Forward model can be saved and loaded back.
 Mulptiple FEM and Pattren diplay options are valible to allow optimal investigations of those (see below).
 
 
-<img src="./doc/images/app_fwd_model_chamber.PNG" alt="app_fwd_model_chamber.PNG" width="500"/>
+<img src="./doc/images/app_fwd_model_chamber.PNG" alt="" width="500"/><br>
+*App page: Forward Model*
 
 Notes:
 - Before building the forward model, make sure you set the units you need.
 
-### **4.2.2 Chamber for FEM**
+### **3.2.2 Chamber for FEM**
 
-To Build the FEM the EIT Chamber, which is composed out of a body (volume, centered in (0,0,0)) and electrode layouts, need to be defined. The Fem will be computed with netgen.
+To build the FEM,  the EIT Chamber, which is composed out of a body (volume, centered in (0,0,0)) and electrode layouts, need to be defined. The FEM will be computed with netgen using the refinement value for the meshing.
+
+The Chamber can be separately saved and loaded. 
 
 Multiples bodies are available :
 - 2D Circle
-- 3D Cylinder (orirnted on the Z-axis)
+- 3D Cylinder (oriented on the Z-axis)
 - 3D Cubic
 
-one of multiples layouts of electrodes can be used (see examples).
+Multiples electrode layout designs are available:
+- Ring
+- Array
 
-Compatible combination
-|Layout|body|Layout Position|
+Those can be placed at different position in the chamber (wall, top, bottom), and theri daiametr can be varied.
+
+For each design an electrode numbers, form (point, circle, rectangle), size(width (diameter), height) and zcontact can be selected.
+
+<img src="./doc/images/app_fwd_model_chamber.PNG" alt="" width="500"/><br>
+*App page: Forward Model - Chamber*
+
+Below are the compatible combination between body, electrode layout designs and electrode layout position.
+|Body|Electrode Layout Design|Electrode Layout Position|FEM plot|
+|:---:|:---:|:---:|:---:|
+|2D Circle|Ring| Wall|<img src="./doc/images/Circle_elec_ring_wall.png" alt="" width="300"/>|
+|3D Cylinder|Ring| Wall|<img src="./doc/images/Cylinder_elec_ring_wall.png" alt="" width="300"/>|
+|3D Cylinder|Ring| Top|<img src="./doc/images/Cylinder_elec_ring_top.png" alt="" width="300"/>|
+|3D Cylinder|Ring| Bottom|<img src="./doc/images/Cylinder_elec_ring_bot.png" alt="" width="300"/>|
+|3D Cylinder|Array*| Top|<img src="./doc/images/Cylinder_elec_array_top.png" alt="" width="300"/>|
+|3D Cylinder|Array*| Bottom|<img src="./doc/images/Cylinder_elec_array_bot.png" alt="" width="300"/>|
+|3D Cubic|Ring| Top|<img src="./doc/images/Cubic_elec_ring_top.png" alt="" width="300"/>|
+|3D Cubic|Ring| Bottom|<img src="./doc/images/Cubic_elec_ring_bot.png" alt="" width="300"/>|
+|3D Cubic|Array*| Top|<img src="./doc/images/Cubic_elec_array_top.png" alt="" width="300"/>|
+|3D Cubic|Array*| Bottom|<img src="./doc/images/Cubic_elec_array_bot.png" alt="" width="300"/>|
+
+It also possible to select multiple layouts design in the same chamber.
+
+|Chamber example|Layouts|FEM plot|
 |:---:|:---:|:---:|
-|Ring|2D Circle| Wall|
-|Ring|3D Cylinder| Wall|
-|Ring|3D Cylinder| Top|
-|Ring|3D Cylinder| Bottom|
-|Ring|3D Cubic| Top|
-|Ring|3D Cubic| Bottom|
-|Array*|3D Cylinder| Top|
-|Array*|3D Cylinder| Bottom|
-|Array*|3D Cubic| Top|
-|Array*|3D Cubic| Bottom|
-
-by the combination |Ring|2D Circle Wall|/ |Ring|3D Cylinder| Wall| the diametre of the deigan wont be used.
-
-
-the cahmber cna be separatel savedd and loaded 
-
-
-multiple layouts of electrodes cabe be selected (see examples)
-
-the
-
-<img src="./doc/images/app_fwd_model_chamber.PNG" alt="app_fwd_model_chamber.PNG" width="500"/>
-
-|Chamber example|FEM plot|
-|:---:|:---:|
-| **Circle_elec_ring_wall** | <img src="./doc/images/Circle_elec_ring_wall.png" alt="Circle_elec_ring_wall.png" width="200"/> |
-|**Cylinder_elec_ring_wall**|<img src="./doc/images/Cylinder_elec_ring_wall.png" alt="Cylinder_elec_ring_wall.png" width="200"/>|
-|**Cylinder_elec_ring_top**|<img src="./doc/images/Cylinder_elec_ring_top.png" alt="Cylinder_elec_ring_top.png" width="200"/>|
-|**Cylinder_elec_ring_bot**|<img src="./doc/images/Cylinder_elec_ring_bot.png" alt="images/Cylinder_elec_ring_bot.png" width="200"/>|
-|**Cylinder_elec_ring_top_array_bot**|<img src="./doc/images/Cylinder_elec_ring_top_array_bot.png" alt="Cylinder_elec_ring_top_array_bot.png" width="200"/>|
-|**Cubic_elec_ring_top_array_bot**|<img src="./doc/images/Cubic_elec_ring_top_array_bot.png" alt="Cubic_elec_ring_top_array_bot.png" width="200"/>|
+|3D Cylinder| Ring Top <br> Array Bottom|<img src="./doc/images/Cylinder_elec_ring_top_array_bot.png" alt="" width="300"/>|
+| 3D Cubic| Ring Top <br> Array Bottom| <img src="./doc/images/Cubic_elec_ring_top_array_bot.png" alt="" width="300"/>|
+| ..| ...| ...|
 
 When 2D is selected, the electrode position should be always on wall.
 
-### **4.2.3 Pattern**
+### **3.2.3 Pattern**
 
 To build the injection and measuremnet pattern select:
 - the amplitude of the injection current
@@ -246,7 +179,8 @@ After a first build it is possible to append new patterns by selecting the hold 
 After building the patterns, the injections can be trunced by selecting the range of the injections to keep.
 
 
-<img src="./doc/images/app_fwd_model_pattern.PNG" alt="app_fwd_model_pattern.PNG" width="500"/>
+<img src="./doc/images/app_fwd_model_pattern.PNG" alt="" width="500"/><br>
+*App page: Forward Model - Patterns*
 
 The injection pattern can be displayed using the EIDORS function "show_stim_meas_pattern" or a lightweight display custom function. Each measurements pattern can be displayed by selectioon the corresponding Injection Nr.
 
@@ -257,100 +191,160 @@ Example of patterning display
 |ad | ad| <img src="./doc/images/" alt="" width="200"/> | <img src="./doc/images/" alt="" width="200"/> |
 |op | op|<img src="./doc/images/" alt="" width="200"/>|<img src="./doc/images/" alt="" width="200"/>|
 
-## **4.3. Solve Forward**
+## **3.3. Solve Forward**
 
-Here the EIDORS solvers parameters can be selected.
-To solve the Forward problem the conductivitsy of the Chamber has to be set.
+To solve the forward problem:
+- Set the EIDORS solving parameters
+- Set the conductivity of the chamber by setting the conductivity of teh medium in the chamber, and by adding objects/artefact (sphere, cell, cylinder) with a different conductivity.
 
-The results of the that simulation can be expeot as mat-file containing
+<img src="./doc/images/app_sim.PNG" alt="" width="500"/> <br>
+*App page: Solve Forward/Simulation*
 
-X, 
-X_ih
-X_h
-eit_env
+During the simulation the homogenious and inhomogenious images and data (simulated measurements) are generated and computed:
 
-this resultsfil can be loaded as an eit_emnv file and the results of that simulation can be redisplayed of the soling can be run!
+| Homogenious image | Inhomogenious image  | Simulated data/measurements | 
+|:---:|:---:|:---:|
+|<img src="./doc/images/app_sim_img_h.PNG" alt="" width="300"/> |<img src="./doc/images/app_sim_img_ih.PNG" alt="" width="300"/> |<img src="./doc/images/app_sim_data.PNG" alt="" width="300"/> |
+
+The results of the simulation can be saved and relaoded.
+
+With following command you can directly access the variables of forward model.
+```matlab
+>> app.eit_env.fwd_model.fmdl()   % struct of forward model for EIDORS
+>> app.eit_env.sim.img_h          % homogeneous EIDORS FEM image
+>> app.eit_env.sim.img_ih         % inhomogeneous EIDORS FEM image
+>> app.eit_env.sim.data_h         % homogeneous EIDORS data
+>> app.eit_env.sim.data_ih        % inhomogeneous EIDORS data
+```
+
+Three object types are available:
+- Sphere/Cell 
+- Cylinder (from top surface of the chamber)
+
+| Sphere | Cell  | Cylinder | 
+|:---:|:---:|:---:|
+|<img src="./doc/images/app_sim_sph.PNG" alt="" width="300"/> |<img src="./doc/images/app_sim_cell.PNG" alt="" width="300"/> |<img src="./doc/images/app_sim_cyl.PNG" alt="" width="300"/> |
+
+Also it is possible to define multiples layers of conductivity for each objects. In that case conductivity is a matrix, where the row are the layers such as:
+```matlab
+[
+    conductivity_1, Radius_ratio_1;
+    conductivity_2, Radius_ratio_2;..
+]
+```
+
+<img src="./doc/images/app_sim_cell_layer.PNG" alt="" width="300"/><br>
+*Here an example for a 2D circle chamber (medium conductivity=1) and a cell (position=[0,0,0], Dimension=[0.3,0], Conductivity=[0.5, 1; 0.1,0.5]) and medium conductivity : 1.*
+
+The `Add object in FEM` option, add the opject in teh FEM for better simulation results
 
 
-### **4.3.1 Forward solver**
-see eidors documentation
+|`Add object in FEM`| FEM view |
+|:---:|:---:|
+|OFF|<img src="./doc/images/app_sim_notaddtofem.PNG" alt="" width="300"/> |
+|ON <br> sphere/cell-object <br>added to the FEM|<img src="./doc/images/app_sim_addtofem.PNG" alt="" width="300"/> |
 
-### **4.3.2 Objects**
+The number of objects is not limited to one!
 
-sphere
+## **3.4 Solving Inverse model**
 
-cell
+After solving the forward model, inverse model can be directly solved with selected solver.
 
-![Untitled](/doc/images/Untitled%204.png)
+<img src="./doc/images/app_rec.PNG" alt="" width="500"/> <br>
+*App page: Solve Inverse/Reconstruction*
 
-cylinder
+When `Load meas` option is chosen, real measurements (homogeneous and inhomogeneous voltages) can be loaded and solved. Before loading the real measurements, a simulation of the forward model is still essential. 
+The real measurements file should be a mat-file containing two variables:
+- `X_h`, homogeneous data/measurements
+- `X_ih`, inhomogeneous data/measurements
 
-![Untitled](/doc/images/Untitled%205.png)
+<img src="./doc/images/app_rec_real_meas.PNG" alt="" width="300"/><br>
+*Real measurements mat-file cotaining the variables `X_h` and `X_ih` for the reconstruction*
+
+During the reconstruction the inverse image (iimg) is computed using the simulated or loaded data/ measuremenst. Next to the FEM view of the iimg, some slices of the 3D view can be diplayed, by setting the plane. 
+
+| Inhomogenious image| Inverse image (iimg)| Slice X=0  | Slice Y=0 |  Slice Z=0 | 
+|:---:|:---:|:---:|:---:|:---:|
+|<img src="./doc/images/app_rec_img_ih.PNG" alt="" width="300"/> |<img src="./doc/images/app_rec_iimg.PNG" alt="" width="300"/> |<img src="./doc/images/app_rec_iimg_slicex.PNG" alt="" width="300"/> |<img src="./doc/images/app_rec_iimg_slicey.PNG" alt="" width="300"/> |<img src="./doc/images/app_rec_iimg_slicez.PNG" alt="" width="300"/>|
+
+The results of the reconstruction can be saved and relaoded.
 
 In the command line, with following command can directly access the variables of forward model.
 
 ```matlab
-
->> app.eit_env.fwd_model.fmdl()   % struct of forward model
->> app.eit_env.sim.img_h
->> app.eit_env.sim.img_ih         % homogeneous and inhomogeneous FEM image
->> app.eit_env.sim.data_h.meas
->> app.eit_env.sim.data_ih.meas   % homogeneous and inhomogeneous voltages 
+>> app.eit_env.rec.iimg           % reconstructed EIDORS image iimg
+>> app.eit_env.rec.data_h         % homogeneous EIDORS data used for reconstruction
+>> app.eit_env.rec.data_ih        % inhomogeneous EIDORS data used for reconstruction
 ```
 
-## **3. Solving Inverse model**
+### **3.5. Dataset for AI**
 
-After solving forward model,  Inverse model can be directly solved with selected solver.
+For the investigation of EIT reconstruction using AI, dataset can be here generated using EIDORS Forward solver.
 
-When “Load meas” is chosen, the real measurements(homogeneous and inhomogeneous voltages) can be loaded and solved. Before loading the real measurement, a simulation of forward model is still essential.
+<img src="./doc/images/app_ai_dataset.PNG" alt="" width="500"/> <br>
+*App page: AI Dataset Generation*
 
-In the command line, with following command can directly access the variables of forward model.
+#### **Generate a dataset**
 
-```matlab
->> app.eit_env.rec.iimg           % reconstructed image
->> app.eit_env.rec.data_h.meas
->> app.eit_env.rec.data_ih.meas   % homogeneous and inhomogeneous conductivity distribution
-```
+Before generation of a dataset, a `_user_entry.mat-file` need to be generated/saved.
+For that  following need to be done in that same order:
+- build a forward model (chamber and pattern)
+- solve that forward model a first time (used default medium and object data)
+- select dataset input data and save the `_user_entry.mat-file`
 
-### 4. **Dataset for AI**
+That file is then asked at the begin of the generation of a dataset.
 
-- define different parameters and save user_entry
-- Generate Training samples with user_entry
-- load eit_dataset.mat file after generation
-- different samples can be plotted with “show scr_data”
+The dataset generator make a directory in "./output/ai_dataset" such as:
 
-![Untitled](/doc/images/Untitled%206.png)
+<img src="./doc/images/app_ai_dataset_dir.PNG" alt="" width="300"/> <br>
+*Dataset directory example*
 
-After generation , four different files can be obtained.
+After the generation the dataset can be loaded to inspect single samples/src_data, by selecting them and plotting them:
 
-1. “Samples” fold contains sample data (x and y)
-2. “src_data” fold contains all information of samples
-3. “eit_dataset.mat” is loaded to plot samples 
-4.  “infos2py” is used for loading in python
+<img src="./doc/images/app_ai_dataset_review.PNG" alt="" width="500"/> <br>
+*Plot of 3 samples contained in a dataset*
 
-### 5. Global
+#### **Details about the Dataset Generation and Data**
 
-eit environment and a “info2py.mat” file can be saved.
+Steps of the computation of a sample:
+- generation of img_h using random medium conduct ouf of the selected conductivity range
+- generation of img_ih using random generated objects placed randomly in the chamber ouf of the selected conductivity range, object amount range. 
+- solve the forward model to get homogeneous and inhomogeneous simulated data/measurements(data_h and data_ih)
+
+In the dataset directory are to found:
+
+**The ``samples``-file** (saved batchwise because of memory for lage nb of samples, here batch of 500 samples per file) contains two variables used for AI model training:
+- `X`, such
+    - X(:,i,1) = sample_i.data_h.meas; homogeneous simulated data/measurements
+    - X(:,i,2) = sample_i.data_ih.meas; inhomogeneous simulated data/measurements
+    - X(:,i,3) = sample_i.data_hn.meas; homogeneous with noise simulated data/measurements
+    - X(:,i,4) = sample_i.data_ihn.meas; inhomogeneous with noise simulated data/measurements
+- `y`, such:
+    - y(:,i,1) = sample_i.img_h.elem_data; homogeneous generated image
+    - y(:,i,2) = sample_i.img_ih.elem_data; inhomogeneous generated image
+
+<img src="./doc/images/app_ai_dataset_samples_detail.PNG" alt="" width="300"/> <br>
+*Dataset samples detail*
+
+**The ``src_data``-file** (saved batchwise because of memory for lage nb of samples, here batch of 250 src_data per file) contains for each samples a single `EIT_sim_env` object in which the forward solving where run. In that object we can found the generated objects, the generated images, and computed data. Note: in src_data all fmdl contained in img etc. have been cleared to save memory, the fmdl is to found in the `*_eit_dataset.mat-file` under `eit_env.fwd_model.fmdl()`
+
+<img src="./doc/images/app_ai_dataset_src_data_detail.PNG" alt="" width="300"/> <br>
+*Dataset src_data detail*
+
+<img src="./doc/images/app_ai_dataset_src_data_detail2.PNG" alt="" width="300"/> <br>
+*Dataset src_data detail*
+
+**The _eit_dataset-file** contain `EIT_dataset` object with wicht the geneartion has been run. it contained all metadata about the Generation of the dataset and the generated data
+
+**The _infos2py-file** contains the same information as the _eit_dataset-file but all data has been put on the top level to be read using python. This file is used as a python-compatible-mat-file which can be read by python (scipy) for the [`eit_ai`](https://github.com/DavidMetzIMT/eit_ai) to train model.  see also "/file/mat_utils.py" in [`glob_utils`](https://github.com/DavidMetzIMT/glob_utils)) for the loading of such file in python.
 
 
-## 3.1 Examples of Forward Model
+Notes:
+- those dataset is used in the python package [`eit_ai`](https://github.com/DavidMetzIMT/eit_ai) to train models, which are used by the [`eit_app`](https://github.com/DavidMetzIMT/eit_app) via [`eit_model`](https://github.com/DavidMetzIMT/eit_model) and , see also "/file/mat_utils.py" in [`glob_utils`](https://github.com/DavidMetzIMT/glob_utils)) for loading of such dataset.
+- not do not change the structure of the dataset dir
 
 
-#### 3.1.2 Examples of Forward Model
-
-#### 3.1.3 Examples of Forward Model
-
-### 3.2 Simulation / Forward Solving (2D/3D)
-#### 3.2.2 Example of simulation
-#### 3.2.1 Object definition
-
-### 3.2 Reconstruction / Inverse Solving (2D/3D)
-
-### 3.3 Generation of AI
-#### 3.3.1 Example of dataset generation
-#### 3.3.2 
-
-## 4. Cite our work.
+## 5. Cite our work.
 
 **If you find `app_eidors_modelsim` useful, please cite our work!**
 
