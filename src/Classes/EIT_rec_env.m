@@ -23,7 +23,7 @@ classdef EIT_rec_env < handle
             %Check rec env is ready to solve inv problem
             if ~obj.is_rec_valid() return; end
 
-            normalize = false
+            normalize = false;
 
             disp('Reconstruction: Start')
             disp('please wait ...')

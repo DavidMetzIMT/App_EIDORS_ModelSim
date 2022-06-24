@@ -280,11 +280,9 @@ classdef EIT_dataset < EIT_env
             medium_conduct = random_val_from_range(obj.user_entry.mediumsConductRange);
             object_n = random_val_from_range(obj.user_entry.objectAmountRange);
             tmp_obj=EIT_object();
-            object_n
             for i=1:floor(object_n)
                 objects(i)= tmp_obj.generate_random(obj.user_entry, obj.setup.chamber);
             end
-            objects
             obj.set_sim(medium_conduct, objects);
             obj.sim.noise_SNR= obj.user_entry.SNR;
             obj.sim.name=indx; % memory the index on the sample in the name property of the sim
@@ -296,7 +294,7 @@ classdef EIT_dataset < EIT_env
             show_fem(obj.sim.img_ih)
             %Return a copy of that simulation env (EIT_sim_env)
             output= obj.sim.copy();
-            output.clean_fmdl()
+            output.clean_fmdl();
         end 
 
         function obj=display_progress(obj,indx)

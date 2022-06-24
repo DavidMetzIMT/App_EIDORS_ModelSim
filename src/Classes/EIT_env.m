@@ -1,14 +1,14 @@
 classdef EIT_env < handle
-    %EIT_ENV Enviromment used for the simulation reconstruction of EIT measurements using the EIDORS Toolbox
-    
+    %EIT_ENV Enviromment used for the modelling, simulation reconstruction of 
+    % EIT measurements using the EIDORS Toolbox
     properties
-        name
-        dir_path
         type='eit_env'
-        setup EIT_setup % Regroup the data for the Measeuement setups (chamber electrode, pattern)
-        fwd_model Eidors_fmdl % the forward model aslike in EIDORS
-        inv_model Eidors_imdl % the inverse model aslike in EIDORS
-        sim EIT_sim_env % Simulation env for simulation with EIDORS
+        name % name of the EIT Enviromment
+        dir_path % path of the loaded EIT Enviromment
+        setup EIT_setup % EIT the Measurement setup (chamber, electrode, pattern)
+        fwd_model Eidors_fmdl % the forward model aslike in EIDORS 
+        inv_model Eidors_imdl % the inverse model aslike in EIDORS 
+        sim EIT_sim_env % Simulation environmnent with EIDORS
         rec EIT_rec_env % Reconstruction environmnent with EIDORS
     end
     
@@ -181,7 +181,6 @@ classdef EIT_env < handle
             obj.sim.mediumConduct= medium;
             obj.sim.reset_objects();
             for i=1:length(objects)
-                new_oject_in_sim= i
                 obj.sim.add_object(objects(i));
             end
         end
@@ -195,9 +194,8 @@ classdef EIT_env < handle
                 [fmdl, success] = obj.create_fwd_model(obj.setup.chamber, obj.setup.elec_layout, add_text);
                 % warndlg('add object in FEM is not implemented yet')
             end
-            fmdl
-            obj.sim.fmdl= fmdl
-            obj.sim.solve_fwd()
+            obj.sim.fmdl= fmdl;
+            obj.sim.solve_fwd();
 
             % Load per default meas in rec env
             obj.rec.set_data_meas(obj.sim.data_ih, obj.sim.data_h)

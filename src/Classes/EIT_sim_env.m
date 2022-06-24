@@ -78,7 +78,7 @@ classdef EIT_sim_env < matlab.mixin.Copyable % a hanlde with copy methods
             obj.data_h = fwd_solve(obj.img_h);
             obj.data_ih = fwd_solve(obj.img_ih);
 
-            noise_ratio= noise_dB_ratio(obj.noise_SNR)
+            noise_ratio= noise_dB_ratio(obj.noise_SNR);
             
             obj.data_hn = add_noise(noise_ratio, obj.data_h);
             obj.data_ihn = add_noise(noise_ratio, obj.data_ih);

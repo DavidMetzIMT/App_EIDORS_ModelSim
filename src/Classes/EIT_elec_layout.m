@@ -46,9 +46,9 @@ classdef EIT_elec_layout < handle
             if nargin==1
                 var= varargin{1};
                 obj.reset = 0;
-                obj.elecNb=var.Number; 
-                obj.elecForm=var.Form; 
-                obj.elecSize=[var.Diameter_Width, var.Height]; 
+                obj.elecNb=var.Elec_Nb; 
+                obj.elecForm=var.Elec_Form; 
+                obj.elecSize=[var.Elec_Width, var.Elec_Height]; 
                 obj.elecPlace=var.Position; 
                 obj.layoutDesign=var.Design; 
                 obj.layoutSize=var.Diameter;
@@ -74,12 +74,12 @@ classdef EIT_elec_layout < handle
             %GET_STRUCT_4_GUI Return the layout as a struct (this struct should be used to create an EIT_elec_layout)
             % attention here the order count
             var.Design          = obj.layoutDesign; 
-            var.Diameter        = obj.layoutSize; 
-            var.Number          = obj.elecNb; 
             var.Position        = obj.elecPlace; 
-            var.Form            = obj.elecForm; 
-            var.Diameter_Width  = obj.elecSize(1);
-            var.Height          = obj.elecSize(2);
+            var.Diameter        = obj.layoutSize; 
+            var.Elec_Nb          = obj.elecNb; 
+            var.Elec_Form            = obj.elecForm; 
+            var.Elec_Width  = obj.elecSize(1);
+            var.Elec_Height          = obj.elecSize(2);
             var.Zcontact =obj.zContact;
         end
 
