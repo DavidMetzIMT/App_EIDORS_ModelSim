@@ -291,7 +291,7 @@ classdef EIT_dataset < EIT_env
             % obj.fwd_model
             obj.solve_fwd(0);
 
-            show_fem(obj.sim.img_ih)
+            %show_fem(obj.sim.img_ih)
             %Return a copy of that simulation env (EIT_sim_env)
             output= obj.sim.copy();
             output.clean_fmdl();

@@ -84,6 +84,7 @@ classdef Eidors_fmdl < handle
         function fmdl4EIDORS = fmdl(obj)
             %FMDL Return itself as a structure for use in EIDORS Toolbox
             fmdl4EIDORS = struct(obj);
+            fmdl4EIDORS = rmfield(fmdl4EIDORS,{'SOLVER', 'JACOBIAN', 'SYS_MAT', 'PERM_SYM'});
         end
 
         function obj = set_fmdl(obj, fmdl) 
