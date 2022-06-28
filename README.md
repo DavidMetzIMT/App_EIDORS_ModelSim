@@ -186,10 +186,12 @@ The injection pattern can be displayed using the EIDORS function "show_stim_meas
 
 Example of patterning display
 
-| Inj Pattern | Meas Pattern | EIDORS Display | Custom Display |
-|:---:|:---:|:---:|:---:|
-|ad | ad| <img src="./doc/images/" alt="" width="200"/> | <img src="./doc/images/" alt="" width="200"/> |
-|op | op|<img src="./doc/images/" alt="" width="200"/>|<img src="./doc/images/" alt="" width="200"/>|
+| Inj Pattern | Meas Pattern | Show Measurements | EIDORS Display | Custom Display |
+|:---:|:---:|:---:|:---:|:---:|
+|ad | ad|OFF| <img src="./doc/images/app_pattern_eidors_adad_inj.png" alt="" width="200"/> | <img src="./doc/images/app_pattern_own_adad_inj.png" alt="" width="200"/> |
+|ad | ad|ON| <img src="./doc/images/app_pattern_eidors_adad_inj_meas.png" alt="" width="200"/> | <img src="./doc/images/app_pattern_own_adad_inj_meas.png" alt="" width="200"/> |
+|op | op|OFF|<img src="./doc/images/app_pattern_eidors_opop_inj.png" alt="" width="200"/>|<img src="./doc/images/app_pattern_own_opop_inj.png" alt="" width="200"/>|
+|op | op|ON|<img src="./doc/images/app_pattern_eidors_opop_inj_meas.png" alt="" width="200"/>|<img src="./doc/images/app_pattern_own_opop_inj_meas.png" alt="" width="200"/>|
 
 ## **3.3. Solve Forward**
 

@@ -19,21 +19,17 @@ getCurrentFigure_with_figName('Wire Mesh Current Injections');
 
 for i=1:size(inj,1)
     plot3(e_xyz(:,1),e_xyz(:,2),e_xyz(:,3),'r*');
-    xlabel('x')
-    ylabel('y')
-    zlabel('z')
+    xlabel('X')
+    ylabel('Y')
+    zlabel('Z')
     hold on
     indx_inj= inj(i,:);
     xyz_inj=e_xyz(indx_inj,1:3);
     plot3(xyz_inj(:,1),xyz_inj(:,2),xyz_inj(:,3),'b-');
+
+    title(sprintf('Stim #=%d', i))
     
     hold on
-    if wait==1
-        pause(time);
-    else
-        pause
-    end
-    
     if display_meas_pattern ==1
         for j=1:size(meas(:,:,i),1)
             indx_meas= meas(j,:,i);
@@ -51,13 +47,16 @@ for i=1:size(inj,1)
                 plot3(xyz_inj(:,1),xyz_inj(:,2),xyz_inj(:,3),'b-');
             end
             title(sprintf('Stim #=%d, Meas #=%d', i, j))
-        end
-        
-    else
-        title(sprintf('Stim #=%d', i))
+        end        
     end
     if display_all==0
         hold off
+    end
+
+    if wait==1
+        pause(time);
+    else
+        pause
     end
 end
 end
