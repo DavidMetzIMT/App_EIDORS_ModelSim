@@ -48,7 +48,7 @@ This MATLAB-based framework is based on the toolbox [EIDORS](http://eidors3d.sou
 Steps:
 
 - Install MATLAB (only R2021a tested)
-- Download EIDORS ([eidors-v3.10-ng](http://prdownloads.sourceforge.net/eidors3d/eidors-v3.10-ng.zip))  and save the `EIDORS`-folder on your local machine under `C:` suchas the `startup.m`-file is at the path: 'C:\EIDORS\eidors\startup.m (note: you can also put it somewhere else, in that case you will be asked after the first start of the app)
+- Download EIDORS ([eidors-v3.10-ng](http://prdownloads.sourceforge.net/eidors3d/eidors-v3.10-ng.zip))  and save the `EIDORS`-folder on your local machine under `C:` such as the `startup.m`-file is at the path: 'C:\EIDORS\eidors\startup.m (note: you can also put it somewhere else, in that case you will be asked after the first start of the app)
 - Start the App (see 1.3 Starting the App in MATLAB)
 
 ### **Linux (Ubuntu 20.04.3 LTS 64-bit)**
@@ -56,9 +56,19 @@ Steps:
 Steps:
 
 - Install MATLAB (only R2021a tested)
-- Download EIDORS ([eidors-v3.10-ng](http://prdownloads.sourceforge.net/eidors3d/eidors-v3.10-ng.zip))  and save the `EIDORS`-folder on your local machine under `/usr/local/` suchas the `startup.m`-file is located at the path: '/usr/local/EIDORS/eidors/startup.m` (note: you can also put it somewhere else, in that case you will be asked after the first start of the app)
+- Download EIDORS ([eidors-v3.10-ng](http://prdownloads.sourceforge.net/eidors3d/eidors-v3.10-ng.zip))  and save the `EIDORS`-folder on your local machine under `/usr/local/` such as the `startup.m`-file is located at the path: '/usr/local/EIDORS/eidors/startup.m` (note: you can also put it somewhere else, in that case you will be asked after the first start of the app)
 - Install netgen-5.3.1 (see documentation under doc/netgen_UNIX_installation), good luck 😉!!
 - Start the App (see 1.3 Starting the App in MATLAB)
+
+### **MacOS(Monterey 12.4)**
+
+Steps:
+
+- Install MATLAB (only R2021b tested)
+- Download EIDORS ([eidors-v3.10-ng](http://prdownloads.sourceforge.net/eidors3d/eidors-v3.10-ng.zip))  and save the `EIDORS`-folder on your local machine such as the `startup.m`-file is located at the path: '/Users/user/Documents/EIDORS/eidors/startup.m`, you will be asked after the first start of the app
+- Build latest netgen from source(see more information on https://ngsolve.org/forum/ngspy-forum/1257-apple-silicon), 
+- Start the App (see 1.3 Starting the App in MATLAB)
+- Since netgen is installed in `Applications` folder on Mac, the netgen path will be asked when start the App and the path `/Applications/Netgen.app/Contents/MacOS/netgen`should be entered manually.
 
 # **2. Starting the App in MATLAB**
 
@@ -133,7 +143,7 @@ Multiples electrode layout designs are available:
 - Ring
 - Array
 
-Those can be placed at different position in the chamber (wall, top, bottom), and theri daiametr can be varied.
+Those can be placed at different position in the chamber (wall, top, bottom), and their diameter can be varied.
 
 For each design an electrode numbers, form (point, circle, rectangle), size(width (diameter), height) and zcontact can be selected.
 
@@ -197,14 +207,14 @@ Example of patterning display
 
 To solve the forward problem:
 - Set the EIDORS solving parameters
-- Set the conductivity of the chamber by setting the conductivity of teh medium in the chamber, and by adding objects/artefact (sphere, cell, cylinder) with a different conductivity.
+- Set the conductivity of the chamber by setting the conductivity of the medium in the chamber, and by adding objects/artefact (sphere, cell, cylinder) with a different conductivity.
 
 <img src="./doc/images/app_sim.PNG" alt="" width="500"/> <br>
 *App page: Solve Forward/Simulation*
 
 During the simulation the homogenious and inhomogenious images and data (simulated measurements) are generated and computed:
 
-| Homogenious image | Inhomogenious image  | Simulated data/measurements | 
+| Homogenous image | Inhomogenous image  | Simulated data/measurements | 
 |:---:|:---:|:---:|
 |<img src="./doc/images/app_sim_img_h.PNG" alt="" width="300"/> |<img src="./doc/images/app_sim_img_ih.PNG" alt="" width="300"/> |<img src="./doc/images/app_sim_data.PNG" alt="" width="300"/> |
 
@@ -227,7 +237,7 @@ Three object types are available:
 |:---:|:---:|:---:|
 |<img src="./doc/images/app_sim_sph.PNG" alt="" width="300"/> |<img src="./doc/images/app_sim_cell.PNG" alt="" width="300"/> |<img src="./doc/images/app_sim_cyl.PNG" alt="" width="300"/> |
 
-Also it is possible to define multiples layers of conductivity for each objects. In that case conductivity is a matrix, where the row are the layers such as:
+Also it is possible to define multiples layers of conductivity for each object. In that case conductivity is a matrix, where the row are the layers such as:
 ```matlab
 [
     conductivity_1, Radius_ratio_1;
@@ -265,7 +275,7 @@ The real measurements file should be a mat-file containing two variables:
 
 During the reconstruction the inverse image (iimg) is computed using the simulated or loaded data/ measuremenst. Next to the FEM view of the iimg, some slices of the 3D view can be diplayed, by setting the plane. 
 
-| Inhomogenious image| Inverse image (iimg)| Slice X=0  | Slice Y=0 |  Slice Z=0 | 
+| Inhomogenous image| Inverse image (iimg)| Slice X=0  | Slice Y=0 |  Slice Z=0 | 
 |:---:|:---:|:---:|:---:|:---:|
 |<img src="./doc/images/app_rec_img_ih.PNG" alt="" width="300"/> |<img src="./doc/images/app_rec_iimg.PNG" alt="" width="300"/> |<img src="./doc/images/app_rec_iimg_slicex.PNG" alt="" width="300"/> |<img src="./doc/images/app_rec_iimg_slicey.PNG" alt="" width="300"/> |<img src="./doc/images/app_rec_iimg_slicez.PNG" alt="" width="300"/>|
 
@@ -336,7 +346,7 @@ In the dataset directory are to found:
 <img src="./doc/images/app_ai_dataset_src_data_detail2.PNG" alt="" width="300"/> <br>
 *Dataset src_data detail*
 
-**The _eit_dataset-file** contain `EIT_dataset` object with wicht the geneartion has been run. it contained all metadata about the Generation of the dataset and the generated data
+**The _eit_dataset-file** contain `EIT_dataset` object with which the generation has been run. it contained all metadata about the Generation of the dataset and the generated data
 
 **The _infos2py-file** contains the same information as the _eit_dataset-file but all data has been put on the top level to be read using python. This file is used as a python-compatible-mat-file which can be read by python (scipy) for the [`eit_ai`](https://github.com/DavidMetzIMT/eit_ai) to train model.  see also "/file/mat_utils.py" in [`glob_utils`](https://github.com/DavidMetzIMT/glob_utils)) for the loading of such file in python.
 
