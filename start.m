@@ -1,3 +1,4 @@
+% try delete(findall(0));end
 path= mfilename('fullpath');
 [path, fName, fExt] = fileparts(path);
 cd(path);
