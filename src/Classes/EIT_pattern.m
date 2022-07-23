@@ -17,11 +17,13 @@ classdef EIT_pattern < handle
         GENERATING_FUNCTIONS={
             'Ring patterning',
             'Array patterning',
+            '3D Ring patterning',
             '3D patterning'
         };
         PATTERNS= {
             {'{ad}';'{op}';'user defined'};
             {'array_ad_simple';'array_ad_full';'array_ad_line';'array_op'};
+            {'planar';'zigzag';'square'};
             {'3d_ad_0';'3d_ad_1';'3d_ad_2';'3d_ad_3';'3d_op_inoutplane';'3d_op';'user defined'};
         }
     end
@@ -107,6 +109,8 @@ classdef EIT_pattern < handle
                         return;
                     end
                     [stimulation, meas_select] = mk_stim_pattern_Array(n_elec,n_XY,inj,meas,option,amplitude);
+                case obj.GENERATING_FUNCTIONS{3} %''3D ring patterning'
+                    [stimulation,meas_select]=mk_stim_ring_patterns_3D(n_elec,n_row,inj,meas,option,amplitude);
                 % case obj.GENERATING_FUNCTIONS{3} %''3D patterning'
                 %     [stimulation,meas_select]=mk_stim_pattern_3D(inj,meas,option,amplitude);
                     
